@@ -1,12 +1,16 @@
-import './App.css'
 
-function App() {
+import { BrowserRouter, Routes,Route } from 'react-router-dom'
+import {LoginPage,HomePage,RegisterPage } from "./Routes"
 
-
+const App = () => {
   return (
-    <>
-    <h1 className='text-3xl font-bold text-center bg-amber-600 text-gray-800'>Hello World</h1>
-    </>
+    <BrowserRouter>
+      <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+      </Routes>
+      </BrowserRouter>
   )
 }
 
