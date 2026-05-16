@@ -1,5 +1,7 @@
 import express from 'express';
+import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import dotenv from 'dotenv';
+const app = express();
 
 // Config
 if (process.env.NODE_ENV !== 'PRODUCTION') {
@@ -7,5 +9,5 @@ if (process.env.NODE_ENV !== 'PRODUCTION') {
     path: 'backend/config/.env',
   });
 }
-const app = express();
+
 export default app;

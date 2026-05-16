@@ -1,7 +1,9 @@
 import app from './app.js';
 import dotenv from 'dotenv';
 import connectDB from './db/database.js';
-
+import { notFound, errorHandler } from './middleware/errorMiddleware.js';
+import cookieParser from 'cookie-parser';
+import express from 'express';
 // Handle Uncaught exceptions
 process.on('uncaughtException', (err) => {
   console.log(`Error: ${err.message}`);
@@ -15,11 +17,18 @@ if (process.env.NODE_ENV !== 'PRODUCTION') {
     path: 'backend/config/.env',
   });
 }
-
+//connect db
 connectDB();
+
 // create server
 const server = app.listen(process.env.PORT, () => {
   console.log(`Server is running on http://localhost:${process.env.PORT}`);
+});
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser);
+
+app.get('/', (req, res) => {
+  res.send('Hello ');
 });
 
 // Unhandled promise rejection
@@ -31,3 +40,5 @@ process.on('unhandledRejection', (err) => {
     process.exit(1);
   });
 });
+app.use(notFound);
+app.use(errorHandler);
