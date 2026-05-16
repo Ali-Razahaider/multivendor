@@ -54,8 +54,12 @@ router.post(
 
     if (user && (await user.comparePassword(password))) {
       generateToken(res, user._id);
+
+      user.password = undefined;
+
       res.status(200).json({
         success: true,
+        message: 'Login Successful',
         user,
       });
     } else {
