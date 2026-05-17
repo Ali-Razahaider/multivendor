@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { LoginPage, HomePage, RegisterPage } from './Routes';
+import { LoginPage, HomePage, RegisterPage, ActivationPage } from './Routes';
 import './App.css';
 const App = () => {
   return (
@@ -8,6 +8,10 @@ const App = () => {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route
+          path="/activation/:activationToken"
+          element={<ActivationPage />}
+        />
       </Routes>
     </BrowserRouter>
   );

@@ -1,8 +1,6 @@
-import LoginPage from './pages/LoginPage.tsx'
-import HomePage from './pages/HomePage.tsx'
-import RegisterPage from './pages/RegisterPage.tsx'
+import LoginPage from './pages/LoginPage';
+import HomePage from './pages/HomePage';
+import RegisterPage from './pages/RegisterPage';
+import ActivationPage from './pages/ActivationPage';
 
-
-export{
-    LoginPage,HomePage,RegisterPage
-}
+export { LoginPage, HomePage, RegisterPage, ActivationPage };
