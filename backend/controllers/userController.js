@@ -29,7 +29,7 @@ router.post(
       },
     };
     const activation_token = createActivationToken(user);
-    const activationUrl = `http://localhost:8000/activation/${activation_token}`;
+    const activationUrl = `http://localhost:5173/activation/${activation_token}`;
 
     await sendMail({
       email: user.email,
@@ -46,30 +46,28 @@ router.post(
 
 // activation of account and user creation
 router.post(
-  '/activation/:activation_token',
+  '/activation',
   asyncHandler(async (req, res, next) => {
-    const { activation_token } = req.params;
+    const { activationToken } = req.body;
 
-    const newUser = jwt.verify(activation_token, process.env.JWT_SECRET);
+    const newUser = jwt.verify(activationToken, process.env.JWT_SECRET);
 
     if (!newUser) {
       res.status(400);
       throw new Error('Invalid token');
     }
 
-    const { name, email, password, avatar } = newUser;
+    // const { name, email, password, avatar } = newUser;
 
     const user = await User.create({
-      name,
-      email,
-      password,
-      avatar,
+      ...newUser,
     });
 
     generateToken(res, user._id);
 
     res.status(201).json({
       success: true,
+      message: 'Account activated successfully!',
       user,
     });
   })
@@ -95,6 +93,7 @@ router.post(
       res.status(200).json({
         success: true,
         message: 'Login Successful',
+        user,
       });
     } else {
       res.status(401);
