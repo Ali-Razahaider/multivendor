@@ -57,7 +57,14 @@ router.post(
       throw new Error('Invalid token');
     }
 
-    // const { name, email, password, avatar } = newUser;
+    const { email } = newUser;
+
+    const existingUser = await User.findOne({ email });
+
+    if (existingUser) {
+      res.status(400);
+      throw new Error('User already exists ');
+    }
 
     const user = await User.create({
       ...newUser,
