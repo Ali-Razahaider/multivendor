@@ -1,8 +1,8 @@
 import Home from '../components/Home/Home.tsx';
-const HomePage = ({ user }: { user: any }) => {
+const HomePage = () => {
   return (
     <div>
-      <Home user={user} />
+      <Home />
     </div>
   );
 };

@@ -4,25 +4,24 @@ import './App.css';
 import { toast, ToastContainer } from 'react-toastify';
 import server from './server.js';
 import 'react-toastify/dist/ReactToastify.css';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import axios from 'axios';
 
 axios.defaults.withCredentials = true;
 
 const App = () => {
-  const [user, setUser] = useState(null);
-
   useEffect(() => {
-    const fetchCurrentUser = async () => {
-      try {
-        const res = await axios.get(`${server}user/current`);
-        setUser(res.data.user);
-      } catch (err) {
-        console.log(err.response?.data?.message);
-        setUser(null);
-      }
+    const fetchCurrentUser = () => {
+      axios
+        .get(`${server}user/current`)
+        .then((res) => {
+          toast.success(`Welcome back ${res.data.user.name}!`);
+        })
+        .catch((err) => {
+          console.log(err.response?.data?.message);
+          toast.error('Please login to continue');
+        });
     };
-
     fetchCurrentUser();
   }, []);
 
@@ -33,7 +32,7 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<HomePage user={user} />} />
+        <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route
