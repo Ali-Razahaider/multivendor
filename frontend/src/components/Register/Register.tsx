@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import styles from '../../styles/styles.js';
 import axios from 'axios';
 import server from '../../server.js';
+import { toast } from 'react-toastify';
 function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,10 +25,13 @@ function Register() {
         }
       )
       .then((res) => {
-        console.log(res);
+        toast.success(res.data.message);
+        setFullName('');
+        setEmail('');
+        setPassword('');
       })
       .catch((err) => {
-        console.log(err);
+        toast.error(err.response.data.message);
       });
   };
 
