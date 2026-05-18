@@ -15,24 +15,24 @@ function Register() {
     e.preventDefault();
     const config = { headers: { 'Content-Type': 'application/json' } };
 
-    await axios
-      .post(
+    try {
+      const res = await axios.post(
         `${server}user/register`,
         { name: fullName, email, password },
         {
           ...config,
           withCredentials: true,
         }
-      )
-      .then((res) => {
-        toast.success(res.data.message);
-        setFullName('');
-        setEmail('');
-        setPassword('');
-      })
-      .catch((err) => {
-        toast.error(err.response.data.message);
-      });
+      );
+
+      toast.success(res.data.message);
+
+      setFullName('');
+      setEmail('');
+      setPassword('');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Registration failed');
+    }
   };
 
   return (

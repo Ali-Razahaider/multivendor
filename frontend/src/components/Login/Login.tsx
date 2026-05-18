@@ -12,29 +12,30 @@ function Login() {
 
   const login = async (e) => {
     e.preventDefault();
-    const config = { headers: { 'Content-Type': 'application/json' } };
 
-    await axios
-      .post(
+    try {
+      const res = await axios.post(
         `${server}user/login`,
         {
           email,
           password,
         },
         {
-          ...config,
+          headers: {
+            'Content-Type': 'application/json',
+          },
           withCredentials: true,
         }
-      )
-      .then((res) => {
-        toast.success(res.data.message);
-      })
-      .catch((err) => {
-        toast.error(err.response.data.message);
-      });
-    setEmail('');
-    setPassword('');
-    setVisible(false);
+      );
+
+      toast.success(res.data.message);
+
+      setEmail('');
+      setPassword('');
+      setVisible(false);
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Login failed');
+    }
   };
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center py-12 sm:px-6 lg:px-8">
