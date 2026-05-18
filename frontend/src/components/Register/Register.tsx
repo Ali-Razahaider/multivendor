@@ -21,7 +21,7 @@ function Register() {
         { name: fullName, email, password },
         {
           ...config,
-          withCredentials: true,
+          withCredentials: true, //with credentials is required to allow cross origin sites to set and read cookie, by default it is false. When the cookie is set by a different origin it will honor the same origin policy. and the cookie isnt accessable through document.cookie
         }
       );
 

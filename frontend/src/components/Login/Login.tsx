@@ -29,7 +29,6 @@ function Login() {
       );
 
       toast.success(res.data.message);
-
       setEmail('');
       setPassword('');
       setVisible(false);

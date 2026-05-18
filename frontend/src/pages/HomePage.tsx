@@ -1,8 +1,9 @@
-
-import Home from '../components/Home/Home.tsx'
-const HomePage = () => {
+import Home from '../components/Home/Home.tsx';
+const HomePage = ({ user }: { user: any }) => {
   return (
-    <div><Home/></div>
-  )
-}
-export default HomePage
+    <div>
+      <Home user={user} />
+    </div>
+  );
+};
+export default HomePage;

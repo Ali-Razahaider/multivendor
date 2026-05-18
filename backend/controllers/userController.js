@@ -4,7 +4,7 @@ import generateToken from '../utils/generateToken.js';
 import asyncHandler from 'express-async-handler';
 import sendMail from '../utils/sendMail.js';
 import jwt from 'jsonwebtoken';
-
+import isAuthenticated from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 router.post(
@@ -113,4 +113,18 @@ const createActivationToken = (user) => {
     expiresIn: '10m',
   });
 };
+
+//Get current user
+router.get(
+  '/current',
+  isAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    res.status(200).json({
+      success: true,
+      message: 'Current user',
+      user: req.user,
+    });
+  })
+);
+
 export default router;
