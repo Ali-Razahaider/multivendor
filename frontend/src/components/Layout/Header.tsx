@@ -1,21 +1,18 @@
 import { Link } from 'react-router-dom';
 import styles from '../../styles/styles';
 import { useState, useEffect } from 'react';
-import type { ChangeEvent } from 'react';
 import { productData, categoriesData } from '../../static/data';
-import { AiOutlineSearch } from 'react-icons/ai';
+import { AiOutlineSearch, AiOutlineShoppingCart } from 'react-icons/ai';
 import { BiMenuAltLeft } from 'react-icons/bi';
 import { IoIosArrowDown, IoIosArrowForward } from 'react-icons/io';
 import DropDown from './DropDown';
+import { IoHeartOutline, IoPersonOutline } from 'react-icons/io5';
 
-interface Product {
-  name: string;
-  image_Url: { url: string }[];
-}
+import Navbar from './Navbar';
 
-const Header = () => {
+const Header = ({ activeHeading }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchData, setSearchData] = useState<Product[]>([]);
+  const [searchData, setSearchData] = useState([]);
   const [active, setActive] = useState(false);
   const [dropdown, setDropDown] = useState(false);
 
@@ -27,7 +24,7 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleSearchChange = (e) => {
     const term = e.target.value;
     setSearchTerm(term);
     if (!term) {
@@ -36,7 +33,7 @@ const Header = () => {
     }
     const filteredProducts =
       productData &&
-      productData.filter((product: Product) =>
+      productData.filter((product) =>
         product.name.toLowerCase().includes(term.toLowerCase())
       );
     setSearchData(filteredProducts);
@@ -60,7 +57,7 @@ const Header = () => {
             placeholder="Search Product..."
             value={searchTerm}
             onChange={handleSearchChange}
-            className="h-[40px] w-full px-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="h-10 w-full px-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <AiOutlineSearch
             size={30}
@@ -77,7 +74,7 @@ const Header = () => {
                       <img
                         src={i.image_Url[0].url}
                         alt=""
-                        className="w-[40px] h-[40px] object-cover rounded-full"
+                        className="w-10 h-10 object-cover rounded-full"
                       />
                       <h1 className="ml-2">{i.name}</h1>
                     </div>
@@ -99,22 +96,46 @@ const Header = () => {
       <div
         className={`${styles.section} ${active ? 'fixed top-0' : 'relative'} w-full bg-blue-500 shadow-md z-10`}
       >
-        <div className={`${styles.section} relative flex items-center`}>
+          <div className={`${styles.section} relative flex items-center justify-between`}>
           <div className="relative h-12.5 mt-2.5 w-67.5 hidden min-[1000px]:block">
             <BiMenuAltLeft size={30} className="absolute top-3 left-2" />
             <button
               onClick={() => setDropDown(!dropdown)}
-              className="h-full w-full flex items-center pl-10 bg-gray-200 rounded-tl-md  rounded-tr-md text-gray-700 font-medium hover:bg-gray-300 transition duration-300"
+              className="h-full w-full flex items-center pl-10 bg-gray-200 rounded-tl-md rounded-tr-md text-gray-700 font-medium hover:bg-gray-300 transition duration-300"
             >
               All Categories
-              <IoIosArrowDown size={20} className="ml-1 
-              " />
+              <IoIosArrowDown size={20} className="ml-1" />
             </button>
             {dropdown && (
-              <DropDown categoriesData={categoriesData} setDropDown={setDropDown}
-              />
+              <DropDown categoriesData={categoriesData} setDropDown={setDropDown} />
             )}
           </div>
+          {/* nav items */}
+          <div className={`${styles.normalFlex}`}>
+            <Navbar active={activeHeading} />
+          </div>
+          {/* icons */}
+          <div className={`${styles.normalFlex}`}>
+            {/* profile icon */}
+            <div className='relative cursor-pointer mr-3.75'>
+              <Link to="/profile">
+                <IoPersonOutline size={25} className='text-white' />
+              </Link>
+            </div>
+            {/* wishlist icon */}
+            <div className='relative cursor-pointer mr-3.75'>
+              <IoHeartOutline size={25} className='text-white' />
+              <span className='absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center'>0</span>
+            </div>
+            {/* cart icon */}
+            <div className='relative cursor-pointer'>
+              <Link to="/cart">
+                <AiOutlineShoppingCart size={25} className='text-white' />
+                <span className='absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center'>0</span>
+              </Link>
+            </div>
+          </div>
+          
         </div>
       </div>
     </div>
