@@ -40,8 +40,8 @@ const Header = ({ activeHeading }) => {
   };
 
   return (
-    <div className={`${styles.section}`}>
-      <div className="flex 800px:h-12.5 800px:my-2.5 items-center justify-between">
+    <div className={`${styles.section} `}>
+      <div className="flex 800px:h-12.5 800px:my-2.5 w-full items-center justify-between">
         <div>
           <Link to="/">
             <img
@@ -96,7 +96,9 @@ const Header = ({ activeHeading }) => {
       <div
         className={`${styles.section} ${active ? 'fixed top-0' : 'relative'} w-full bg-blue-500 shadow-md z-10`}
       >
-          <div className={`${styles.section} relative flex items-center justify-between`}>
+        <div
+          className={`${styles.section} relative  flex items-center justify-between`}
+        >
           <div className="relative h-12.5 mt-2.5 w-67.5 hidden min-[1000px]:block">
             <BiMenuAltLeft size={30} className="absolute top-3 left-2" />
             <button
@@ -107,7 +109,10 @@ const Header = ({ activeHeading }) => {
               <IoIosArrowDown size={20} className="ml-1" />
             </button>
             {dropdown && (
-              <DropDown categoriesData={categoriesData} setDropDown={setDropDown} />
+              <DropDown
+                categoriesData={categoriesData}
+                setDropDown={setDropDown}
+              />
             )}
           </div>
           {/* nav items */}
@@ -117,25 +122,28 @@ const Header = ({ activeHeading }) => {
           {/* icons */}
           <div className={`${styles.normalFlex}`}>
             {/* profile icon */}
-            <div className='relative cursor-pointer mr-3.75'>
+            <div className="relative cursor-pointer mr-3.75">
               <Link to="/profile">
-                <IoPersonOutline size={25} className='text-white' />
+                <IoPersonOutline size={25} className="text-white" />
               </Link>
             </div>
             {/* wishlist icon */}
-            <div className='relative cursor-pointer mr-3.75'>
-              <IoHeartOutline size={25} className='text-white' />
-              <span className='absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center'>0</span>
+            <div className="relative cursor-pointer mr-3.75">
+              <IoHeartOutline size={25} className="text-white" />
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                0
+              </span>
             </div>
             {/* cart icon */}
-            <div className='relative cursor-pointer'>
+            <div className="relative cursor-pointer">
               <Link to="/cart">
-                <AiOutlineShoppingCart size={25} className='text-white' />
-                <span className='absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center'>0</span>
+                <AiOutlineShoppingCart size={25} className="text-white" />
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                  0
+                </span>
               </Link>
             </div>
           </div>
-          
         </div>
       </div>
     </div>
