@@ -1,0 +1,107 @@
+import { Link } from 'react-router-dom';
+import styles from '../../styles/styles';
+import { AiFillStar, AiOutlineStar, AiOutlineHeart, AiFillHeart, AiOutlineShoppingCart } from 'react-icons/ai';
+import { useState } from 'react';
+
+const ProductCard = ({ data }) => {
+  const [click, setClick] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  const d = data.name;
+  const productName = d.replace(/\s+/g, '-');
+
+  return (
+    <div className="w-full h-105 bg-white rounded-lg shadow-sm p-3 relative cursor-pointer">
+      <div className="flex justify-end">
+        {data.discount_price && data.price && (
+          <div className="bg-green-500 text-white px-3 py-1 rounded-lg text-sm font-semibold absolute top-2 left-2">
+            {Math.round(((data.price - data.discount_price) / data.price) * 100)}% Off
+          </div>
+        )}
+        <div
+          className="absolute top-2 right-2 z-10"
+          onClick={(e) => {
+            e.preventDefault();
+            setClick(!click);
+          }}
+        >
+          {click ? (
+            <AiFillHeart size={22} className="text-red-500" />
+          ) : (
+            <AiOutlineHeart size={22} className="text-gray-500 hover:text-red-500 transition" />
+          )}
+        </div>
+      </div>
+
+      <Link to={`/product/${productName}`}>
+        <img
+          src={data.image_Url[0].url}
+          alt={data.name}
+          className="w-full h-42.5 object-cover mt-8"
+        />
+      </Link>
+
+      <Link to={`/product/${productName}`}>
+        <h5 className="text-sm font-semibold text-gray-700 mt-3 line-clamp-2">
+          {data.name}
+        </h5>
+      </Link>
+
+      <div className="flex items-center mt-2">
+        {data.discount_price ? (
+          <>
+            <span className={`${styles.productDiscountPrice}`}>
+              ${data.discount_price}
+            </span>
+            <span className={`${styles.price}`}>
+              ${data.price}
+            </span>
+          </>
+        ) : (
+          <span className={`${styles.productDiscountPrice}`}>
+            ${data.price}
+          </span>
+        )}
+      </div>
+
+      <div className="flex items-center mt-2">
+        {data.shop && (
+          <span className="text-[12px] text-gray-500 mr-2">{data.shop.name}</span>
+        )}
+        <div className="flex items-center">
+          {[1, 2, 3, 4, 5].map((star) => {
+            if (data.rating >= star) {
+              return <AiFillStar key={star} size={15} className="text-yellow-500" />;
+            } else if (data.rating >= star - 0.5) {
+              return (
+                <span key={star} className="relative inline-block">
+                  <AiOutlineStar size={15} className="text-gray-400" />
+                  <span className="absolute inset-0 overflow-hidden" style={{ width: '50%' }}>
+                    <AiFillStar size={15} className="text-yellow-500" />
+                  </span>
+                </span>
+              );
+            } else {
+              return <AiOutlineStar key={star} size={15} className="text-gray-400" />;
+            }
+          })}
+          <span className="text-[12px] text-gray-500 ml-1">({data.total_sell})</span>
+        </div>
+      </div>
+
+      <div
+        className="absolute bottom-3 right-3"
+        onClick={(e) => {
+          e.preventDefault();
+          setOpen(!open);
+        }}
+      >
+        <div className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full transition">
+          <AiOutlineShoppingCart size={20} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ProductCard;
