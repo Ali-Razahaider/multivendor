@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import styles from '../../styles/styles';
 import { AiFillStar, AiOutlineStar, AiOutlineHeart, AiFillHeart, AiOutlineShoppingCart, AiOutlineEye } from 'react-icons/ai';
 import { useState } from 'react';
+import ProductDetails from './ProductDetails';
 
 const ProductCard = ({ data }) => {
   const [click, setClick] = useState(false);
@@ -97,6 +98,7 @@ const ProductCard = ({ data }) => {
         <span className="text-[13px] text-green-600 ml-auto font-medium">{data.total_sell} sold</span>
       </div>
 
+      {open && <ProductDetails data={data} setOpen={setOpen} />}
     </div>
   );
 };

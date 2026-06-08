@@ -3,6 +3,7 @@ import Header from '../Layout/Header.tsx';
 import Hero from './Hero';
 import Categories from './Categories.tsx';
 import BestDeals from './BestDeals.tsx';
+import FeaturedProducts from './FeaturedProducts';
 const Home = () => {
   return (
     <>
@@ -10,6 +11,7 @@ const Home = () => {
       <Hero />
       <Categories />
       <BestDeals />
+      <FeaturedProducts />
     </>
   )
     ;
