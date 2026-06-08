@@ -4,6 +4,7 @@ import Hero from './Hero';
 import Categories from './Categories.tsx';
 import BestDeals from './BestDeals.tsx';
 import FeaturedProducts from './FeaturedProducts';
+import Events from './Events';
 const Home = () => {
   return (
     <>
@@ -11,6 +12,7 @@ const Home = () => {
       <Hero />
       <Categories />
       <BestDeals />
+      <Events />
       <FeaturedProducts />
     </>
   )
