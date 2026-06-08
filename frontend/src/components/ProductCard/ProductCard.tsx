@@ -51,11 +51,13 @@ const ProductCard = ({ data }) => {
         {data.discount_price ? (
           <>
             <span className={`${styles.productDiscountPrice}`}>
-              ${data.discount_price}
+              {`$${data.discount_price || 0}`}
             </span>
-            <span className={`${styles.price}`}>
-              ${data.price}
-            </span>
+            {data.price && (
+              <span className={`${styles.price}`}>
+                ${data.price}
+              </span>
+            )}
           </>
         ) : (
           <span className={`${styles.productDiscountPrice}`}>
@@ -85,8 +87,8 @@ const ProductCard = ({ data }) => {
               return <AiOutlineStar key={star} size={15} className="text-gray-400" />;
             }
           })}
-          <span className="text-[12px] text-gray-500 ml-1">({data.total_sell})</span>
         </div>
+        <span className="text-[13px] text-green-600 ml-auto font-medium">{data.total_sell} sold</span>
       </div>
 
       <div
