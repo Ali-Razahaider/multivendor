@@ -19,29 +19,23 @@ const ProductCard = ({ data }) => {
           </div>
         )}
         <div className="absolute top-2 right-2 z-10 flex flex-col gap-2">
-          <div
-            onClick={(e) => {
-              e.preventDefault();
-              setClick(!click);
-            }}
-          >
-            {click ? (
-              <AiFillHeart size={22} className="text-red-500" />
-            ) : (
-              <AiOutlineHeart size={22} className="text-gray-500 hover:text-red-500 transition" />
-            )}
-          </div>
-          <div>
-            <AiOutlineEye size={22} className="text-gray-500 hover:text-blue-500 transition" />
-          </div>
-          <div
-            onClick={(e) => {
-              e.preventDefault();
-              setOpen(!open);
-            }}
-          >
-            <AiOutlineShoppingCart size={22} className="text-gray-500 hover:text-blue-500 transition" />
-          </div>
+          {click ? (
+            <AiFillHeart size={22} className="text-red-500"
+              onClick={() => setClick(!click)}
+            />
+          ) : (
+            <AiOutlineHeart size={22} className="text-gray-500 hover:text-red-500 transition"
+              onClick={() => setClick(!click)}
+            />
+          )}
+          <AiOutlineEye size={22}
+            className="text-gray-500 hover:text-blue-500 transition"
+            onClick={() => setOpen(!open)}
+          />
+          <AiOutlineShoppingCart size={22}
+            className="text-gray-500 hover:text-blue-500 transition"
+            onClick={() => setOpen(!open)}
+          />
         </div>
       </div>
 
