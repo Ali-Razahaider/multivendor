@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import styles from '../../styles/styles';
-import { AiFillStar, AiOutlineStar, AiOutlineHeart, AiFillHeart, AiOutlineShoppingCart } from 'react-icons/ai';
+import { AiFillStar, AiOutlineStar, AiOutlineHeart, AiFillHeart, AiOutlineShoppingCart, AiOutlineEye } from 'react-icons/ai';
 import { useState } from 'react';
 
 const ProductCard = ({ data }) => {
@@ -18,18 +18,30 @@ const ProductCard = ({ data }) => {
             {Math.round(((data.price - data.discount_price) / data.price) * 100)}% Off
           </div>
         )}
-        <div
-          className="absolute top-2 right-2 z-10"
-          onClick={(e) => {
-            e.preventDefault();
-            setClick(!click);
-          }}
-        >
-          {click ? (
-            <AiFillHeart size={22} className="text-red-500" />
-          ) : (
-            <AiOutlineHeart size={22} className="text-gray-500 hover:text-red-500 transition" />
-          )}
+        <div className="absolute top-2 right-2 z-10 flex flex-col gap-2">
+          <div
+            onClick={(e) => {
+              e.preventDefault();
+              setClick(!click);
+            }}
+          >
+            {click ? (
+              <AiFillHeart size={22} className="text-red-500" />
+            ) : (
+              <AiOutlineHeart size={22} className="text-gray-500 hover:text-red-500 transition" />
+            )}
+          </div>
+          <div>
+            <AiOutlineEye size={22} className="text-gray-500 hover:text-blue-500 transition" />
+          </div>
+          <div
+            onClick={(e) => {
+              e.preventDefault();
+              setOpen(!open);
+            }}
+          >
+            <AiOutlineShoppingCart size={22} className="text-gray-500 hover:text-blue-500 transition" />
+          </div>
         </div>
       </div>
 
@@ -91,17 +103,6 @@ const ProductCard = ({ data }) => {
         <span className="text-[13px] text-green-600 ml-auto font-medium">{data.total_sell} sold</span>
       </div>
 
-      <div
-        className="absolute bottom-3 right-3"
-        onClick={(e) => {
-          e.preventDefault();
-          setOpen(!open);
-        }}
-      >
-        <div className="bg-blue-500 hover:bg-blue-600 text-white p-2 rounded-full transition">
-          <AiOutlineShoppingCart size={20} />
-        </div>
-      </div>
     </div>
   );
 };
