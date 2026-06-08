@@ -11,8 +11,8 @@ const FeaturedProducts = () => {
               </div>
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
                   {
-                      productData && productData.map((product) => (
-                          <ProductCard key={product.id} data={product} />
+                      productData && productData.map((product, idx) => (
+                          <ProductCard key={`${product.id}-${idx}`} data={product} />
                       ))
             }    
               </div>
