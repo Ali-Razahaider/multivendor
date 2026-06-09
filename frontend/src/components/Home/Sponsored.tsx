@@ -4,8 +4,9 @@ import styles from '../../styles/styles';
 const Sponsored = () => {
   return (
     <div
-      className={`${styles.section} hidden sm:block bg-white py-10 px-5 mb-12 cursor-pointer rounded-xl`}
+      className={`${styles.section} hidden sm:block bg-white py-6 mt-12 px-5 mb-12 cursor-pointer rounded-xl`}
     >
+      <span className="font-bold text-lg">Sponsored by</span>
       <div className="flex justify-between w-full">
         <div className=" flex items-center">
           <img
