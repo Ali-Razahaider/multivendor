@@ -9,7 +9,7 @@ interface NavItem {
 
 function Navbar({ active }) {
   return (
-    <div className={`${styles.normalFlex}`}>
+    <div className={`${styles.normalFlex} `}>
       {navItems &&
         navItems.map((i, index) => (
           <div className="flex " key={index}>

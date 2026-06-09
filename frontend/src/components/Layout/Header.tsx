@@ -40,8 +40,8 @@ const Header = ({ activeHeading }) => {
   };
 
   return (
-    <div className={`${styles.section} `}>
-      <div className="flex 800px:h-12.5 800px:my-2.5 w-full items-center justify-between">
+    <div className={`${styles.section} w-full `}>
+      <div className="flex 800px:h-12.5 800px:my-2.5 w-11/12 m-auto items-center justify-between">
         <div>
           <Link to="/">
             <img
@@ -116,7 +116,7 @@ const Header = ({ activeHeading }) => {
             )}
           </div>
           {/* nav items */}
-          <div className={`${styles.normalFlex}`}>
+          <div className={`${styles.normalFlex} w-full`}>
             <Navbar active={activeHeading} />
           </div>
           {/* icons */}
