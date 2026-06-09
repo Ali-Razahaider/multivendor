@@ -74,9 +74,6 @@ const ProductCard = ({ data }) => {
       </div>
 
       <div className="flex items-center mt-2">
-        {data.shop && (
-          <span className="text-[12px] text-gray-500 mr-2">{data.shop.name}</span>
-        )}
         <div className="flex items-center">
           {[1, 2, 3, 4, 5].map((star) => {
             if (data.rating >= star) {
@@ -97,6 +94,9 @@ const ProductCard = ({ data }) => {
         </div>
         <span className="text-[13px] text-green-600 ml-auto font-medium">{data.total_sell} sold</span>
       </div>
+      {data.shop && (
+        <span className="text-[12px] text-gray-500 mt-2 block">{data.shop.name}</span>
+      )}
 
       {open && <ProductDetails data={data} setOpen={setOpen} />}
     </div>

@@ -69,6 +69,22 @@ const Footer = () => {
             
           ))}
         </ul>
+
+        <div className="text-center p-4 sm:text-start mt-4 sm:mt-0">
+          
+          <p className="text-gray-400">123 Main Street, Anytown, USA</p>
+          <p className="text-gray-400">Email:
+            <a href="mailto:info@company.com" className="text-blue-400 hover:text-blue-300">
+              info@company.com
+            </a>
+          </p>
+        </div>
+        
+
+      </div>
+          
+      <div className="bg-[#342ac8] text-center text-white py-3">
+        <p className="text-sm">&copy; 2026 Ecommerce Store. All rights reserved.</p>
       </div>
     </div>
   )
