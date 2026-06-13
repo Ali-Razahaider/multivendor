@@ -7,6 +7,7 @@ import { BiMenuAltLeft } from 'react-icons/bi';
 import { IoIosArrowDown, IoIosArrowForward } from 'react-icons/io';
 import DropDown from './DropDown';
 import { IoHeartOutline, IoPersonOutline } from 'react-icons/io5';
+import { useSelector } from 'react-redux';
 
 import Navbar from './Navbar';
 
@@ -15,6 +16,7 @@ const Header = ({ activeHeading }) => {
   const [searchData, setSearchData] = useState([]);
   const [active, setActive] = useState(false);
   const [dropdown, setDropDown] = useState(false);
+  const {isAuthenticated, user} = useSelector((state) => state.user);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -123,9 +125,19 @@ const Header = ({ activeHeading }) => {
           <div className={`${styles.normalFlex}`}>
             {/* profile icon */}
             <div className="relative cursor-pointer mr-3.75">
-              <Link to="/profile">
-                <IoPersonOutline size={25} className="text-white" />
-              </Link>
+              {isAuthenticated ? (
+                <Link to="/profile" className="flex items-center">
+                  {user?.avatar?.url ? (
+                    <img src={user.avatar.url} alt="" className="w-6.25 h-6.25 rounded-full object-cover border border-white shrink-0" />
+                  ) : (
+                    <IoPersonOutline size={25} className="text-white" />
+                  )}
+                </Link>
+              ) : (
+                <Link to="/login">
+                  <IoPersonOutline size={25} className="text-white" />
+                </Link>
+              )}
             </div>
             {/* wishlist icon */}
             <div className="relative cursor-pointer mr-3.75">

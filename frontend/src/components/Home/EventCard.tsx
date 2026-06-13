@@ -1,9 +1,9 @@
 import React from 'react'
 import Countdown from './Countdown';
 
-function EventCard() {
+function EventCard({active}) {
     return (
-        <div className="w-full bg-white rounded-lg p-6 flex flex-col lg:flex-row gap-6 items-center">
+        <div className={`w-full bg-white rounded-lg p-6 flex mt-12 flex-col lg:flex-row gap-6 items-center ${active ? 'unset' : 'mb-12'}`}>
             <div className="w-full lg:w-1/2 flex items-center justify-center">
                 <img
                     src="https://www.apple.com/newsroom/images/2024/09/apple-debuts-iphone-16-pro-and-iphone-16-pro-max/article/Apple-iPhone-16-Pro-hero-240909_inline.jpg.large_2x.jpg"
