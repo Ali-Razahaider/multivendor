@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { LoginPage, HomePage, RegisterPage, ActivationPage,ProductsPage } from './Routes';
+import { LoginPage, HomePage, RegisterPage, ActivationPage,ProductsPage, BestSellingPage } from './Routes';
 import './App.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import Store from './redux/store.js';
 import { loadUser } from './redux/actions/userActions.js';
+
 
 axios.defaults.withCredentials = true;
 
@@ -23,13 +24,14 @@ const App = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/products" element={<ProductsPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route
           path="/activation/:activationToken"
           element={<ActivationPage />}
         />
+        <Route path="/products" element={<ProductsPage />} />
+        <Route path="/best-selling" element={<BestSellingPage />} />
       </Routes>
       <ToastContainer
         position="bottom-center"

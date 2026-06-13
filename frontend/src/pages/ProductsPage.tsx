@@ -36,7 +36,12 @@ const ProductsPage = () => {
                 {data.map((product) => (
                     <ProductCard key={product.id} data={product} />
                 ))}
-            </div>
+                    {data.length === 0 && (
+                        <p className="text-gray-500 text-center my-2.5 col-span-full">No products found in this category.</p>
+                    )}
+                
+                </div>
+                
             </div>
             <Footer />
         </>
