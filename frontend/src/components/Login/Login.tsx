@@ -5,7 +5,9 @@ import styles from '../../styles/styles.js';
 import axios from 'axios';
 import server from '../../server.js';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 function Login() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [visible, setVisible] = useState(false);
@@ -32,6 +34,8 @@ function Login() {
       setEmail('');
       setPassword('');
       setVisible(false);
+      navigate('/');
+      window.location.reload();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Login failed');
     }
