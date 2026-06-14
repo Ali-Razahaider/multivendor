@@ -8,6 +8,7 @@ import { IoIosArrowDown, IoIosArrowForward } from 'react-icons/io';
 import DropDown from './DropDown';
 import { IoHeartOutline, IoPersonOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
+import Cart from '../Cart/Cart';
 
 import Navbar from './Navbar';
 
@@ -16,7 +17,10 @@ const Header = ({ activeHeading }) => {
   const [searchData, setSearchData] = useState([]);
   const [active, setActive] = useState(false);
   const [dropdown, setDropDown] = useState(false);
-  const {isAuthenticated, user} = useSelector((state) => state.user);
+  const { isAuthenticated, user } = useSelector((state) => state.user);
+  const [openCart, setOpenCart] = useState(false);
+  const [openWishlist, setOpenWishlist] = useState(false);
+  
 
   useEffect(() => {
     const handleScroll = () => {
@@ -147,17 +151,17 @@ const Header = ({ activeHeading }) => {
               </span>
             </div>
             {/* cart icon */}
-            <div className="relative cursor-pointer">
-              <Link to="/cart">
-                <AiOutlineShoppingCart size={25} className="text-white" />
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                  0
-                </span>
-              </Link>
+            <div className="relative cursor-pointer" onClick={() => setOpenCart(true)}>
+              <AiOutlineShoppingCart size={25} className="text-white" />
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                0
+              </span>
             </div>
+
           </div>
         </div>
       </div>
+      {openCart && <Cart setOpenCart={setOpenCart} />}
     </div>
   );
 };
