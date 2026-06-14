@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { LoginPage, HomePage, RegisterPage, ActivationPage, ProductsPage, BestSellingPage, EventPage, FaqPage, ProductDetailsPage } from './Routes';
+import { LoginPage, HomePage, RegisterPage, ActivationPage, ProductsPage, BestSellingPage, EventPage, FaqPage, ProductDetailsPage, ProfilePage } from './Routes';
 import './App.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -35,6 +35,7 @@ const App = () => {
         <Route path="/events" element={<EventPage />} />
         <Route path="/faq" element={<FaqPage />} />
         <Route path="/product/:name" element={<ProductDetailsPage />} />  
+        <Route path="/profile" element={<ProfilePage />} />
       </Routes>
       <ToastContainer
         position="bottom-center"
