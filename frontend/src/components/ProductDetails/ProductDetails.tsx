@@ -43,14 +43,16 @@ const ProductDetailsInfo = ({ data }) => {
                 </div>
             </div>
 
-            {/* product details tab */}
-            {active === 1 && (
-                <p className="py-2 text-lg leading-8 pb-10 whitespace-pre-line">{data.description}</p>
-            )}
+            {/* tab content with fixed height */}
+            <div className="h-[400px] overflow-y-auto">
+                {/* product details tab — product description text */}
+                {active === 1 && (
+                    <p className="py-2 text-md leading-8 pb-10 whitespace-pre-line">{data.description}</p>
+                )}
 
-            {/* reviews tab */}
-            {active === 2 && (
-                <div className="w-full min-h-[40vh] flex flex-col py-3">
+                {/* reviews tab — user avatars, names, star ratings, and comments */}
+                {active === 2 && (
+                    <div className="w-full flex flex-col py-3">
                     {reviews.length === 0 ? (
                         <div className="w-full flex justify-center">
                             <h5 className="text-gray-500">No Reviews have for this product!</h5>
@@ -82,7 +84,7 @@ const ProductDetailsInfo = ({ data }) => {
                 </div>
             )}
 
-            {/* seller info tab */}
+            {/* seller information tab — shop avatar, name, ratings, description, joined date, total products/reviews, visit shop button */}
             {active === 3 && data.shop && (
                 <div className="w-full block 800px:flex p-5">
                     <div className="w-full 800px:w-1/2">
@@ -121,6 +123,7 @@ const ProductDetailsInfo = ({ data }) => {
                     </div>
                 </div>
             )}
+            </div>
         </div>
     )
 }
@@ -170,7 +173,7 @@ function ProductDetails({ data }) {
                     </div>
                     <div className="w-full 800px:w-1/2 pt-5">
                         <h1 className={`${styles.productTitle} mb-3`}>{data.name}</h1>
-                        <p className="text-gray-700 text-sm leading-relaxed mb-4">{data.description}</p>
+                        <p className="text-gray-700 text-md leading-relaxed mb-4">{data.description}</p>
                         <div className={`${styles.normalFlex} gap-4 mb-4`}>
                             <h4 className={`${styles.productDiscountPrice}`}>${data.discountPrice || data.discount_price}</h4>
                             {data.price && <h3 className={`${styles.price} !pl-0`}>${data.price}</h3>}
