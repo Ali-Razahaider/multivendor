@@ -9,6 +9,7 @@ import DropDown from './DropDown';
 import { IoHeartOutline, IoPersonOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 import Cart from '../Cart/Cart';
+import Wishlist from '../Wishlist/Wishlist';
 
 import Navbar from './Navbar';
 
@@ -144,7 +145,7 @@ const Header = ({ activeHeading }) => {
               )}
             </div>
             {/* wishlist icon */}
-            <div className="relative cursor-pointer mr-3.75">
+            <div className="relative cursor-pointer mr-3.75" onClick={() => setOpenWishlist(true)}>
               <IoHeartOutline size={25} className="text-white" />
               <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
                 0
@@ -162,6 +163,7 @@ const Header = ({ activeHeading }) => {
         </div>
       </div>
       {openCart && <Cart setOpenCart={setOpenCart} />}
+      {openWishlist && <Wishlist setOpenWishlist={setOpenWishlist} />}
     </div>
   );
 };

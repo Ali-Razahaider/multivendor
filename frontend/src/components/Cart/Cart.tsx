@@ -1,34 +1,69 @@
-import React from 'react'
+import { useState } from 'react';
 import { RxCross1 } from 'react-icons/rx';
+import { IoBagHandleOutline } from 'react-icons/io5';
+import { Link } from 'react-router-dom';
+import styles from '../../styles/styles';
+import { HiPlus, HiOutlineMinus } from 'react-icons/hi';
+
+const CartSingle = ({ data }) => {
+    const [value, setValue] = useState(data.qty);
+
+    return (
+        <div className="flex items-center p-4 border-b">
+            <img src={data.img} alt={data.name} className="w-16 h-16 object-cover rounded-md" />
+            <div className="ml-3 flex-1">
+                <h5 className="text-[15px] font-medium">{data.name}</h5>
+                <h5 className="text-[14px] text-gray-500">USD ${data.price}</h5>
+                <div className="flex items-center mt-2">
+                    <button
+                        className="w-7 h-7 flex items-center justify-center bg-[#e44343] rounded-full text-white"
+                        onClick={() => setValue(value + 1)}
+                    >
+                        <HiPlus size={14} />
+                    </button>
+                    <span className="px-3 font-medium">{value}</span>
+                    <button
+                        className="w-7 h-7 flex items-center justify-center bg-gray-200 rounded-full"
+                        onClick={() => setValue(value > 1 ? value - 1 : 1)}
+                    >
+                        <HiOutlineMinus size={14} />
+                    </button>
+                </div>
+            </div>
+        </div>
+    )
+}
 
 function Cart({ setOpenCart }) {
     const cartData = [
         { name: "Iphone 14 Pro Max", description: "Latest iPhone model with advanced features", price: 120000, qty: 1, img: "https://shopo.quomodothemes.website/assets/images/products/apple-iphone-14-pro-max-1.jpg" },
         { name: "Macbook Pro M2", description: "Powerful laptop with M2 chip", price: 150000, qty: 1, img: "https://shopo.quomodothemes.website/assets/images/products/apple-macbook-pro-m2-1.jpg" }
     ]
+
     return (
-        <div className="fixed top-0 left-0 w-full h-screen z-50">
-            <div className="fixed top-0 left-0 w-full h-screen bg-white/40" onClick={() => setOpenCart(false)} />
-            <div className="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-lg z-50 flex flex-col">
-                <div className="flex justify-between items-center p-5 border-b">
-                    <h1 className="text-2xl font-bold">Shopping Cart</h1>
-                    <RxCross1 size={25} className="cursor-pointer" onClick={() => setOpenCart(false)} />
+        <div className="fixed top-0 left-0 w-full bg-[#0000004b] h-screen z-50">
+            <div className="fixed top-0 right-0 h-full w-[80%] 800px:w-[25%] bg-white flex flex-col overflow-y-scroll justify-between shadow-sm">
+                <div>
+                    <div className="flex w-full justify-end pt-5 pr-5">
+                        <RxCross1 size={25} className="cursor-pointer" onClick={() => setOpenCart(false)} />
+                    </div>
+                    <div className={`${styles.normalFlex} p-4`}>
+                        <IoBagHandleOutline size={25} />
+                        <h5 className="pl-2 text-[20px] font-[500]">{cartData.length} items</h5>
+                    </div>
+                    <br />
+                    <div className="w-full border-t">
+                        {cartData.map((item, index) => (
+                            <CartSingle key={index} data={item} />
+                        ))}
+                    </div>
                 </div>
-                <div className="flex-1 overflow-y-auto p-5">
-                    {cartData.map((item, index) => (
-                        <div key={index} className="flex items-center mb-5">
-                            <img src={item.img} alt={item.name} className="w-20 h-20 object-cover rounded-md shrink-0" />
-                            <div className="ml-5">
-                                <h2 className="text-lg font-semibold">{item.name}</h2>
-                                <p className="text-gray-500">{item.description}</p>
-                                <p className="text-gray-700 mt-1">Price: ${item.price}</p>
-                                <p className="text-gray-700 mt-1">Quantity: {item.qty}</p>
-                            </div>
+                <div className="px-5 mb-3">
+                    <Link to="/checkout">
+                        <div className="h-[45px] flex items-center justify-center w-full bg-black rounded-[5px]">
+                            <h1 className="text-white text-[18px] font-[600]">Checkout Now</h1>
                         </div>
-                    ))}
-                </div>
-                <div className="w-full p-5 border-t">
-                    <button className="bg-black text-white w-full py-3 rounded-md font-semibold hover:bg-gray-800 transition">Checkout</button>
+                    </Link>
                 </div>
             </div>
         </div>
@@ -36,3 +71,5 @@ function Cart({ setOpenCart }) {
 }
 
 export default Cart
+
+
