@@ -92,6 +92,13 @@ const ProfileContent = ({ active }) => {
         </div>
       )}
 
+      {/* Inbox */}
+      {active === 3 && (
+        <div className="flex justify-center items-center h-[50vh]">
+          <p className="text-gray-500 text-lg">Inbox - Coming Soon</p>
+        </div>
+      )}
+
       {/* Refund */}
       {active === 4 && (
         <div>
@@ -99,10 +106,41 @@ const ProfileContent = ({ active }) => {
         </div>
       )}
 
+      {/* Logout */}
+      {active === 5 && (
+        <div className="flex justify-center items-center h-[50vh]">
+          <p className="text-gray-500 text-lg">Logout - Coming Soon</p>
+        </div>
+      )}
+
       {/* Track order */}
       {active === 6 && (
         <div>
           <TrackOrder />
+        </div>
+      )}
+
+      {/* Payment Methods */}
+      {active === 7 && (
+        <div className="w-full px-5">
+          <div className="w-[80%] mx-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-gray-800">Saved Payment Methods</h2>
+              <button className="bg-black text-white text-sm font-medium px-4 py-2 rounded-md cursor-pointer">+ Add Payment Method</button>
+            </div>
+            <div className="flex items-center gap-4 border rounded-lg px-4 py-3 shadow-sm bg-white">
+              <div className="w-12 h-8 bg-blue-700 rounded flex items-center justify-center text-white text-[10px] font-bold shrink-0">VISA</div>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-gray-800 truncate">John Doe</p>
+                <p className="text-sm text-gray-500 font-mono">4242 **** **** 4242</p>
+              </div>
+              <div className="text-right text-sm text-gray-600 shrink-0">
+                <p>12/28</p>
+                <p className="text-[10px] text-gray-400">CVC ***</p>
+              </div>
+              <span className="text-[11px] text-green-600 font-medium border border-green-600 rounded px-2 py-0.5 shrink-0">Default</span>
+            </div>
+          </div>
         </div>
       )}
     </div>
