@@ -1,11 +1,10 @@
-import { AiOutlineUser, AiOutlineShoppingCart, AiOutlineHeart, AiOutlineLogout } from 'react-icons/ai'
+import { AiOutlineUser, AiOutlineLock } from 'react-icons/ai'
 import { RxExit } from 'react-icons/rx'
 
 const ProfileSideBar = ({ active, setActive }) => {
     const tabs = [
         { id: 1, label: 'Profile', icon: <AiOutlineUser size={20} /> },
-        { id: 2, label: 'Orders', icon: <AiOutlineShoppingCart size={20} /> },
-        { id: 3, label: 'Wishlist', icon: <AiOutlineHeart size={20} /> },
+        { id: 6, label: 'Change Password', icon: <AiOutlineLock size={20} /> },
         { id: 4, label: 'Logout', icon: <RxExit size={20} /> },
     ]
 

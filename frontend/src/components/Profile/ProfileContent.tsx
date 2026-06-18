@@ -1,66 +1,232 @@
-import { useSelector } from 'react-redux'
+import { useState, useEffect } from "react";
+import { AiOutlineCamera } from "react-icons/ai";
+import { useSelector, useDispatch } from "react-redux";
+import server from "../../server";
+import styles from "../../styles/styles";
+import { loadUser } from "../../redux/actions/userActions";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const ProfileContent = ({ active }) => {
-    const { user } = useSelector((state) => state.user)
+  const { user, error, successMessage } = useSelector((state) => state.user);
+  const [name, setName] = useState(user && user.name);
+  const [email, setEmail] = useState(user && user.email);
+  const [phoneNumber, setPhoneNumber] = useState(user && user.phoneNumber);
+  const [password, setPassword] = useState("");
+  const [avatar, setAvatar] = useState(null);
+  const dispatch = useDispatch();
 
-    const renderContent = () => {
-        switch (active) {
-            case 1:
-                return (
-                    <div className="bg-white shadow-sm rounded-md p-6">
-                        <h2 className="text-xl font-semibold mb-4">Profile Information</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-sm text-gray-500 mb-1">Full Name</label>
-                                <p className="font-medium">{user?.name || 'N/A'}</p>
-                            </div>
-                            <div>
-                                <label className="block text-sm text-gray-500 mb-1">Email</label>
-                                <p className="font-medium">{user?.email || 'N/A'}</p>
-                            </div>
-                            <div>
-                                <label className="block text-sm text-gray-500 mb-1">Phone</label>
-                                <p className="font-medium">{user?.phoneNumber || 'N/A'}</p>
-                            </div>
-                            <div>
-                                <label className="block text-sm text-gray-500 mb-1">Joined</label>
-                                <p className="font-medium">{user?.createdAt?.slice(0, 10) || 'N/A'}</p>
-                            </div>
-                        </div>
-                    </div>
-                )
-            case 2:
-                return (
-                    <div className="bg-white shadow-sm rounded-md p-6">
-                        <h2 className="text-xl font-semibold mb-4">My Orders</h2>
-                        <p className="text-gray-500">No orders yet.</p>
-                    </div>
-                )
-            case 3:
-                return (
-                    <div className="bg-white shadow-sm rounded-md p-6">
-                        <h2 className="text-xl font-semibold mb-4">My Wishlist</h2>
-                        <p className="text-gray-500">Your wishlist is empty.</p>
-                    </div>
-                )
-            case 4:
-                return (
-                    <div className="bg-white shadow-sm rounded-md p-6">
-                        <h2 className="text-xl font-semibold mb-4">Logout</h2>
-                        <p className="text-gray-500 mb-4">Are you sure you want to logout?</p>
-                        <button className="bg-red-500 text-white px-6 py-2 rounded-md hover:bg-red-600 transition-colors">Logout</button>
-                    </div>
-                )
-            default:
-                return null
-        }
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch({ type: "clearErrors" });
     }
+    if (successMessage) {
+      toast.success(successMessage);
+      dispatch({ type: "clearMessages" });
+    }
+  }, [error, successMessage]);
 
-    return (
-        <div className="w-full ml-0 800px:ml-5">
-            {renderContent()}
-        </div>
-    )
-}
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch({ type: "updateUserInfo", payload: { name, email, phoneNumber, password } });
+  };
 
-export default ProfileContent
+  const handleImage = async (e) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setAvatar(reader.result);
+        axios
+          .put(
+            `${server}user/update-avatar`,
+            { avatar: reader.result },
+            { withCredentials: true }
+          )
+          .then((response) => {
+            dispatch(loadUser());
+            toast.success("avatar updated successfully!");
+          })
+          .catch((error) => {
+            toast.error(error);
+          });
+      }
+    };
+
+    reader.readAsDataURL(e.target.files[0]);
+  };
+
+  return (
+    <div className="w-full">
+      {/* profile */}
+      {active === 1 && (
+        <>
+          <div className="flex justify-center w-full">
+            <div className="relative">
+              <img
+                src={`${user?.avatar?.url}`}
+                className="w-[150px] h-[150px] rounded-full object-cover border-[3px] border-[#3ad132]"
+                alt=""
+              />
+              <div className="w-[30px] h-[30px] bg-[#E3E9EE] rounded-full flex items-center justify-center cursor-pointer absolute bottom-[5px] right-[5px]">
+                <input
+                  type="file"
+                  id="image"
+                  className="hidden"
+                  onChange={handleImage}
+                />
+                <label htmlFor="image">
+                  <AiOutlineCamera />
+                </label>
+              </div>
+            </div>
+          </div>
+          <br />
+          <br />
+          <div className="w-full px-5">
+            <form onSubmit={handleSubmit} aria-required={true}>
+              <div className="w-full 800px:flex block pb-3">
+                <div className=" w-[100%] 800px:w-[50%]">
+                  <label className="block pb-2">Full Name</label>
+                  <input
+                    type="text"
+                    className={`${styles.input} !w-[95%] mb-4 800px:mb-0`}
+                    required
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                </div>
+                <div className=" w-[100%] 800px:w-[50%]">
+                  <label className="block pb-2">Email Address</label>
+                  <input
+                    type="text"
+                    className={`${styles.input} !w-[95%] mb-1 800px:mb-0`}
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="w-full 800px:flex block pb-3">
+                <div className=" w-[100%] 800px:w-[50%]">
+                  <label className="block pb-2">Phone Number</label>
+                  <input
+                    type="number"
+                    className={`${styles.input} !w-[95%] mb-4 800px:mb-0`}
+                    required
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                  />
+                </div>
+
+                <div className=" w-[100%] 800px:w-[50%]">
+                  <label className="block pb-2">Enter your password</label>
+                  <input
+                    type="password"
+                    className={`${styles.input} !w-[95%] mb-4 800px:mb-0`}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
+              </div>
+              <input
+                className={`w-[250px] h-[40px] border border-[#3a24db] text-center text-[#3a24db] rounded-[3px] mt-8 cursor-pointer`}
+                required
+                value="Update"
+                type="submit"
+              />
+            </form>
+          </div>
+        </>
+      )}
+
+      {/* change password */}
+      {active === 6 && (
+        <ChangePassword />
+      )}
+    </div>
+  );
+};
+
+const ChangePassword = () => {
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const passwordChangeHandler = async (e) => {
+    e.preventDefault();
+
+    await axios
+      .put(
+        `${server}user/update-user-password`,
+        { oldPassword, newPassword, confirmPassword },
+        { withCredentials: true }
+      )
+      .then((res) => {
+        toast.success(res.data.success);
+        setOldPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+      })
+      .catch((error) => {
+        toast.error(error.response.data.message);
+      });
+  };
+
+  return (
+    <div className="w-full px-5">
+      <h1 className="block text-[25px] text-center font-[600] text-[#000000ba] pb-2">
+        Change Password
+      </h1>
+      <div className="w-full">
+        <form
+          aria-required
+          onSubmit={passwordChangeHandler}
+          className="flex flex-col items-center"
+        >
+          <div className=" w-[100%] 800px:w-[50%] mt-5">
+            <label className="block pb-2">Enter your old password</label>
+            <input
+              type="password"
+              className={`${styles.input} !w-[95%] mb-4 800px:mb-0`}
+              required
+              value={oldPassword}
+              onChange={(e) => setOldPassword(e.target.value)}
+            />
+          </div>
+          <div className=" w-[100%] 800px:w-[50%] mt-2">
+            <label className="block pb-2">Enter your new password</label>
+            <input
+              type="password"
+              className={`${styles.input} !w-[95%] mb-4 800px:mb-0`}
+              required
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+          </div>
+          <div className=" w-[100%] 800px:w-[50%] mt-2">
+            <label className="block pb-2">Enter your confirm password</label>
+            <input
+              type="password"
+              className={`${styles.input} !w-[95%] mb-4 800px:mb-0`}
+              required
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            <input
+              className={`w-[95%] h-[40px] border border-[#3a24db] text-center text-[#3a24db] rounded-[3px] mt-8 cursor-pointer`}
+              required
+              value="Update"
+              type="submit"
+            />
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default ProfileContent;
