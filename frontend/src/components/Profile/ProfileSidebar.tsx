@@ -20,8 +20,8 @@ function ProfileSidebar({active , setActive}) {
       <div className='w-full h-screen bg-white shadow-sm rounded-sm p-3'>
           {sidebarItems.map((item) => (
             <div key={item.id} className="flex items-center cursor-pointer w-full mb-8" onClick={() => setActive(item.id)}>
-                <item.icon size={25} className={`${active === item.id ? "text-[#f63b60]" : "text-[#00000080]"} `} />
-                <span className={`pl-3 text-lg font-medium ${active === item.id ? "text-[#f63b60]" : "text-[#00000080]"} `}>{item.label}</span>
+                <item.icon size={25} className={`${active === item.id ? "text-[#f63b60]" : "text-black/50"} `} />
+                <span className={`pl-3 text-lg font-medium ${active === item.id ? "text-[#f63b60]" : "text-black/50"} `}>{item.label}</span>
             </div>
           ))}
       </div>

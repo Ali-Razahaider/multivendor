@@ -23,7 +23,7 @@ function Wishlist({ setOpenWishlist }) {
     ]
 
     return (
-        <div className="fixed top-0 left-0 w-full bg-[#0000004b] h-screen z-50">
+        <div className="fixed top-0 left-0 w-full bg-black/30 h-screen z-50">
             <div className="fixed top-0 right-0 h-full w-[80%] 800px:w-[25%] bg-white flex flex-col overflow-y-scroll justify-between shadow-sm">
                 <div>
                     <div className="flex w-full justify-end pt-5 pr-5">
