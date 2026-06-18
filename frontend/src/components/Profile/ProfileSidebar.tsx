@@ -1,6 +1,6 @@
 import React from 'react'
 import { RxPerson } from 'react-icons/rx';
-import { IoBagHandleOutline, IoHeartOutline } from 'react-icons/io5';
+import { IoBagHandleOutline, IoChatbubbleOutline, IoArrowBackCircleOutline, IoLocationOutline, IoCardOutline } from 'react-icons/io5';
 import { RiLogoutCircleRLine } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom';
 function ProfileSidebar({active , setActive}) {
@@ -9,16 +9,19 @@ function ProfileSidebar({active , setActive}) {
     const sidebarItems = [
       { id: 1, icon: RxPerson, label: 'Profile' },
       { id: 2, icon: IoBagHandleOutline, label: 'Orders' },
-      { id: 3, icon: IoHeartOutline, label: 'Wishlist' },
-      { id: 4, icon: RiLogoutCircleRLine, label: 'Logout' },
+      { id: 3, icon: IoChatbubbleOutline, label: 'Inbox' },
+      { id: 4, icon: IoArrowBackCircleOutline, label: 'Refunds' },
+      { id: 5, icon: RiLogoutCircleRLine, label: 'Logout' },
+      { id: 6, icon: IoLocationOutline, label: 'Track Order' },
+      { id: 7, icon: IoCardOutline, label: 'Payment Methods' },
     ];
 
   return (
-      <div className='w-full h-[100vh] bg-white shadow-sm rounded-[4px] p-3'>
+      <div className='w-full h-screen bg-white shadow-sm rounded-sm p-3'>
           {sidebarItems.map((item) => (
             <div key={item.id} className="flex items-center cursor-pointer w-full mb-8" onClick={() => setActive(item.id)}>
-                <item.icon size={30} className={`${active === item.id ? "text-[#f63b60]" : "text-[#00000080]"} `} />
-                <span className={`pl-3 text-[18px] font-[500] ${active === item.id ? "text-[#f63b60]" : "text-[#00000080]"} `}>{item.label}</span>
+                <item.icon size={25} className={`${active === item.id ? "text-[#f63b60]" : "text-[#00000080]"} `} />
+                <span className={`pl-3 text-lg font-medium ${active === item.id ? "text-[#f63b60]" : "text-[#00000080]"} `}>{item.label}</span>
             </div>
           ))}
       </div>

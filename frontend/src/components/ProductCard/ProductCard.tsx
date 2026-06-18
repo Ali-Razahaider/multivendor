@@ -95,7 +95,7 @@ const ProductCard = ({ data }) => {
         <span className="text-[13px] text-green-600 ml-auto font-medium">{data.total_sell} sold</span>
       </div>
       {data.shop && (
-        <span className="text-[12px] text-gray-500 mt-2 block">{data.shop.name}</span>
+        <span className="text-xs text-gray-500 mt-2 block">{data.shop.name}</span>
       )}
 
       {open && <ProductDetails data={data} setOpen={setOpen} />}

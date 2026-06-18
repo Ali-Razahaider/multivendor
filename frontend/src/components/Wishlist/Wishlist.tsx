@@ -9,7 +9,7 @@ const WishlistSingle = ({ data }) => {
             <img src={data.img} alt={data.name} className="w-16 h-16 object-cover rounded-md" />
             <div className="ml-3 flex-1">
                 <h5 className="text-[15px] font-medium">{data.name}</h5>
-                <h5 className="text-[14px] text-gray-500">USD ${data.price}</h5>
+                <h5 className="text-sm text-gray-500">USD ${data.price}</h5>
             </div>
             <AiOutlineShoppingCart size={20} className="text-gray-500 hover:text-blue-500 cursor-pointer" />
         </div>
@@ -31,7 +31,7 @@ function Wishlist({ setOpenWishlist }) {
                     </div>
                     <div className={`${styles.normalFlex} p-4`}>
                         <IoHeartOutline size={25} />
-                        <h5 className="pl-2 text-[20px] font-[500]">{wishlistData.length} items</h5>
+                        <h5 className="pl-2 text-xl font-medium">{wishlistData.length} items</h5>
                     </div>
                     <br />
                     <div className="w-full border-t">

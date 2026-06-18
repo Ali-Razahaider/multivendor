@@ -22,7 +22,7 @@ const ProfilePage = () => {
             <div className="w-[50px] 800px:w-[335px] sticky 800px:mt-0 mt-[18%]">
               <ProfileSideBar active={active} setActive={setActive} />
             </div>
-            <ProfileContent  />
+            <ProfileContent active={active} />
           </div>
         </>
       )}

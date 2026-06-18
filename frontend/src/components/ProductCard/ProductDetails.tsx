@@ -69,7 +69,7 @@ const ProductDetails = ({ data, setOpen }) => {
                       <img
                         src={`${data?.shop?.avatar?.url || data?.shop?.shop_avatar?.url}`}
                         alt=""
-                        className="w-[50px] h-[50px] rounded-full border-2 border-gray-300 p-0.5"
+                        className="size-[50px] rounded-full border-2 border-gray-300 p-0.5"
                       />
                     </Link>
                       <Link to={`/shop/preview/${data?.shop?._id || data?.shopId}`}>

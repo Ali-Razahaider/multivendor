@@ -13,7 +13,7 @@ const CartSingle = ({ data }) => {
             <img src={data.img} alt={data.name} className="w-16 h-16 object-cover rounded-md" />
             <div className="ml-3 flex-1">
                 <h5 className="text-[15px] font-medium">{data.name}</h5>
-                <h5 className="text-[14px] text-gray-500">USD ${data.price}</h5>
+                <h5 className="text-sm text-gray-500">USD ${data.price}</h5>
                 <div className="flex items-center mt-2">
                     <button
                         className="w-7 h-7 flex items-center justify-center bg-[#e44343] rounded-full text-white"
@@ -49,7 +49,7 @@ function Cart({ setOpenCart }) {
                     </div>
                     <div className={`${styles.normalFlex} p-4`}>
                         <IoBagHandleOutline size={25} />
-                        <h5 className="pl-2 text-[20px] font-[500]">{cartData.length} items</h5>
+                        <h5 className="pl-2 text-xl font-medium">{cartData.length} items</h5>
                     </div>
                     <br />
                     <div className="w-full border-t">
@@ -61,7 +61,7 @@ function Cart({ setOpenCart }) {
                 <div className="px-5 mb-3">
                     <Link to="/checkout">
                         <div className="h-[45px] flex items-center justify-center w-full bg-black rounded-[5px]">
-                            <h1 className="text-white text-[18px] font-[600]">Checkout Now</h1>
+                            <h1 className="text-white text-lg font-semibold">Checkout Now</h1>
                         </div>
                     </Link>
                 </div>
