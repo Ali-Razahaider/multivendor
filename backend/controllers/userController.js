@@ -127,4 +127,14 @@ router.get(
   })
 );
 
+//logout user
+
+router.post('/logout', isAuthenticated, asyncHandler(async (req, res, next) => {
+  res.clearCookie('auth_token');
+  res.status(200).json({
+    success: true,
+    message: 'Logged out successfully',
+  });
+}))
+
 export default router;
