@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import styles from '../../styles/styles';
 import { useState, useEffect } from 'react';
-import { productData, categoriesData } from '../../static/data';
+import { productData, categoriesData, navItems } from '../../static/data';
 import { AiOutlineHeart, AiOutlineSearch, AiOutlineShoppingCart } from 'react-icons/ai';
 import { BiMenuAltLeft } from 'react-icons/bi';
 import { IoIosArrowDown, IoIosArrowForward } from 'react-icons/io';
@@ -257,7 +257,11 @@ const Header = ({ activeHeading }) => {
                 )}
               </div>
 
-              <Navbar active={activeHeading} />
+              {navItems && navItems.map((i, index) => (
+                <Link to={i.url} key={index} className={`block py-2 pl-4 font-medium ${activeHeading === index + 1 ? 'text-green-900' : 'text-gray-700'}`} onClick={() => setOpen(false)}>
+                  {i.title}
+                </Link>
+              ))}
               <div className={`${styles.button} ml-4 !rounded-[4px]`}>
                 <Link to="/shop-create">
                   <h1 className="text-[#fff] flex items-center">
