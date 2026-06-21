@@ -11,10 +11,14 @@ import { loadSeller } from './redux/actions/sellerActions.js';
 import ProtectedRoute from './ProtectedRoute';
 import { useSelector } from 'react-redux';
 
+  
+
 axios.defaults.withCredentials = true;
 
 const App = () => {
   const { loading, isAuthenticated } = useSelector((state) => state.user);
+  const { seller, isSeller } = useSelector((state) => state.seller);
+  console.log(seller);
 
   useEffect(() => {
     Store.dispatch(loadUser());
@@ -43,7 +47,7 @@ const App = () => {
         <Route path="/profile" element={<ProtectedRoute isAuthenticated={isAuthenticated}> <ProfilePage /> </ProtectedRoute>} />
         <Route path="/checkout" element={<ProtectedRoute isAuthenticated={isAuthenticated}> <CheckoutPage /> </ProtectedRoute>} />
 
-        <Route path="/shop-create" element={<ProtectedRoute isAuthenticated={isAuthenticated}> <ShopCreatePage /> </ProtectedRoute>} />
+        <Route path="/shop-create" element={<ShopCreatePage />} />
         <Route path="/shop-login" element={<ShopLoginPage />} />
 
 
