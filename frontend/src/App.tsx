@@ -7,11 +7,14 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import Store from './redux/store.js';
 import { loadUser } from './redux/actions/userActions.js';
-
+import ProtectedRoute from './ProtectedRoute';
+import { useSelector } from 'react-redux';
 
 axios.defaults.withCredentials = true;
 
 const App = () => {
+  const { loading, isAuthenticated } = useSelector((state) => state.user);
+
   useEffect(() => {
     Store.dispatch(loadUser());
   }, []);
@@ -34,8 +37,8 @@ const App = () => {
         <Route path="/best-selling" element={<BestSellingPage />} />
         <Route path="/events" element={<EventPage />} />
         <Route path="/faq" element={<FaqPage />} />
-        <Route path="/product/:name" element={<ProductDetailsPage />} />  
-        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/product/:name" element={<ProductDetailsPage />} />
+        <Route path="/profile" element={<ProtectedRoute isAuthenticated={isAuthenticated}> <ProfilePage /> </ProtectedRoute>} />
       </Routes>
       <ToastContainer
         position="bottom-center"

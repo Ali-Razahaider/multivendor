@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import styles from '../../styles/styles';
 import { useState, useEffect } from 'react';
 import { productData, categoriesData } from '../../static/data';
-import { AiOutlineSearch, AiOutlineShoppingCart } from 'react-icons/ai';
+import { AiOutlineHeart, AiOutlineSearch, AiOutlineShoppingCart } from 'react-icons/ai';
 import { BiMenuAltLeft } from 'react-icons/bi';
 import { IoIosArrowDown, IoIosArrowForward } from 'react-icons/io';
 import DropDown from './DropDown';
@@ -10,6 +10,7 @@ import { IoHeartOutline, IoPersonOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 import Cart from '../Cart/Cart';
 import Wishlist from '../Wishlist/Wishlist';
+import { RxCross1 } from 'react-icons/rx';
 
 import Navbar from './Navbar';
 
@@ -21,6 +22,7 @@ const Header = ({ activeHeading }) => {
   const { isAuthenticated, user } = useSelector((state) => state.user);
   const [openCart, setOpenCart] = useState(false);
   const [openWishlist, setOpenWishlist] = useState(false);
+  const [open, setOpen] = useState(false);
   
 
   useEffect(() => {
@@ -47,7 +49,8 @@ const Header = ({ activeHeading }) => {
   };
 
   return (
-    <div className={`${styles.section} w-full `}>
+    <>
+    <div className={`${styles.section} w-full hidden 800px:block`}>
       <div className="flex 800px:h-12.5 800px:my-2.5 w-11/12 m-auto items-center justify-between">
         <div>
           <Link to="/">
@@ -101,7 +104,7 @@ const Header = ({ activeHeading }) => {
       </div>
 
       <div
-        className={`${styles.section} ${active ? 'fixed top-0' : 'relative'} w-full bg-blue-500 shadow-md z-10`}
+        className={`${styles.section} ${active ? 'fixed top-0' : 'relative'} w-full bg-blue-500 shadow-md z-10 hidden 800px:block`}
       >
         <div
           className={`${styles.section} relative  flex items-center justify-between`}
@@ -159,12 +162,118 @@ const Header = ({ activeHeading }) => {
               </span>
             </div>
 
+              </div>
+            </div>
+          </div>
+      </div>
+      {/* mobile header */}
+      <div
+        className={`${
+          active === true ? "shadow-sm fixed top-0 left-0 z-10" : null
+        }
+      w-full h-[60px] bg-[#fff] z-50 top-0 left-0 shadow-sm 800px:hidden`}
+      >
+        <div className="w-full flex items-center justify-between">
+          <div>
+            <BiMenuAltLeft
+              size={40}
+              className="ml-4"
+              onClick={() => setOpen(true)}
+            />
+          </div>
+          <div>
+            <Link to="/">
+              <img
+                src="https://shopo.quomodothemes.website/assets/images/logo.svg"
+                alt=""
+                className="mt-3 cursor-pointer"
+              />
+            </Link>
+          </div>
+          <div>
+            <div
+              className="relative mr-[20px]"
+              onClick={() => setOpenCart(true)}
+            >
+              <AiOutlineShoppingCart size={30} />
+              <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 text-white font-mono text-[12px] leading-tight text-center">
+                0
+              </span>
+            </div>
           </div>
         </div>
-      </div>
+
+        {/* header sidebar */}
+        {open && (
+          <div className="fixed w-full bg-[#0000005f] z-20 h-full top-0 left-0">
+            <div className="fixed w-[70%] bg-[#fff] h-screen top-0 left-0 z-10 overflow-y-scroll">
+              <div className="flex flex-col min-h-full">
+              <div className="w-full justify-between flex pr-3">
+                <div>
+                  <div
+                    className="relative mr-[15px]"
+                    onClick={() => { setOpenWishlist(true); setOpen(false); }}
+                  >
+                    <AiOutlineHeart size={30} className="mt-5 ml-3" />
+                    <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 text-white font-mono text-[12px] leading-tight text-center">
+                      0
+                    </span>
+                  </div>
+                </div>
+                <RxCross1
+                  size={30}
+                  className="ml-4 mt-5"
+                  onClick={() => setOpen(false)}
+                />
+              </div>
+
+              <div className="my-8 w-[92%] m-auto h-[40px] relative">
+                <input
+                  type="search"
+                  placeholder="Search Product..."
+                  className="h-[40px] w-full px-2 border-[#3957db] border-[2px] rounded-md"
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                />
+                {searchData && searchData.length > 0 && (
+                  <div className="absolute bg-[#fff] z-10 shadow w-full left-0 p-3">
+                    {searchData.map((i) => {
+                      const d = i.name;
+                      const Product_name = d.replace(/\s+/g, "-");
+                      return (
+                        <Link to={`/product/${Product_name}`} key={i._id}>
+                          <div className="flex items-center">
+                            <img
+                              src={i.images?.[0]?.url || i.image_Url?.[0]?.url}
+                              alt=""
+                              className="w-[50px] mr-2"
+                            />
+                            <h5>{i.name}</h5>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              <Navbar active={activeHeading} />
+              <div className={`${styles.button} ml-4 !rounded-[4px]`}>
+                <Link to="/shop-create">
+                  <h1 className="text-[#fff] flex items-center">
+                    Become Seller <IoIosArrowForward className="ml-1" />
+                  </h1>
+                </Link>
+              </div>
+              <br />
+            </div>
+        </div>
+        </div>
+      )}
       {openCart && <Cart setOpenCart={setOpenCart} />}
       {openWishlist && <Wishlist setOpenWishlist={setOpenWishlist} />}
-    </div>
+      </div>
+      </>
   );
 };
 

@@ -11,8 +11,8 @@ function ProfileSidebar({active , setActive}) {
         try {
             const res = await axios.post(`${server}user/logout`, {}, { withCredentials: true });
             if(res.data.success){
-                navigate('/login');
                 window.location.reload();
+                navigate('/login');
             }
         } catch (error) {
             console.error('Logout failed:', error);
@@ -30,11 +30,11 @@ function ProfileSidebar({active , setActive}) {
     ];
 
   return (
-      <div className='w-full h-screen bg-white shadow-sm rounded-sm p-3'>
+      <div className='w-full bg-white shadow-sm rounded-sm p-3 sticky top-0'>
           {sidebarItems.map((item) => (
             <div key={item.id} className="flex items-center cursor-pointer w-full mb-8" onClick={item.onClick || (() => setActive(item.id))}>
-                <item.icon size={25} className={`${active === item.id ? "text-[#f63b60]" : "text-black/50"} `} />
-                <span className={`pl-3 text-lg font-medium ${active === item.id ? "text-[#f63b60]" : "text-black/50"} `}>{item.label}</span>
+                <item.icon className={`w-5 h-5 800px:w-6 800px:h-6 ${active === item.id ? "text-[#f63b60]" : "text-black/50"}`} />
+                <span className={`pl-3 text-lg font-medium hidden 800px:block ${active === item.id ? "text-[#f63b60]" : "text-black/50"} `}>{item.label}</span>
             </div>
           ))}
       </div>

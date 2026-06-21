@@ -39,7 +39,7 @@ const ProfileContent = ({ active }) => {
                   <label className="block pb-2">Full Name</label>
                   <input
                     type="text"
-                    className={`${styles.input} !w-[95%] mb-4 800px:mb-0`}
+                    className={`${styles.input} !w-full 800px:!w-[95%] mb-4 800px:mb-0`}
                     required
                     placeholder={user?.name}
                   />
@@ -48,7 +48,7 @@ const ProfileContent = ({ active }) => {
                   <label className="block pb-2">Email Address</label>
                   <input
                     type="text"
-                    className={`${styles.input} !w-[95%] mb-1 800px:mb-0`}
+                    className={`${styles.input} !w-full 800px:!w-[95%] mb-1 800px:mb-0`}
                     required
                     placeholder={user?.email}
                   />
@@ -60,7 +60,7 @@ const ProfileContent = ({ active }) => {
                   <label className="block pb-2">Phone Number</label>
                   <input
                     type="number"
-                    className={`${styles.input} !w-[95%] mb-4 800px:mb-0`}
+                    className={`${styles.input} !w-full 800px:!w-[95%] mb-4 800px:mb-0`}
                     required
                     placeholder={user?.phoneNumber}
                   />
@@ -70,13 +70,13 @@ const ProfileContent = ({ active }) => {
                   <label className="block pb-2">Enter your password</label>
                   <input
                     type="password"
-                    className={`${styles.input} !w-[95%] mb-4 800px:mb-0`}
+                    className={`${styles.input} !w-full 800px:!w-[95%] mb-4 800px:mb-0`}
                     required
                   />
                 </div>
               </div>
               <input
-                className={`w-[250px] h-[40px] border border-[#3a24db] text-center text-[#3a24db] rounded-[3px] mt-8 cursor-pointer`}
+                className={`w-full 800px:w-[250px] h-[40px] border border-[#3a24db] text-center text-[#3a24db] rounded-[3px] mt-8 cursor-pointer`}
                 value="Update"
                 type="submit"
               />
@@ -123,22 +123,26 @@ const ProfileContent = ({ active }) => {
       {/* Payment Methods */}
       {active === 7 && (
         <div className="w-full px-5">
-          <div className="w-[80%] mx-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-gray-800">Saved Payment Methods</h2>
-              <button className="bg-black text-white text-sm font-medium px-4 py-2 rounded-md cursor-pointer">+ Add Payment Method</button>
+          <div className="w-full 800px:w-[80%] mx-auto">
+            <div className="flex flex-col 800px:flex-row items-start 800px:items-center justify-between mb-4 gap-2">
+              <h2 className="text-lg 800px:text-xl font-semibold text-gray-800">Saved Payment Methods</h2>
+              <button className="bg-black text-white text-xs 800px:text-sm font-medium px-3 800px:px-4 py-2 rounded-md cursor-pointer w-full 800px:w-auto text-center">+ Add Payment Method</button>
             </div>
-            <div className="flex items-center gap-4 border rounded-lg px-4 py-3 shadow-sm bg-white">
-              <div className="w-12 h-8 bg-blue-700 rounded flex items-center justify-center text-white text-[10px] font-bold shrink-0">VISA</div>
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-gray-800 truncate">John Doe</p>
-                <p className="text-sm text-gray-500 font-mono">4242 **** **** 4242</p>
+            <div className="flex flex-col 800px:flex-row items-start 800px:items-center gap-3 border rounded-lg px-3 800px:px-4 py-3 shadow-sm bg-white">
+              <div className="flex items-center gap-3 w-full 800px:w-auto">
+                <div className="w-10 h-7 800px:w-12 800px:h-8 bg-blue-700 rounded flex items-center justify-center text-white text-[9px] 800px:text-[10px] font-bold shrink-0">VISA</div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-gray-800 text-sm 800px:text-base truncate">John Doe</p>
+                  <p className="text-xs 800px:text-sm text-gray-500 font-mono">4242 **** **** 4242</p>
+                </div>
               </div>
-              <div className="text-right text-sm text-gray-600 shrink-0">
-                <p>12/28</p>
-                <p className="text-[10px] text-gray-400">CVC ***</p>
+              <div className="flex items-center gap-3 w-full 800px:w-auto 800px:ml-auto">
+                <div className="text-left 800px:text-right text-xs 800px:text-sm text-gray-600">
+                  <p>12/28</p>
+                  <p className="text-[9px] 800px:text-[10px] text-gray-400">CVC ***</p>
+                </div>
+                <span className="text-[10px] 800px:text-[11px] text-green-600 font-medium border border-green-600 rounded px-2 py-0.5 shrink-0 ml-auto 800px:ml-0">Default</span>
               </div>
-              <span className="text-[11px] text-green-600 font-medium border border-green-600 rounded px-2 py-0.5 shrink-0">Default</span>
             </div>
           </div>
         </div>
