@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import axios from 'axios';
 import Store from './redux/store.js';
 import { loadUser } from './redux/actions/userActions.js';
+import { loadSeller } from './redux/actions/sellerActions.js';
 import ProtectedRoute from './ProtectedRoute';
 import { useSelector } from 'react-redux';
 
@@ -17,6 +18,7 @@ const App = () => {
 
   useEffect(() => {
     Store.dispatch(loadUser());
+    Store.dispatch(loadSeller());
   }, []);
 
   // if (!user) {

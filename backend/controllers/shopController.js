@@ -1,7 +1,7 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
 import Shop from '../models/shopModel.js';
-import isAuthenticated from '../middleware/authMiddleware.js';
+import { isAuthenticated, isSeller } from '../middleware/authMiddleware.js';
 import sendShopToken from '../utils/sendShopToken.js';
 import sendMail from '../utils/sendMail.js';
 import jwt from 'jsonwebtoken';
@@ -91,9 +91,9 @@ router.post(
         sendShopToken(res, shop._id);
         try {
             await sendMail({
-                email: shopData.email,
+                email: shop.email,
                 subject: 'Welcome to Our Platform',
-                message: `Hello ${shopData.name}, welcome to our platform! Your shop has been successfully activated. You can now log in and start managing your shop.`,
+                message: `Hello ${shop.name}, welcome to our platform! Your shop has been successfully activated. You can now log in and start managing your shop.`,
             });
         } catch (mailErr) {
             res.status(500);
@@ -141,19 +141,14 @@ router.post(
     })
 );
 
-// get current shop
+// get seller (for Redux loadSeller action)
 router.get(
-    '/current',
-    isAuthenticated,
+    '/getSeller',
+    isSeller,
     asyncHandler(async (req, res, next) => {
-        const shop = await Shop.findById(req.user._id);
-        if (!shop) {
-            res.status(404);
-            throw new Error('Shop not found');
-        }
         res.status(200).json({
             success: true,
-            shop,
+            shop: req.shop,
         });
     })
 );
@@ -161,9 +156,9 @@ router.get(
 // logout shop
 router.post(
     '/logout',
-    isAuthenticated,
+    isSeller,
     asyncHandler(async (req, res, next) => {
-        res.clearCookie('auth_token');
+        res.clearCookie('shop_token');
         res.status(200).json({
             success: true,
             message: 'Logged out successfully',
