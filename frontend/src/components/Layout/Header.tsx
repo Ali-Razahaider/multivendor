@@ -270,6 +270,37 @@ const Header = ({ activeHeading }) => {
                 </Link>
               </div>
               <br />
+              <br />
+              <br />
+
+              <div className="flex w-full justify-center mb-20 mt-auto">
+                {isAuthenticated ? (
+                  <div>
+                    <Link to="/profile">
+                      <img
+                        src={`${user?.avatar?.url}`}
+                        alt=""
+                        className="w-10  h-10 rounded-full border-[3px] border-[#0eae88]"
+                      />
+                    </Link>
+                  </div>
+                ) : (
+                  <>
+                    <Link
+                      to="/login"
+                      className="text-[18px] pr-[10px] text-[#000000b7]"
+                    >
+                      Login /
+                    </Link>
+                    <Link
+                      to="/sign-up"
+                      className="text-[18px] text-[#000000b7]"
+                    >
+                      Sign up
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
         </div>
         </div>
