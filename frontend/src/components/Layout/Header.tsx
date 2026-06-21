@@ -305,9 +305,9 @@ const Header = ({ activeHeading }) => {
         </div>
         </div>
       )}
+      </div>
       {openCart && <Cart setOpenCart={setOpenCart} />}
       {openWishlist && <Wishlist setOpenWishlist={setOpenWishlist} />}
-      </div>
       </>
   );
 };
