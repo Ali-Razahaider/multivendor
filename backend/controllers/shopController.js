@@ -25,6 +25,11 @@ router.post(
       throw new Error('All fields are required');
     }
 
+    if (password.length < 6) {
+      res.status(400);
+      throw new Error('Password should be at least 6 characters long');
+    }
+
     const existingShop = await Shop.findOne({ email });
     if (existingShop) {
       res.status(400);

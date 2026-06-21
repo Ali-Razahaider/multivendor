@@ -41,7 +41,7 @@ const App = () => {
         <Route path="/profile" element={<ProtectedRoute isAuthenticated={isAuthenticated}> <ProfilePage /> </ProtectedRoute>} />
         <Route path="/checkout" element={<ProtectedRoute isAuthenticated={isAuthenticated}> <CheckoutPage /> </ProtectedRoute>} />
 
-        <Route path="/shop-create" element={<ShopCreatePage />} />
+        <Route path="/shop-create" element={<ProtectedRoute isAuthenticated={isAuthenticated}> <ShopCreatePage /> </ProtectedRoute>} />
 
 
 
