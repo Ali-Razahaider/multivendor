@@ -1,33 +1,35 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import server from '../server.js';
 
 function ActivationPage() {
   const { activationToken } = useParams();
+  const [searchParams] = useSearchParams();
   const [error, setError] = useState(false);
 
   useEffect(() => {
     if (activationToken) {
-      const activationEmail = async () => {
+      const activation = async () => {
         try {
+          const type = searchParams.get('type') || 'user';
+          const endpoint = type === 'shop' ? 'shop' : 'user';
           const res = await axios.post(
-            `${server}user/activation`,
-            {
-              activationToken,
-            },
+            `${server}${endpoint}/activation`,
+            { activationToken },
             { withCredentials: true }
           );
           console.log(res.data.message);
           setError(false);
         } catch (error) {
           setError(true);
-          console.log(error.response.data.message);
+          console.log(error.response?.data?.message);
         }
       };
-      activationEmail();
+      activation();
     }
   }, []);
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">

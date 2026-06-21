@@ -41,7 +41,7 @@ router.post(
     };
 
     const activationToken = createActivationToken(shopData);
-    const activationUrl = `http://localhost:5173/activation/${activationToken}`;
+    const activationUrl = `http://localhost:5173/activation/${activationToken}?type=shop`;
 
     try {
       await sendMail({
