@@ -9,6 +9,6 @@ import FaqPage from './pages/FaqPage';
 import ProductDetailsPage from './pages/ProductDetailsPage';
 import ProfilePage from './pages/ProfilePage';
 import CheckoutPage from './pages/CheckoutPage';
+import ShopCreatePage from './pages/ShopCreatePage';
 
-
-export { LoginPage, HomePage, RegisterPage, ActivationPage, ProductsPage, BestSellingPage, EventPage, FaqPage, ProductDetailsPage, ProfilePage, CheckoutPage };
+export { LoginPage, HomePage, RegisterPage, ActivationPage, ProductsPage, BestSellingPage, EventPage, FaqPage, ProductDetailsPage, ProfilePage, CheckoutPage, ShopCreatePage };
