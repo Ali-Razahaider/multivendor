@@ -2,7 +2,7 @@ import express from 'express';
 import asyncHandler from 'express-async-handler';
 import Shop from '../models/shopModel.js';
 import isAuthenticated from '../middleware/authMiddleware.js';
-import generateToken from '../utils/generateToken.js';
+import sendShopToken from '../utils/sendShopToken.js';
 import sendMail from '../utils/sendMail.js';
 import jwt from 'jsonwebtoken';
 
@@ -88,7 +88,7 @@ router.post(
 
         const shop = await Shop.create(newShop);
 
-        generateToken(res, shop._id);
+        sendShopToken(res, shop._id);
         try {
             await sendMail({
                 email: shopData.email,
@@ -127,7 +127,7 @@ router.post(
         }
 
         if (await shop.comparePassword(password)) {
-            generateToken(res, shop._id);
+            sendShopToken(res, shop._id);
             shop.password = undefined;
             res.status(200).json({
                 success: true,

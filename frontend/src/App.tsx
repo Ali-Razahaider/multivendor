@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { LoginPage, HomePage, RegisterPage, ActivationPage, ProductsPage, BestSellingPage, EventPage, FaqPage, ProductDetailsPage, ProfilePage, CheckoutPage, ShopCreatePage } from './Routes';
+import { LoginPage, HomePage, RegisterPage, ActivationPage, ProductsPage, BestSellingPage, EventPage, FaqPage, ProductDetailsPage, ProfilePage, CheckoutPage, ShopCreatePage, ShopLoginPage } from './Routes';
 import './App.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -42,6 +42,7 @@ const App = () => {
         <Route path="/checkout" element={<ProtectedRoute isAuthenticated={isAuthenticated}> <CheckoutPage /> </ProtectedRoute>} />
 
         <Route path="/shop-create" element={<ProtectedRoute isAuthenticated={isAuthenticated}> <ShopCreatePage /> </ProtectedRoute>} />
+        <Route path="/shop-login" element={<ShopLoginPage />} />
 
 
 
