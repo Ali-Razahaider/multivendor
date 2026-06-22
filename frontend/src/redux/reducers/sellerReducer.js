@@ -2,21 +2,21 @@ import { createReducer } from '@reduxjs/toolkit';
 
 const initialState = {
   isSeller: false,
-  isLoading: false,
+  sellerLoading: true,
 };
 
 const sellerReducer = createReducer(initialState, (builder) => {
   builder.addCase('LoadSellerRequest', (state) => {
-    state.isLoading = true;
+    state.sellerLoading = true;
   });
   builder.addCase('LoadSellerSuccess', (state, action) => {
     state.isSeller = true;
-    state.isLoading = false;
+    state.sellerLoading = false;
     state.seller = action.payload;
   });
   builder.addCase('LoadSellerFail', (state, action) => {
     state.isSeller = false;
-    state.isLoading = false;
+    state.sellerLoading = false;
     state.error = action.payload;
   });
   builder.addCase('clearErrors', (state) => {
