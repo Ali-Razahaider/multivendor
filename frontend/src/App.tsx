@@ -22,10 +22,10 @@ import axios from 'axios';
 import Store from './redux/store.js';
 import { loadUser } from './redux/actions/userActions.js';
 import { loadSeller } from './redux/actions/sellerActions.js';
-import ProtectedRoute from './routes/ProtectedRoute.js';
+import ProtectedRoute from './routes/ProtectedRoute';
 import { useSelector } from 'react-redux';
-import SellerProtectedRoute from './routes/SellerProtectedRoute.js';
-import ShopHomePage from './routes/shopRoutes';
+import SellerProtectedRoute from './routes/SellerProtectedRoute';
+import { ShopHomePage, ShopDashboardPage } from './routes/shopRoutes';
 
 axios.defaults.withCredentials = true;
 
