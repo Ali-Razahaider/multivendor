@@ -51,7 +51,7 @@ const App = () => {
 
         <Route path="/shop-create" element={<ShopCreatePage />} />
         <Route path="/shop-login" element={<ShopLoginPage />} />
-        <Route path="/shop-home" element={
+        <Route path="/shop/:id" element={
           <SellerProtectedRoute isSeller={isSeller} isLoading={sellerLoading}>
             <ShopHomePage />
           </SellerProtectedRoute>

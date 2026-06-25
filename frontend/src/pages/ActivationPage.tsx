@@ -1,4 +1,4 @@
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import server from '../server.js';
@@ -6,6 +6,7 @@ import server from '../server.js';
 function ActivationPage() {
   const { activationToken } = useParams();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [error, setError] = useState(false);
 
   useEffect(() => {
@@ -21,6 +22,9 @@ function ActivationPage() {
           );
           console.log(res.data.message);
           setError(false);
+          if (type === 'shop') {
+            navigate(`/shop/${res.data.shop._id}`);
+          }
         } catch (error) {
           setError(true);
           console.log(error.response?.data?.message);

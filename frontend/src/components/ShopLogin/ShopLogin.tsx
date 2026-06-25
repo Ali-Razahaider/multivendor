@@ -35,7 +35,7 @@ function ShopLogin() {
       setEmail('');
       setPassword('');
       setVisible(false);
-      navigate('/');
+      navigate(`/shop/${res.data.shop._id}`);
       window.location.reload();
     } catch (err) {
       toast.error(err.response?.data?.message || 'Login failed');

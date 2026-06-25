@@ -20,6 +20,7 @@ const Header = ({ activeHeading }) => {
   const [active, setActive] = useState(false);
   const [dropdown, setDropDown] = useState(false);
   const { isAuthenticated, user } = useSelector((state) => state.user);
+  const { isSeller, seller } = useSelector((state) => state.seller);
   const [openCart, setOpenCart] = useState(false);
   const [openWishlist, setOpenWishlist] = useState(false);
   const [open, setOpen] = useState(false);
@@ -95,9 +96,9 @@ const Header = ({ activeHeading }) => {
           ) : null}
         </div>
         <div className={`${styles.button}`}>
-          <Link to="/shop-create">
+          <Link to={isSeller ? `/shop/${seller?._id}` : "/shop-create"}>
             <h1 className="text-amber-100 flex items-center">
-              Become Seller <IoIosArrowForward className="ml-1" />{' '}
+              {isSeller ? "My Shop" : "Become Seller"} <IoIosArrowForward className="ml-1" />{' '}
             </h1>
           </Link>
         </div>
@@ -263,9 +264,9 @@ const Header = ({ activeHeading }) => {
                 </Link>
               ))}
               <div className={`${styles.button} ml-4 !rounded-[4px]`}>
-                <Link to="/shop-create">
+                <Link to={isSeller ? `/shop/${seller?._id}` : "/shop-create"}>
                   <h1 className="text-[#fff] flex items-center">
-                    Become Seller <IoIosArrowForward className="ml-1" />
+                    {isSeller ? "My Shop" : "Become Seller"} <IoIosArrowForward className="ml-1" />
                   </h1>
                 </Link>
               </div>
