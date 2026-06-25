@@ -1,5 +1,19 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { LoginPage, HomePage, RegisterPage, ActivationPage, ProductsPage, BestSellingPage, EventPage, FaqPage, ProductDetailsPage, ProfilePage, CheckoutPage, ShopCreatePage, ShopLoginPage } from './Routes';
+import {
+  LoginPage,
+  HomePage,
+  RegisterPage,
+  ActivationPage,
+  ProductsPage,
+  BestSellingPage,
+  EventPage,
+  FaqPage,
+  ProductDetailsPage,
+  ProfilePage,
+  CheckoutPage,
+  ShopCreatePage,
+  ShopLoginPage,
+} from './routes/Routes';
 import './App.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -8,19 +22,16 @@ import axios from 'axios';
 import Store from './redux/store.js';
 import { loadUser } from './redux/actions/userActions.js';
 import { loadSeller } from './redux/actions/sellerActions.js';
-import ProtectedRoute from './ProtectedRoute';
+import ProtectedRoute from './routes/ProtectedRoute.js';
 import { useSelector } from 'react-redux';
-import SellerProtectedRoute from './SellerProtectedRoute.js';
-import ShopHomePage from './shopRoutes';
-
-
+import SellerProtectedRoute from './routes/SellerProtectedRoute.js';
+import ShopHomePage from './routes/shopRoutes';
 
 axios.defaults.withCredentials = true;
 
 const App = () => {
   const { loading, isAuthenticated } = useSelector((state) => state.user);
   const { sellerLoading, isSeller } = useSelector((state) => state.seller);
-
 
   useEffect(() => {
     Store.dispatch(loadUser());
@@ -46,17 +57,40 @@ const App = () => {
         <Route path="/events" element={<EventPage />} />
         <Route path="/faq" element={<FaqPage />} />
         <Route path="/product/:name" element={<ProductDetailsPage />} />
-        <Route path="/profile" element={<ProtectedRoute isAuthenticated={isAuthenticated} isLoading={loading}> <ProfilePage /> </ProtectedRoute>} />
-        <Route path="/checkout" element={<ProtectedRoute isAuthenticated={isAuthenticated} isLoading={loading}> <CheckoutPage /> </ProtectedRoute>} />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute>
+              <CheckoutPage />
+            </ProtectedRoute>
+          }
+        />
 
         <Route path="/shop-create" element={<ShopCreatePage />} />
         <Route path="/shop-login" element={<ShopLoginPage />} />
-        <Route path="/shop/:id" element={
-          <SellerProtectedRoute isSeller={isSeller} isLoading={sellerLoading}>
-            <ShopHomePage />
-          </SellerProtectedRoute>
-        } />
-  
+        <Route
+          path="/shop/:id"
+          element={
+            <SellerProtectedRoute>
+              <ShopHomePage />
+            </SellerProtectedRoute>
+          }
+        /><Route
+          path="/dashboard"
+          element={
+            <SellerProtectedRoute>
+              <ShopDashboardPage />
+            </SellerProtectedRoute>
+          }
+        />
       </Routes>
       <ToastContainer
         position="bottom-center"
