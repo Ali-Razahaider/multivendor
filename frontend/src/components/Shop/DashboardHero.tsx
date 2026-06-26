@@ -68,7 +68,7 @@ function DashboardHero() {
       </div>
       <br />
       <h3 className="text-[22px] font-semibold pb-2">Latest Orders</h3>
-      <Card>
+      <Card className="w-full mb-4">
         <CardContent className="p-5">
           <p className="text-[#555]">No orders yet</p>
         </CardContent>
