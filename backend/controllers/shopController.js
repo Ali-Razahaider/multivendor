@@ -153,6 +153,19 @@ router.get(
     })
 );
 
+// get shop info by ID (public)
+router.get(
+    '/get-shop-info/:id',
+    asyncHandler(async (req, res, next) => {
+        const shop = await Shop.findById(req.params.id);
+        if (!shop) {
+            res.status(404);
+            throw new Error('Shop not found');
+        }
+        res.status(200).json({ success: true, shop });
+    })
+);
+
 // logout shop
 router.post(
     '/logout',

@@ -1,6 +1,6 @@
-import React from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import Loader from '../Layout/Loader'
 import styles from '../../styles/styles'
 import axios from 'axios'
@@ -8,11 +8,26 @@ import server from '../../server'
 import { useNavigate } from 'react-router-dom'
 
 const ShopInfo = ({ isOwner }) => {
-  const { seller, isLoading } = useSelector((state) => state.seller)
+  const { seller, isLoading: sellerLoading } = useSelector((state) => state.seller)
   const navigate = useNavigate()
+  const { id } = useParams()
 
+  const [data, setData] = useState(null)
+  const [loading, setLoading] = useState(false)
   const products = []
   const averageRating = 0
+
+  useEffect(() => {
+    if (!isOwner && id) {
+      setLoading(true)
+      axios.get(`${server}shop/get-shop-info/${id}`)
+        .then((res) => {
+          setData(res.data.shop)
+          setLoading(false)
+        })
+        .catch(() => setLoading(false))
+    }
+  }, [id, isOwner])
 
   const logoutHandler = async () => {
     try {
@@ -26,32 +41,33 @@ const ShopInfo = ({ isOwner }) => {
     }
   }
 
+  const displayData = isOwner ? seller : data
+
   return (
     <>
-      {isLoading ? (
-        <Loader />
-      ) : (
+      {isOwner ? (sellerLoading ? <Loader /> : null) : (loading ? <Loader /> : null)}
+      {displayData && (
         <div>
           <div className="w-full py-5">
             <div className="w-full flex item-center justify-center">
               <img
-                src={typeof seller?.avatar === 'string' ? seller.avatar : seller?.avatar?.url || ''}
+                src={typeof displayData?.avatar === 'string' ? displayData.avatar : displayData?.avatar?.url || ''}
                 alt=""
                 className="w-[150px] h-[150px] object-cover rounded-full"
               />
             </div>
-            <h3 className="text-center py-2 text-[20px]">{seller?.name}</h3>
+            <h3 className="text-center py-2 text-[20px]">{displayData?.name}</h3>
             <p className="text-[16px] text-[#000000a6] p-[10px] flex items-center">
-              {seller?.description}
+              {displayData?.description}
             </p>
           </div>
           <div className="p-3">
             <h5 className="font-[600]">Address</h5>
-            <h4 className="text-[#000000a6]">{seller?.address}</h4>
+            <h4 className="text-[#000000a6]">{displayData?.address}</h4>
           </div>
           <div className="p-3">
             <h5 className="font-[600]">Phone Number</h5>
-            <h4 className="text-[#000000a6]">{seller?.phoneNumber}</h4>
+            <h4 className="text-[#000000a6]">{displayData?.phoneNumber}</h4>
           </div>
           <div className="p-3">
             <h5 className="font-[600]">Total Products</h5>
@@ -63,7 +79,7 @@ const ShopInfo = ({ isOwner }) => {
           </div>
           <div className="p-3">
             <h5 className="font-[600]">Joined On</h5>
-            <h4 className="text-[#000000b0]">{seller?.createdAt?.slice(0, 10)}</h4>
+            <h4 className="text-[#000000b0]">{displayData?.createdAt?.slice(0, 10)}</h4>
           </div>
           {isOwner && (
             <div className="py-3 px-4">
@@ -81,6 +97,9 @@ const ShopInfo = ({ isOwner }) => {
             </div>
           )}
         </div>
+      )}
+      {!isOwner && !data && !loading && (
+        <div className="p-8 text-center text-gray-500">Shop not found</div>
       )}
     </>
   )

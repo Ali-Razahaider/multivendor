@@ -1,10 +1,11 @@
-import { useState } from 'react'
-import { useSelector } from 'react-redux'
-import { Link } from 'react-router-dom'
-import { productData } from '../../static/data'
+import { useState, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { Link, useParams } from 'react-router-dom'
 import ProductCard from '../ProductCard/ProductCard'
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai'
 import styles from '../../styles/styles'
+import { getShopProducts } from '../../redux/actions/productActions'
+import { getShopEvents } from '../../redux/actions/eventActions'
 
 const tabs = [
   { id: 'products', label: 'Shop Products' },
@@ -14,9 +15,17 @@ const tabs = [
 
 const ShopProfileData = ({ isOwner }) => {
   const [active, setActive] = useState('products')
-  const { seller } = useSelector((state) => state.seller)
+  const dispatch = useDispatch()
+  const { id } = useParams()
+  const { products } = useSelector((state) => state.product)
+  const { events } = useSelector((state) => state.events)
 
-  const shopProducts = productData
+  useEffect(() => {
+    if (id) {
+      dispatch(getShopProducts(id))
+      dispatch(getShopEvents(id))
+    }
+  }, [dispatch, id])
 
   return (
     <div className="w-full bg-[#fff] rounded-[4px] shadow-sm p-5">
@@ -45,14 +54,14 @@ const ShopProfileData = ({ isOwner }) => {
 
       {active === 'products' && (
         <div className="py-5">
-          {shopProducts.length === 0 ? (
+          {!products || products.length === 0 ? (
             <div className="flex items-center justify-center h-[300px]">
               <p className="text-[#000000a6] text-[16px]">No products yet</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5">
-              {shopProducts.map((product, idx) => (
-                <ProductCard key={`${product.id}-${product.name}-${idx}`} data={product} />
+              {products.map((product, idx) => (
+                <ProductCard key={product._id || idx} data={product} />
               ))}
             </div>
           )}
@@ -62,10 +71,10 @@ const ShopProfileData = ({ isOwner }) => {
       {active === 'reviews' && (
         <div className="py-5">
           {(() => {
-            const allReviews = shopProducts.flatMap(
+            const allReviews = products?.flatMap(
               (product) => product.reviews?.map((review) => ({ ...review, productName: product.name })) || []
             )
-            return allReviews.length === 0 ? (
+            return !allReviews || allReviews.length === 0 ? (
               <div className="flex items-center justify-center h-[300px]">
                 <p className="text-[#000000a6] text-[16px]">No reviews yet</p>
               </div>
@@ -95,11 +104,20 @@ const ShopProfileData = ({ isOwner }) => {
       )}
 
       {active === 'events' && (
-        <div className="flex items-center justify-center h-[300px]">
-          <p className="text-[#000000a6] text-[16px]">No events yet</p>
+        <div className="py-5">
+          {!events || events.length === 0 ? (
+            <div className="flex items-center justify-center h-[300px]">
+              <p className="text-[#000000a6] text-[16px]">No events yet</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5">
+              {events.map((event, idx) => (
+                <ProductCard key={event._id || idx} data={event} />
+              ))}
+            </div>
+          )}
         </div>
       )}
-
     </div>
   )
 }
