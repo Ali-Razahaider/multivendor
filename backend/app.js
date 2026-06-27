@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import user from './controllers/userController.js'
 import shop from './controllers/shopController.js'
 import product from './controllers/productController.js'
+import event from './controllers/eventController.js'
 import cors from 'cors';
 const app = express();
 
@@ -33,6 +34,7 @@ app.get('/', (req, res) => {
 app.use('/api/user', user);
 app.use('/api/shop', shop);
 app.use('/api/product', product);
+app.use('/api/event', event);
 
 // error handling (traversy media)
 app.use(notFound);
