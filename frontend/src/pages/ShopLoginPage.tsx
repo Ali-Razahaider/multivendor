@@ -1,4 +1,4 @@
-import ShopLogin from '../components/ShopLogin/ShopLogin';
+import ShopLogin from '../components/Shop/ShopLogin';
 
 const ShopLoginPage = () => {
   

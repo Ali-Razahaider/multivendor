@@ -1,5 +1,5 @@
 import React from 'react'
-import ShopCreate from '../components/ShopCreate';
+import ShopCreate from '../components/Shop/ShopCreate';
 
 const ShopCreatePage = () => {
   return (
