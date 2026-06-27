@@ -17,7 +17,7 @@ const menuItems = [
   { id: 6, icon: VscNewFile, label: "Create Event", path: "/dashboard-create-event" },
   { id: 7, icon: CiMoneyBill, label: "Withdraw Money", path: "/dashboard-withdraw-money" },
   { id: 8, icon: BiMessageSquareDetail, label: "Shop Inbox", path: "/dashboard-messages" },
-  { id: 9, icon: AiOutlineGift, label: "Discount Codes", path: "/dashboard-coupouns" },
+  { id: 9, icon: AiOutlineGift, label: "Discount Codes", path: "/dashboard-coupons" },
   { id: 10, icon: HiOutlineReceiptRefund, label: "Refunds", path: "/dashboard-refunds" },
   { id: 11, icon: CiSettings, label: "Settings", path: "/settings" },
 ]
