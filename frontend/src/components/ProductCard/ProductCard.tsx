@@ -12,7 +12,7 @@ const ProductCard = ({ data }) => {
   const productName = d.replace(/\s+/g, '-');
 
   return (
-    <div className="w-full h-105 bg-white rounded-lg shadow-sm p-3 relative cursor-pointer">
+    <div className="w-full h-105 bg-white rounded-lg shadow-sm p-3 relative cursor-pointer hover:shadow-md hover:scale-[1.02] transition-all duration-300">
       <div className="flex justify-end">
         {data.discount_price && data.price && (
           <div className="bg-green-500 text-white px-3 py-1 rounded-lg text-sm font-semibold absolute top-2 left-2">

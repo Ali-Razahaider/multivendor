@@ -1,7 +1,7 @@
-import React from 'react';
 import { AiOutlineGift } from 'react-icons/ai';
 import { MdOutlineLocalOffer } from 'react-icons/md';
 import { FiShoppingBag } from 'react-icons/fi';
+import { IoPersonOutline } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
@@ -25,8 +25,19 @@ const DashboardHeader = () => {
           <Link to="/dashboard-events" className="mr-4">
             <MdOutlineLocalOffer size={30} className="cursor-pointer" />
           </Link>
-          <Link to="/dashboard-products">
+          <Link to="/dashboard-products" className="mr-4">
             <FiShoppingBag size={30} className="cursor-pointer" />
+          </Link>
+          <Link to={`/shop/${seller?._id}`}>
+            {seller?.avatar ? (
+              <img
+                src={typeof seller.avatar === 'string' ? seller.avatar : seller.avatar?.url}
+                alt=""
+                className="w-8 h-8 rounded-full object-cover border border-gray-300"
+              />
+            ) : (
+              <IoPersonOutline size={28} className="cursor-pointer text-gray-600" />
+            )}
           </Link>
         </div>
       </div>

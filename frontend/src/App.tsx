@@ -25,7 +25,7 @@ import { loadSeller } from './redux/actions/sellerActions.js';
 import ProtectedRoute from './routes/ProtectedRoute';
 import { useSelector } from 'react-redux';
 import SellerProtectedRoute from './routes/SellerProtectedRoute';
-import { ShopHomePage, ShopDashboardPage } from './routes/shopRoutes';
+import { ShopHomePage, ShopDashboardPage,ShopCreateProduct } from './routes/shopRoutes';
 
 axios.defaults.withCredentials = true;
 
@@ -91,6 +91,13 @@ const App = () => {
               <ShopDashboardPage />
             </SellerProtectedRoute>
           }
+        /><Route
+          path="/dashboard-create-product"
+          element={
+            <SellerProtectedRoute>
+              <ShopCreateProduct />
+            </SellerProtectedRoute>
+          }
         />
       </Routes>
       <ToastContainer
@@ -110,3 +117,4 @@ const App = () => {
 };
 
 export default App;
+  

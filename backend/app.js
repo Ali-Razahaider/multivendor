@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import user from './controllers/userController.js'
 import shop from './controllers/shopController.js'
+import product from './controllers/productController.js'
 import cors from 'cors';
 const app = express();
 
@@ -31,6 +32,7 @@ app.get('/', (req, res) => {
 // import routes
 app.use('/api/user', user);
 app.use('/api/shop', shop);
+app.use('/api/product', product);
 
 // error handling (traversy media)
 app.use(notFound);
