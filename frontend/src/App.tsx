@@ -23,15 +23,13 @@ import Store from './redux/store.js';
 import { loadUser } from './redux/actions/userActions.js';
 import { loadSeller } from './redux/actions/sellerActions.js';
 import ProtectedRoute from './routes/ProtectedRoute';
-import { useSelector } from 'react-redux';
+
 import SellerProtectedRoute from './routes/SellerProtectedRoute';
-import { ShopHomePage, ShopDashboardPage,ShopCreateProduct } from './routes/shopRoutes';
+import { ShopHomePage, ShopDashboardPage, ShopCreateProduct, ShopAllProducts } from './routes/shopRoutes';
 
 axios.defaults.withCredentials = true;
 
 const App = () => {
-  const { loading, isAuthenticated } = useSelector((state) => state.user);
-  const { sellerLoading, isSeller } = useSelector((state) => state.seller);
 
   useEffect(() => {
     Store.dispatch(loadUser());
@@ -91,7 +89,16 @@ const App = () => {
               <ShopDashboardPage />
             </SellerProtectedRoute>
           }
-        /><Route
+        />
+        <Route
+          path="/dashboard-products"
+          element={
+            <SellerProtectedRoute>
+              <ShopAllProducts />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
           path="/dashboard-create-product"
           element={
             <SellerProtectedRoute>

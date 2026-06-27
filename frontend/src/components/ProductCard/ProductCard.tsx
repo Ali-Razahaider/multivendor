@@ -11,12 +11,18 @@ const ProductCard = ({ data }) => {
   const d = data.name;
   const productName = d.replace(/\s+/g, '-');
 
+  const images = data.image_Url || data.images
+  const firstImage = images?.[0]?.url || images?.[0]
+  const discountPrice = data.discount_price ?? data.discountedPrice
+  const rating = data.rating ?? data.ratings ?? 0
+  const totalSold = data.total_sell ?? data.totalSell ?? 0
+
   return (
-    <div className="w-full h-105 bg-white rounded-lg shadow-sm p-3 relative cursor-pointer hover:shadow-md hover:scale-[1.02] transition-all duration-300">
+    <div className="w-full h-105 bg-white rounded-lg shadow-sm p-3 relative cursor-pointer hover:shadow-md transition-all duration-300">
       <div className="flex justify-end">
-        {data.discount_price && data.price && (
+        {discountPrice && data.price && (
           <div className="bg-green-500 text-white px-3 py-1 rounded-lg text-sm font-semibold absolute top-2 left-2">
-            {Math.round(((data.price - data.discount_price) / data.price) * 100)}% Off
+            {Math.round(((data.price - discountPrice) / data.price) * 100)}% Off
           </div>
         )}
         <div className="absolute top-2 right-2 z-10 flex flex-col gap-2">
@@ -42,7 +48,7 @@ const ProductCard = ({ data }) => {
 
       <Link to={`/product/${productName}`}>
         <img
-          src={data.image_Url[0].url}
+          src={firstImage}
           alt={data.name}
           className="w-full h-42.5 object-cover mt-8"
         />
@@ -55,10 +61,10 @@ const ProductCard = ({ data }) => {
       </Link>
 
       <div className="flex items-center mt-2">
-        {data.discount_price ? (
+        {discountPrice ? (
           <>
             <span className={`${styles.productDiscountPrice}`}>
-              {`$${data.discount_price || 0}`}
+              {`$${discountPrice || 0}`}
             </span>
             {data.price && (
               <span className={`${styles.price}`}>
@@ -76,9 +82,9 @@ const ProductCard = ({ data }) => {
       <div className="flex items-center mt-2">
         <div className="flex items-center">
           {[1, 2, 3, 4, 5].map((star) => {
-            if (data.rating >= star) {
+            if (rating >= star) {
               return <AiFillStar key={star} size={15} className="text-yellow-500" />;
-            } else if (data.rating >= star - 0.5) {
+            } else if (rating >= star - 0.5) {
               return (
                 <span key={star} className="relative inline-block">
                   <AiOutlineStar size={15} className="text-gray-400" />
@@ -92,7 +98,7 @@ const ProductCard = ({ data }) => {
             }
           })}
         </div>
-        <span className="text-[13px] text-green-600 ml-auto font-medium">{data.total_sell} sold</span>
+        <span className="text-[13px] text-green-600 ml-auto font-medium">{totalSold} sold</span>
       </div>
       {data.shop && (
         <span className="text-xs text-gray-500 mt-2 block">{data.shop.name}</span>

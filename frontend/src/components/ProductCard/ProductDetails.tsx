@@ -44,7 +44,7 @@ const ProductDetails = ({ data, setOpen }) => {
                 <div className="w-full 800px:w-[50%] pt-30">
                   <div className="flex justify-center items-center bg-gray-50 rounded-lg p-4 mb-4 h-[300px] overflow-hidden">
                     <img
-                      src={`${(data.images || data.image_Url)?.[select]?.url}`}
+                      src={`${(data.images || data.image_Url)?.[select]?.url || (data.images || data.image_Url)?.[select]}`}
                       alt=""
                       className="max-w-full max-h-full object-contain"
                     />
@@ -58,7 +58,7 @@ const ProductDetails = ({ data, setOpen }) => {
                             } cursor-pointer rounded-md overflow-hidden w-15 h-15`}
                           onClick={() => setSelect(index)}
                         >
-                          <img src={`${i?.url}`} alt="" className="w-full h-full object-cover" />
+                          <img src={`${i?.url || i}`} alt="" className="w-full h-full object-cover" />
                         </div>
                       ))}
                   </div>
@@ -67,7 +67,7 @@ const ProductDetails = ({ data, setOpen }) => {
                     <div>
                     <Link to={`/shop/preview/${data?.shop?._id || data?.shopId}`} className="ml-3">
                       <img
-                        src={`${data?.shop?.avatar?.url || data?.shop?.shop_avatar?.url}`}
+                        src={`${typeof data?.shop?.avatar === 'string' ? data.shop.avatar : (data?.shop?.avatar?.url || data?.shop?.shop_avatar?.url)}`}
                         alt=""
                         className="size-[50px] rounded-full border-2 border-gray-300 p-0.5"
                       />
@@ -94,11 +94,17 @@ const ProductDetails = ({ data, setOpen }) => {
                     <p className="text-gray-700 text-sm leading-relaxed">{data.description}</p>
                   </div>
                   <div className="flex items-center gap-4 mb-4">
-                    <h4 className={`${styles.productDiscountPrice} text-xl font-bold`}>
-                      ${data.discountPrice || data.discount_price}
-                    </h4>
-                    {data.price && (
-                      <h3 className="text-base line-through text-gray-500">${data.price}</h3>
+                    {data.discountedPrice || data.discount_price ? (
+                      <>
+                        <h4 className={`${styles.productDiscountPrice} text-xl font-bold`}>
+                          ${data.discountedPrice || data.discount_price}
+                        </h4>
+                        <h3 className="text-base line-through text-gray-500">${data.price}</h3>
+                      </>
+                    ) : (
+                      <h4 className={`${styles.productDiscountPrice} text-xl font-bold`}>
+                        ${data.price}
+                      </h4>
                     )}
                   </div>
 

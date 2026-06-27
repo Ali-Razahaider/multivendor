@@ -105,7 +105,7 @@ const Header = ({ activeHeading }) => {
       </div>
 
       <div
-        className={`${styles.section} ${active ? 'fixed top-0' : 'relative'} w-full bg-blue-500 shadow-md z-10 hidden 800px:block`}
+        className={`${styles.section} ${active ? 'fixed top-0' : 'relative'} w-full bg-blue-500 shadow-md z-50 hidden 800px:block`}
       >
         <div
           className={`${styles.section} relative  flex items-center justify-between`}

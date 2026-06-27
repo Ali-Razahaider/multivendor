@@ -10,9 +10,8 @@ const LoginPage = () => {
     if (isAuthenticated) {
       navigate('/');
     }
-  }
-    , []);
-  
+  }, []);
+
   return (
     <div>
       <Login />
