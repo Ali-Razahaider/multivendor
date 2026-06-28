@@ -2,9 +2,13 @@ import { Link } from 'react-router-dom';
 import styles from '../../styles/styles';
 import { AiFillStar, AiOutlineStar, AiOutlineHeart, AiFillHeart, AiOutlineShoppingCart, AiOutlineEye } from 'react-icons/ai';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 import ProductDetails from './ProductDetails';
+import { addToCart } from '../../redux/actions/cartActions';
 
 const ProductCard = ({ data }) => {
+  const dispatch = useDispatch()
   const [click, setClick] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -16,6 +20,20 @@ const ProductCard = ({ data }) => {
   const discountPrice = data.discount_price ?? data.discountedPrice
   const rating = data.rating ?? data.ratings ?? 0
   const totalSold = data.total_sell ?? data.totalSell ?? 0
+
+  const handleAddToCart = () => {
+    dispatch(addToCart({
+      _id: data._id || data.id,
+      name: data.name,
+      price: data.price,
+      discountedPrice: discountPrice,
+      images: images,
+      shopId: data.shopId,
+      stock: data.countInStock,
+      qty: 1,
+    }))
+    toast.success('Item added to cart')
+  }
 
   return (
     <div className="w-full h-105 bg-white rounded-lg shadow-sm p-3 relative cursor-pointer hover:shadow-md transition-all duration-300">
@@ -41,7 +59,7 @@ const ProductCard = ({ data }) => {
           />
           <AiOutlineShoppingCart size={22}
             className="text-gray-500 hover:text-blue-500 transition"
-            onClick={() => setOpen(!open)}
+            onClick={handleAddToCart}
           />
         </div>
       </div>

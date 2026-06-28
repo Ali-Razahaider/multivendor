@@ -2,11 +2,32 @@ import { useState, useEffect } from "react"
 import { AiFillHeart, AiOutlineHeart, AiOutlineMessage, AiOutlineShoppingCart, AiOutlineClose, AiFillStar, AiOutlineStar } from "react-icons/ai"
 import { Link } from "react-router-dom"
 import styles from "../../styles/styles"
+import { useDispatch } from 'react-redux'
+import { addToCart } from '../../redux/actions/cartActions'
+import { toast } from 'react-toastify'
 
 const ProductDetails = ({ data, setOpen }) => {
+  const dispatch = useDispatch()
   const [count, setCount] = useState(1)
   const [click, setClick] = useState(false)
   const [select, setSelect] = useState(0)
+
+  const images = data.image_Url || data.images
+
+  const handleAddToCart = () => {
+    dispatch(addToCart({
+      _id: data._id || data.id,
+      name: data.name,
+      price: data.price,
+      discountedPrice: data.discountedPrice || data.discount_price,
+      images,
+      shopId: data.shopId,
+      stock: data.countInStock,
+      qty: count,
+    }))
+    toast.success('Item added to cart')
+    setOpen(false)
+  }
 
   useEffect(() => {
     document.body.style.overflow = 'hidden';
@@ -144,7 +165,10 @@ const ProductDetails = ({ data, setOpen }) => {
                       )}
                     </div>
                   </div>
-                  <div className={`${styles.button} !mt-4 !rounded-lg !h-10 flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer`}>
+                  <div
+                    className={`${styles.button} !mt-4 !rounded-lg !h-10 flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer`}
+                    onClick={handleAddToCart}
+                  >
                     <span className="text-white flex items-center text-sm">
                       Add to cart <AiOutlineShoppingCart className="ml-2" size={18} />
                     </span>

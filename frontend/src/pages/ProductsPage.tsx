@@ -33,8 +33,8 @@ const ProductsPage = () => {
             </div>
 
             <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                {data.map((product) => (
-                    <ProductCard key={product.id} data={product} />
+                {data.map((product, idx) => (
+                    <ProductCard key={`${product.id}-${idx}`} data={product} />
                 ))}
                     {data.length === 0 && (
                         <p className="text-gray-500 text-center my-2.5 col-span-full">No products found in this category.</p>
