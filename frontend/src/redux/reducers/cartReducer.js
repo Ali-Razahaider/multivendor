@@ -10,7 +10,7 @@ const cartReducer = createReducer(initialState, (builder) => {
       const item = action.payload
       const index = state.cart.findIndex((i) => i._id === item._id)
       if (index !== -1) {
-        state.cart[index] = item
+        state.cart[index].qty += item.qty
       } else {
         state.cart.push(item)
       }

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { RxCross1 } from 'react-icons/rx'
 import { IoBagHandleOutline } from 'react-icons/io5'
@@ -65,6 +66,14 @@ function Cart({ setOpenCart }) {
   const dispatch = useDispatch()
   const { cart } = useSelector((state) => state.cart)
   const totalPrice = cart.reduce((acc, item) => acc + item.qty * (item.discountedPrice || item.price), 0)
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') setOpenCart(false)
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [setOpenCart])
 
   return (
     <div className="fixed top-0 left-0 w-full bg-black/30 h-screen z-50">

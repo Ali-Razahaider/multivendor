@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { RxCross1 } from 'react-icons/rx';
 import { IoHeartOutline } from 'react-icons/io5';
 import { AiOutlineShoppingCart } from 'react-icons/ai';
@@ -17,6 +18,14 @@ const WishlistSingle = ({ data }) => {
 }
 
 function Wishlist({ setOpenWishlist }) {
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') setOpenWishlist(false)
+        }
+        window.addEventListener('keydown', handleKeyDown)
+        return () => window.removeEventListener('keydown', handleKeyDown)
+    }, [setOpenWishlist])
+
     const wishlistData = [
         { name: "Iphone 14 Pro Max", price: 120000, img: "https://shopo.quomodothemes.website/assets/images/products/apple-iphone-14-pro-max-1.jpg" },
         { name: "Macbook Pro M2", price: 150000, img: "https://shopo.quomodothemes.website/assets/images/products/apple-macbook-pro-m2-1.jpg" }
