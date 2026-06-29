@@ -1,13 +1,14 @@
-export const addToCart = (item) => ({
-  type: 'addToCart',
-  payload: item,
-})
+export const addToCart = (item) => (dispatch, getState) => {
+  dispatch({ type: 'addToCart', payload: item })
+  localStorage.setItem('cartItems', JSON.stringify(getState().cart.cart))
+}
 
-export const removeFromCart = (id) => ({
-  type: 'removeFromCart',
-  payload: id,
-})
+export const removeFromCart = (id) => (dispatch, getState) => {
+  dispatch({ type: 'removeFromCart', payload: id })
+  localStorage.setItem('cartItems', JSON.stringify(getState().cart.cart))
+}
 
-export const clearCart = () => ({
-  type: 'clearCart',
-})
+export const clearCart = () => (dispatch, getState) => {
+  dispatch({ type: 'clearCart' })
+  localStorage.removeItem('cartItems')
+}
