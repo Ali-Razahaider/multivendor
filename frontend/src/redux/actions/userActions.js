@@ -15,3 +15,19 @@ export const loadUser = () => async (dispatch) => {
     });
   }
 };
+
+export const updateProfile = (data) => async (dispatch) => {
+  try {
+    dispatch({ type: 'UpdateProfileRequest' });
+    const res = await axios.put(`${server}user/update-profile`, data, {
+      withCredentials: true,
+      headers: { 'Content-Type': 'application/json' },
+    });
+    dispatch({ type: 'UpdateProfileSuccess', payload: res.data.user });
+  } catch (error) {
+    dispatch({
+      type: 'UpdateProfileFail',
+      payload: error.response?.data?.message || error.message,
+    });
+  }
+};

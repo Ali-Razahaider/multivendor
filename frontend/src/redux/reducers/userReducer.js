@@ -19,6 +19,17 @@ const userReducer = createReducer(initialState, (builder) => {
     state.loading = false;
     state.error = action.payload;
   });
+  builder.addCase('UpdateProfileRequest', (state) => {
+    state.loading = true;
+  });
+  builder.addCase('UpdateProfileSuccess', (state, action) => {
+    state.loading = false;
+    state.user = action.payload;
+  });
+  builder.addCase('UpdateProfileFail', (state, action) => {
+    state.loading = false;
+    state.error = action.payload;
+  });
   builder.addCase('clearErrors', (state) => {
     state.error = null;
   });

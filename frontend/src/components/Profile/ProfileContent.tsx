@@ -1,14 +1,54 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { AiOutlineArrowRight, AiOutlineCamera } from "react-icons/ai";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import styles from "../../styles/styles";
 import { DataGrid } from "@mui/x-data-grid";
 import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
 import { MdTrackChanges } from "react-icons/md";
+import { toast } from "react-toastify";
+import { updateProfile } from "../../redux/actions/userActions";
 
 const ProfileContent = ({ active }) => {
-  const { user } = useSelector((state) => state.user);
+  const { user, error, loading } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setEmail(user.email || "");
+      setPhoneNumber(user.phoneNumber || "");
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch({ type: 'clearErrors' });
+    }
+  }, [error, dispatch]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const data = {};
+    if (name && name !== user?.name) data.name = name;
+    if (email && email !== user?.email) data.email = email;
+    if (phoneNumber && phoneNumber !== user?.phoneNumber) data.phoneNumber = phoneNumber;
+    if (oldPassword) data.oldPassword = oldPassword;
+    if (newPassword) data.newPassword = newPassword;
+    dispatch(updateProfile(data));
+    if (!error) {
+      toast.success("Profile updated successfully");
+      setOldPassword("");
+      setNewPassword("");
+    }
+  };
 
   return (
     <div className="w-full">
@@ -33,15 +73,15 @@ const ProfileContent = ({ active }) => {
           <br />
           <br />
           <div className="w-full px-5">
-            <form aria-required={true} onSubmit={(e) => e.preventDefault()}>
+            <form aria-required={true} onSubmit={handleSubmit}>
               <div className="w-full 800px:flex block pb-3">
                 <div className=" w-full 800px:w-[50%]">
                   <label className="block pb-2">Full Name</label>
                   <input
                     type="text"
                     className={`${styles.input} !w-full 800px:!w-[95%] mb-4 800px:mb-0`}
-                    required
-                    placeholder={user?.name}
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
                   />
                 </div>
                 <div className=" w-full 800px:w-[50%]">
@@ -49,8 +89,8 @@ const ProfileContent = ({ active }) => {
                   <input
                     type="text"
                     className={`${styles.input} !w-full 800px:!w-[95%] mb-1 800px:mb-0`}
-                    required
-                    placeholder={user?.email}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
               </div>
@@ -61,24 +101,39 @@ const ProfileContent = ({ active }) => {
                   <input
                     type="number"
                     className={`${styles.input} !w-full 800px:!w-[95%] mb-4 800px:mb-0`}
-                    required
-                    placeholder={user?.phoneNumber}
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
                   />
                 </div>
 
                 <div className=" w-full 800px:w-[50%]">
-                  <label className="block pb-2">Enter your password</label>
+                  <label className="block pb-2">Old Password</label>
                   <input
                     type="password"
                     className={`${styles.input} !w-full 800px:!w-[95%] mb-4 800px:mb-0`}
-                    required
+                    value={oldPassword}
+                    onChange={(e) => setOldPassword(e.target.value)}
                   />
                 </div>
               </div>
+
+              <div className="w-full 800px:flex block pb-3">
+                <div className=" w-full 800px:w-[50%]">
+                  <label className="block pb-2">New Password</label>
+                  <input
+                    type="password"
+                    className={`${styles.input} !w-full 800px:!w-[95%] mb-4 800px:mb-0`}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                  />
+                </div>
+              </div>
+
               <input
                 className={`w-full 800px:w-[250px] h-[40px] border border-[#3a24db] text-center text-[#3a24db] rounded-[3px] mt-8 cursor-pointer`}
-                value="Update"
+                value={loading ? "Updating..." : "Update"}
                 type="submit"
+                disabled={loading}
               />
             </form>
           </div>

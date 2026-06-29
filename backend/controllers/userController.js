@@ -137,4 +137,54 @@ router.post('/logout', isAuthenticated, asyncHandler(async (req, res, next) => {
   });
 }))
 
+//update user profile
+router.put(
+  '/update-profile',
+  isAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const { name, email, phoneNumber, oldPassword, newPassword } = req.body;
+
+    const user = await User.findById(req.user._id).select('+password');
+
+    if (!user) {
+      res.status(404);
+      throw new Error('User not found');
+    }
+
+    if (email && email !== user.email) {
+      const emailExists = await User.findOne({ email });
+      if (emailExists) {
+        res.status(400);
+        throw new Error('Email already in use');
+      }
+      user.email = email;
+    }
+
+    if (name) user.name = name;
+    if (phoneNumber !== undefined) user.phoneNumber = phoneNumber;
+
+    if (newPassword) {
+      if (!oldPassword) {
+        res.status(400);
+        throw new Error('Please provide your current password');
+      }
+      const isMatch = await user.comparePassword(oldPassword);
+      if (!isMatch) {
+        res.status(401);
+        throw new Error('Current password is incorrect');
+      }
+      user.password = newPassword;
+    }
+
+    const updatedUser = await user.save();
+    updatedUser.password = undefined;
+
+    res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      user: updatedUser,
+    });
+  })
+);
+
 export default router;
