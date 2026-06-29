@@ -2,6 +2,10 @@ import { useState } from "react"
 import { AiFillHeart, AiOutlineHeart, AiOutlineShoppingCart, AiFillStar, AiOutlineStar } from "react-icons/ai"
 import { Link } from "react-router-dom"
 import styles from "../../styles/styles"
+import { useSelector, useDispatch } from 'react-redux'
+import { addToWishlist, removeFromWishlist } from '../../redux/actions/wishlistActions'
+import { addToCart } from '../../redux/actions/cartActions'
+import { toast } from 'react-toastify'
 
 const ProductDetailsInfo = ({ data }) => {
     const [active, setActive] = useState(1)
@@ -129,9 +133,11 @@ const ProductDetailsInfo = ({ data }) => {
 }
 
 function ProductDetails({ data }) {
+    const dispatch = useDispatch()
+    const { wishlist } = useSelector((state) => state.wishlist)
     const [count, setCount] = useState(1)
-    const [click, setClick] = useState(false)
     const [select, setSelect] = useState(0)
+    const isWishlisted = wishlist?.find((i) => (i._id || i.id) === (data?._id || data?.id))
 
     if (!data) return <div className="text-center py-20 text-gray-500">Product not found</div>
 
@@ -175,7 +181,7 @@ function ProductDetails({ data }) {
                         <h1 className={`${styles.productTitle} mb-3`}>{data.name}</h1>
                         <p className="text-gray-700 text-md leading-relaxed mb-4">{data.description}</p>
                         <div className={`${styles.normalFlex} gap-4 mb-4`}>
-                            <h4 className={`${styles.productDiscountPrice}`}>${data.discountPrice || data.discount_price}</h4>
+                            <h4 className={`${styles.productDiscountPrice}`}>${data.discountedPrice || data.discount_price}</h4>
                             {data.price && <h3 className={`${styles.price} !pl-0`}>${data.price}</h3>}
                         </div>
                         <div className={`${styles.normalFlex} justify-between pr-3`}>
@@ -184,11 +190,30 @@ function ProductDetails({ data }) {
                                 <span className="bg-white text-gray-800 font-medium px-4 py-1.5 min-w-[40px] text-center text-sm">{count}</span>
                                 <button className="bg-gray-100 text-gray-700 font-bold px-3 py-1.5 hover:bg-gray-200 text-sm" onClick={() => count > 1 && setCount(count - 1)}>-</button>
                             </div>
-                            <div onClick={() => setClick(!click)} className="cursor-pointer">
-                                {click ? <AiFillHeart size={28} className="text-red-500" /> : <AiOutlineHeart size={28} className="text-gray-500" />}
+                            <div className="cursor-pointer">
+                                {isWishlisted ? (
+                                    <AiFillHeart size={28} className="text-red-500" onClick={() => dispatch(removeFromWishlist(data._id || data.id))} />
+                                ) : (
+                                    <AiOutlineHeart size={28} className="text-gray-500" onClick={() => dispatch(addToWishlist({ ...data, _id: data._id || data.id }))} />
+                                )}
                             </div>
                         </div>
-                        <div className={`${styles.button} !w-full !mt-4 !rounded-lg !h-10`}>
+                        <div
+                            className={`${styles.button} !w-full !mt-4 !rounded-lg !h-10 cursor-pointer`}
+                            onClick={() => {
+                                dispatch(addToCart({
+                                    _id: data._id || data.id,
+                                    name: data.name,
+                                    price: data.price,
+                                    discountedPrice: data.discountedPrice || data.discount_price,
+                                    images: data.images || data.image_Url,
+                                    shopId: data.shopId,
+                                    stock: data.countInStock,
+                                    qty: count,
+                                }))
+                                toast.success('Item added to cart')
+                            }}
+                        >
                             <span className="text-white flex items-center text-sm">
                                 Add to cart <AiOutlineShoppingCart className="ml-2" size={18} />
                             </span>

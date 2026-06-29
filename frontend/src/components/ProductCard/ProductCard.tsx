@@ -2,15 +2,17 @@ import { Link } from 'react-router-dom';
 import styles from '../../styles/styles';
 import { AiFillStar, AiOutlineStar, AiOutlineHeart, AiFillHeart, AiOutlineShoppingCart, AiOutlineEye } from 'react-icons/ai';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import ProductDetails from './ProductDetails';
 import { addToCart } from '../../redux/actions/cartActions';
+import { addToWishlist, removeFromWishlist } from '../../redux/actions/wishlistActions';
 
 const ProductCard = ({ data }) => {
   const dispatch = useDispatch()
-  const [click, setClick] = useState(false);
+  const { wishlist } = useSelector((state) => state.wishlist)
   const [open, setOpen] = useState(false);
+  const isWishlisted = wishlist?.find((i) => (i._id || i.id) === (data._id || data.id))
 
   const d = data.name;
   const productName = d.replace(/\s+/g, '-');
@@ -44,13 +46,13 @@ const ProductCard = ({ data }) => {
           </div>
         )}
         <div className="absolute top-2 right-2 z-10 flex flex-col gap-2">
-          {click ? (
+          {isWishlisted ? (
             <AiFillHeart size={22} className="text-red-500"
-              onClick={() => setClick(!click)}
+              onClick={() => dispatch(removeFromWishlist(data._id || data.id))}
             />
           ) : (
             <AiOutlineHeart size={22} className="text-gray-500 hover:text-red-500 transition"
-              onClick={() => setClick(!click)}
+              onClick={() => dispatch(addToWishlist({ ...data, _id: data._id || data.id }))}
             />
           )}
           <AiOutlineEye size={22}

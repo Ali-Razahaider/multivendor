@@ -2,15 +2,17 @@ import { useState, useEffect } from "react"
 import { AiFillHeart, AiOutlineHeart, AiOutlineMessage, AiOutlineShoppingCart, AiOutlineClose, AiFillStar, AiOutlineStar } from "react-icons/ai"
 import { Link } from "react-router-dom"
 import styles from "../../styles/styles"
-import { useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { addToCart } from '../../redux/actions/cartActions'
+import { addToWishlist, removeFromWishlist } from '../../redux/actions/wishlistActions'
 import { toast } from 'react-toastify'
 
 const ProductDetails = ({ data, setOpen }) => {
   const dispatch = useDispatch()
+  const { wishlist } = useSelector((state) => state.wishlist)
   const [count, setCount] = useState(1)
-  const [click, setClick] = useState(false)
   const [select, setSelect] = useState(0)
+  const isWishlisted = wishlist?.find((i) => (i._id || i.id) === (data._id || data.id))
 
   const images = data.image_Url || data.images
 
@@ -148,18 +150,18 @@ const ProductDetails = ({ data, setOpen }) => {
                       </button>
                     </div>
                     <div>
-                      {click ? (
+                      {isWishlisted ? (
                         <AiFillHeart
                           size={28}
                           className="cursor-pointer hover:scale-110 transition-transform"
-                          onClick={() => setClick(!click)}
+                          onClick={() => dispatch(removeFromWishlist(data._id || data.id))}
                           color="red"
                         />
                       ) : (
                         <AiOutlineHeart
                           size={28}
                           className="cursor-pointer hover:scale-110 transition-transform"
-                          onClick={() => setClick(!click)}
+                          onClick={() => dispatch(addToWishlist({ ...data, _id: data._id || data.id }))}
                           color="#333"
                         />
                       )}
