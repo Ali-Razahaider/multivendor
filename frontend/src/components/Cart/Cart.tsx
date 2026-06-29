@@ -9,6 +9,7 @@ import { addToCart, removeFromCart } from '../../redux/actions/cartActions'
 
 const CartSingle = ({ data }) => {
   const dispatch = useDispatch()
+  const productName = data.name?.replace(/\s+/g, '-')
 
   const handleIncrement = () => {
     dispatch(addToCart({ ...data, qty: data.qty + 1 }))
@@ -22,15 +23,19 @@ const CartSingle = ({ data }) => {
 
   return (
     <div className="flex items-center p-4 border-b">
-      <img
-        src={data.images?.[0]?.url || data.images?.[0] || data.img}
-        alt={data.name}
-        className="w-16 h-16 object-cover rounded-md"
-      />
+      <Link to={`/product/${productName}`}>
+        <img
+          src={data.images?.[0]?.url || data.images?.[0] || data.img}
+          alt={data.name}
+          className="w-16 h-16 object-cover rounded-md"
+        />
+      </Link>
       <div className="ml-3 flex-1">
         <div className="flex items-start justify-between">
           <div>
-            <h5 className="text-[15px] font-medium">{data.name}</h5>
+            <Link to={`/product/${productName}`}>
+              <h5 className="text-[15px] font-medium hover:text-blue-600">{data.name}</h5>
+            </Link>
             <h5 className="text-sm text-gray-500">USD ${data.discountedPrice || data.price}</h5>
           </div>
         </div>

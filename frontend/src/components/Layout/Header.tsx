@@ -22,6 +22,7 @@ const Header = ({ activeHeading }) => {
   const { isAuthenticated, user } = useSelector((state) => state.user);
   const { isSeller, seller } = useSelector((state) => state.seller);
   const { cart } = useSelector((state) => state.cart);
+  const { wishlist } = useSelector((state) => state.wishlist);
   const [openCart, setOpenCart] = useState(false);
   const [openWishlist, setOpenWishlist] = useState(false);
   const [open, setOpen] = useState(false);
@@ -153,7 +154,7 @@ const Header = ({ activeHeading }) => {
             <div className="relative cursor-pointer mr-3.75" onClick={() => setOpenWishlist(true)}>
               <IoHeartOutline size={25} className="text-white" />
               <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
-                0
+                {wishlist?.length || 0}
               </span>
             </div>
             {/* cart icon */}
@@ -218,7 +219,7 @@ const Header = ({ activeHeading }) => {
                   >
                     <AiOutlineHeart size={30} className="mt-5 ml-3" />
                     <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 text-white font-mono text-[12px] leading-tight text-center">
-                      0
+                      {wishlist?.length || 0}
                     </span>
                   </div>
                 </div>
