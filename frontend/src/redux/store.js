@@ -6,6 +6,7 @@ import sellerReducer from './reducers/sellerReducer.js';
 import productReducer from './reducers/productReducer.js';
 import eventReducer from './reducers/eventReducer.js';
 import couponReducer from './reducers/couponReducer.js';
+import orderReducer from './reducers/orderReducer.js';
 const Store = configureStore({
   reducer: {
     user: userReducer,
@@ -15,6 +16,7 @@ const Store = configureStore({
     product: productReducer,
     events: eventReducer,
     coupon: couponReducer,
+    order: orderReducer,
   },
 });
 
