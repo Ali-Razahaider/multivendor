@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { MdTrackChanges } from "react-icons/md";
 import { toast } from "react-toastify";
 import { updateProfile } from "../../redux/actions/userActions";
+import { getAllOrdersOfUser } from "../../redux/actions/orderActions";
 
 const ProfileContent = ({ active }) => {
   const { user, error, loading } = useSelector((state) => state.user);
@@ -207,6 +208,16 @@ const ProfileContent = ({ active }) => {
 };
 
 const AllOrders = () => {
+  const { orders } = useSelector((state) => state.order);
+  const { user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (user) {
+      dispatch(getAllOrdersOfUser(user._id));
+    }
+  }, [dispatch, user]);
+
   const columns = [
     { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
 
@@ -258,12 +269,17 @@ const AllOrders = () => {
     },
   ];
 
-  const row = [];
+  const rows = (orders || []).map((item) => ({
+    id: item._id,
+    itemsQty: item.cart?.reduce((acc, c) => acc + c.qty, 0) || 0,
+    total: item.totalPrice || 0,
+    status: item.status,
+  }));
 
   return (
     <div className="pl-8 pt-1">
       <DataGrid
-        rows={row}
+        rows={rows}
         columns={columns}
         initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
         pageSizeOptions={[10]}
@@ -275,6 +291,16 @@ const AllOrders = () => {
 };
 
 const AllRefundOrders = () => {
+  const { orders } = useSelector((state) => state.order);
+  const { user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (user) {
+      dispatch(getAllOrdersOfUser(user._id));
+    }
+  }, [dispatch, user]);
+
   const columns = [
     { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
 
@@ -326,12 +352,19 @@ const AllRefundOrders = () => {
     },
   ];
 
-  const row = [];
+  const rows = (orders || [])
+    .filter((item) => item.status === "Processing refund" || item.status === "Refund Success")
+    .map((item) => ({
+      id: item._id,
+      itemsQty: item.cart?.reduce((acc, c) => acc + c.qty, 0) || 0,
+      total: item.totalPrice || 0,
+      status: item.status,
+    }));
 
   return (
     <div className="pl-8 pt-1">
       <DataGrid
-        rows={row}
+        rows={rows}
         columns={columns}
         initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
         pageSizeOptions={[10]}
@@ -343,6 +376,16 @@ const AllRefundOrders = () => {
 };
 
 const TrackOrder = () => {
+  const { orders } = useSelector((state) => state.order);
+  const { user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (user) {
+      dispatch(getAllOrdersOfUser(user._id));
+    }
+  }, [dispatch, user]);
+
   const columns = [
     { field: "id", headerName: "Order ID", minWidth: 150, flex: 0.7 },
 
@@ -394,12 +437,17 @@ const TrackOrder = () => {
     },
   ];
 
-  const row = [];
+  const rows = (orders || []).map((item) => ({
+    id: item._id,
+    itemsQty: item.cart?.reduce((acc, c) => acc + c.qty, 0) || 0,
+    total: item.totalPrice || 0,
+    status: item.status,
+  }));
 
   return (
     <div className="pl-8 pt-1">
       <DataGrid
-        rows={row}
+        rows={rows}
         columns={columns}
         initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
         pageSizeOptions={[10]}
