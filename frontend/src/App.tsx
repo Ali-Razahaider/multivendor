@@ -11,6 +11,8 @@ import {
   ProductDetailsPage,
   ProfilePage,
   CheckoutPage,
+  PaymentPage,
+  OrderSuccessPage,
   ShopCreatePage,
   ShopLoginPage,
 } from './routes/Routes';
@@ -68,6 +70,22 @@ const App = () => {
           element={
             <ProtectedRoute>
               <CheckoutPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payment"
+          element={
+            <ProtectedRoute>
+              <PaymentPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/order/success"
+          element={
+            <ProtectedRoute>
+              <OrderSuccessPage />
             </ProtectedRoute>
           }
         />

@@ -9,7 +9,9 @@ import FaqPage from '../pages/FaqPage';
 import ProductDetailsPage from '../pages/ProductDetailsPage';
 import ProfilePage from '../pages/ProfilePage';
 import CheckoutPage from '../pages/CheckoutPage';
+import PaymentPage from '../pages/PaymentPage';
+import OrderSuccessPage from '../pages/OrderSuccessPage';
 import ShopCreatePage from '../pages/ShopCreatePage';
 import ShopLoginPage from '../pages/ShopLoginPage';
 
-export { LoginPage, HomePage, RegisterPage, ActivationPage, ProductsPage, BestSellingPage, EventPage, FaqPage, ProductDetailsPage, ProfilePage, CheckoutPage, ShopCreatePage, ShopLoginPage };
+export { LoginPage, HomePage, RegisterPage, ActivationPage, ProductsPage, BestSellingPage, EventPage, FaqPage, ProductDetailsPage, ProfilePage, CheckoutPage, PaymentPage, OrderSuccessPage, ShopCreatePage, ShopLoginPage };
