@@ -28,6 +28,17 @@ const orderReducer = createReducer(initialState, (builder) => {
       state.isLoading = false;
       state.error = action.payload;
     })
+    .addCase('getAllOrdersSellerRequest', (state) => {
+      state.isLoading = true;
+    })
+    .addCase('getAllOrdersSellerSuccess', (state, action) => {
+      state.isLoading = false;
+      state.sellerOrders = action.payload;
+    })
+    .addCase('getAllOrdersSellerFailed', (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+    })
     .addCase('clearErrors', (state) => {
       state.error = null;
     })
