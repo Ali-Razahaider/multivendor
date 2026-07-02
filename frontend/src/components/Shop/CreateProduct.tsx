@@ -38,7 +38,7 @@ const CreateProduct = () => {
   const [category, setCategory] = useState('')
   const [tags, setTags] = useState('')
   const [price, setPrice] = useState(0)
-  const [discountedPrice, setDiscountedPrice] = useState(0)
+  const [discountedPrice, setDiscountedPrice] = useState<number | undefined>(undefined)
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -50,7 +50,7 @@ const CreateProduct = () => {
         category,
         countInStock,
         tags,
-        discountedPrice: discountedPrice || undefined,
+        discountedPrice: discountedPrice ?? null,
         images: [defaultImage],
       })
     )
@@ -126,9 +126,9 @@ const CreateProduct = () => {
                 <Input
                   id="discountedPrice"
                   type="number"
-                  value={discountedPrice}
-                  onChange={(e) => setDiscountedPrice(e.target.valueAsNumber)}
-                  placeholder="0"
+                  value={discountedPrice ?? ''}
+                  onChange={(e) => setDiscountedPrice(e.target.value === '' ? undefined : e.target.valueAsNumber)}
+                  placeholder="Leave empty for no discount"
                   min="0"
                   step="0.01"
                 />

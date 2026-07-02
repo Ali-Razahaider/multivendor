@@ -7,6 +7,16 @@ import axios from 'axios'
 import server from '../../server'
 import { useNavigate } from 'react-router-dom'
 
+const fallbackShop = {
+  _id: 'fallback-shop-1',
+  name: 'Apple Inc.',
+  description: 'Leading technology company specializing in consumer electronics, software, and services.',
+  address: '123 Innovation Drive, Cupertino, CA 95014',
+  phoneNumber: '+1 (408) 996-1010',
+  avatar: 'https://www.hatchwise.com/wp-content/uploads/2022/05/amazon-logo-1024x683.png',
+  createdAt: '2024-01-15T00:00:00.000Z',
+}
+
 const ShopInfo = ({ isOwner }) => {
   const { seller, isLoading: sellerLoading } = useSelector((state) => state.seller)
   const navigate = useNavigate()
@@ -25,7 +35,10 @@ const ShopInfo = ({ isOwner }) => {
           setData(res.data.shop)
           setLoading(false)
         })
-        .catch(() => setLoading(false))
+        .catch(() => {
+          setData(fallbackShop)
+          setLoading(false)
+        })
     }
   }, [id, isOwner])
 

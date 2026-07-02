@@ -11,6 +11,7 @@ import { addToWishlist, removeFromWishlist } from '../../redux/actions/wishlistA
 const ProductCard = ({ data }) => {
   const dispatch = useDispatch()
   const { wishlist } = useSelector((state) => state.wishlist)
+  const { isSeller } = useSelector((state) => state.seller)
   const [open, setOpen] = useState(false);
   const isWishlisted = wishlist?.find((i) => (i._id || i.id) === (data._id || data.id))
 
@@ -40,29 +41,35 @@ const ProductCard = ({ data }) => {
   return (
     <div className="w-full h-105 bg-white rounded-lg shadow-sm p-3 relative cursor-pointer hover:shadow-md transition-all duration-300">
       <div className="flex justify-end">
-        {discountPrice && data.price && (
+        {discountPrice && data.price && data.price > discountPrice && (
           <div className="bg-green-500 text-white px-3 py-1 rounded-lg text-sm font-semibold absolute top-2 left-2">
             {Math.round(((data.price - discountPrice) / data.price) * 100)}% Off
           </div>
         )}
-        <div className="absolute top-2 right-2 z-10 flex flex-col gap-2">
-          {isWishlisted ? (
-            <AiFillHeart size={22} className="text-red-500"
-              onClick={() => dispatch(removeFromWishlist(data._id || data.id))}
-            />
-          ) : (
-            <AiOutlineHeart size={22} className="text-gray-500 hover:text-red-500 transition"
-              onClick={() => dispatch(addToWishlist({ ...data, _id: data._id || data.id }))}
-            />
+        <div className="absolute top-2 right-2 z-10 flex flex-col gap-2 bg-white/80 backdrop-blur-sm rounded-lg p-1.5 shadow-sm">
+          {!isSeller && (
+            <>
+              {isWishlisted ? (
+                <AiFillHeart size={22} className="text-red-500"
+                  onClick={() => dispatch(removeFromWishlist(data._id || data.id))}
+                />
+              ) : (
+                <AiOutlineHeart size={22} className="text-gray-700 hover:text-red-500 transition"
+                  onClick={() => dispatch(addToWishlist({ ...data, _id: data._id || data.id }))}
+                />
+              )}
+            </>
           )}
           <AiOutlineEye size={22}
-            className="text-gray-500 hover:text-blue-500 transition"
+            className="text-gray-700 hover:text-blue-500 transition"
             onClick={() => setOpen(!open)}
           />
-          <AiOutlineShoppingCart size={22}
-            className="text-gray-500 hover:text-blue-500 transition"
-            onClick={handleAddToCart}
-          />
+          {!isSeller && (
+            <AiOutlineShoppingCart size={22}
+              className="text-gray-700 hover:text-blue-500 transition"
+              onClick={handleAddToCart}
+            />
+          )}
         </div>
       </div>
 
@@ -81,16 +88,14 @@ const ProductCard = ({ data }) => {
       </Link>
 
       <div className="flex items-center mt-2">
-        {discountPrice ? (
+        {discountPrice && data.price && data.price > discountPrice ? (
           <>
             <span className={`${styles.productDiscountPrice}`}>
-              {`$${discountPrice || 0}`}
+              ${discountPrice}
             </span>
-            {data.price && (
-              <span className={`${styles.price}`}>
-                ${data.price}
-              </span>
-            )}
+            <span className={`${styles.price}`}>
+              ${data.price}
+            </span>
           </>
         ) : (
           <span className={`${styles.productDiscountPrice}`}>

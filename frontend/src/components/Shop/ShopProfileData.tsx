@@ -6,6 +6,7 @@ import { AiFillStar, AiOutlineStar } from 'react-icons/ai'
 import styles from '../../styles/styles'
 import { getShopProducts } from '../../redux/actions/productActions'
 import { getShopEvents } from '../../redux/actions/eventActions'
+import { productData } from '../../static/data'
 
 const tabs = [
   { id: 'products', label: 'Shop Products' },
@@ -54,24 +55,28 @@ const ShopProfileData = ({ isOwner }) => {
 
       {active === 'products' && (
         <div className="py-5">
-          {!products || products.length === 0 ? (
-            <div className="flex items-center justify-center h-[300px]">
-              <p className="text-[#000000a6] text-[16px]">No products yet</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5">
-              {products.map((product, idx) => (
-                <ProductCard key={product._id || idx} data={product} />
-              ))}
-            </div>
-          )}
+          {(() => {
+            const displayProducts = products?.length > 0 ? products : productData
+            return displayProducts.length === 0 ? (
+              <div className="flex items-center justify-center h-[300px]">
+                <p className="text-[#000000a6] text-[16px]">No products yet</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5">
+                {displayProducts.map((product, idx) => (
+                  <ProductCard key={product._id || product.id || idx} data={product} />
+                ))}
+              </div>
+            )
+          })()}
         </div>
       )}
 
       {active === 'reviews' && (
         <div className="py-5">
           {(() => {
-            const allReviews = products?.flatMap(
+            const displayProducts = products?.length > 0 ? products : productData
+            const allReviews = displayProducts.flatMap(
               (product) => product.reviews?.map((review) => ({ ...review, productName: product.name })) || []
             )
             return !allReviews || allReviews.length === 0 ? (

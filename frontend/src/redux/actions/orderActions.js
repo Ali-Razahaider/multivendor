@@ -33,6 +33,23 @@ export const getAllOrdersOfUser = (userId) => async (dispatch) => {
   }
 };
 
+export const updateOrderStatus = (id, status) => async (dispatch) => {
+  try {
+    dispatch({ type: 'updateOrderStatusRequest' });
+    const { data } = await axios.put(
+      `${server}order/update-order-status/${id}`,
+      { status },
+      { withCredentials: true }
+    );
+    dispatch({ type: 'updateOrderStatusSuccess', payload: data.order });
+  } catch (error) {
+    dispatch({
+      type: 'updateOrderStatusFail',
+      payload: error.response?.data?.message || error.message,
+    });
+  }
+};
+
 export const getAllOrdersOfSeller = (shopId) => async (dispatch) => {
   try {
     dispatch({ type: 'getAllOrdersSellerRequest' });

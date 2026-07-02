@@ -28,7 +28,7 @@ const EditProduct = ({ product, open, setOpen }) => {
   const [category, setCategory] = useState('')
   const [tags, setTags] = useState('')
   const [price, setPrice] = useState(0)
-  const [discountedPrice, setDiscountedPrice] = useState(0)
+  const [discountedPrice, setDiscountedPrice] = useState<number | undefined>(undefined)
 
   useEffect(() => {
     dispatch(clearErrors())
@@ -42,7 +42,7 @@ const EditProduct = ({ product, open, setOpen }) => {
       setCategory(product.category || '')
       setTags(product.tags || '')
       setPrice(product.price || 0)
-      setDiscountedPrice(product.discountedPrice || 0)
+      setDiscountedPrice(product.discountedPrice ?? undefined)
     }
   }, [product])
 
@@ -69,7 +69,7 @@ const EditProduct = ({ product, open, setOpen }) => {
         category,
         countInStock,
         tags,
-        discountedPrice: discountedPrice || undefined,
+        discountedPrice: discountedPrice ?? null,
       })
     )
   }
@@ -144,9 +144,9 @@ const EditProduct = ({ product, open, setOpen }) => {
                 <Input
                   id="edit-discountedPrice"
                   type="number"
-                  value={discountedPrice}
-                  onChange={(e) => setDiscountedPrice(e.target.valueAsNumber)}
-                  placeholder="0"
+                  value={discountedPrice ?? ''}
+                  onChange={(e) => setDiscountedPrice(e.target.value === '' ? undefined : e.target.valueAsNumber)}
+                  placeholder="Leave empty for no discount"
                   min="0"
                   step="0.01"
                 />

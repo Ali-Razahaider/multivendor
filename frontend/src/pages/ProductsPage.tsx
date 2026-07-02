@@ -1,28 +1,27 @@
-import {useEffect, useState} from 'react'
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import styles from '../styles/styles'
 import ProductCard from '../components/ProductCard/ProductCard'
 import Header from '../components/Layout/Header'
-import { productData } from '../static/data';
-import Footer from '../components/Layout/Footer';
-import { useSearchParams } from 'react-router';
+import Footer from '../components/Layout/Footer'
+import { useSearchParams } from 'react-router'
+import { getAllProducts } from '../redux/actions/productActions'
+import { productData } from '../static/data'
 
 const ProductsPage = () => {
-    const [ searchParams ] = useSearchParams();
-    const category = searchParams.get('category');
-    const [data, setData] = useState([]);
-    
+    const dispatch = useDispatch()
+    const { products } = useSelector((state) => state.product)
+    const [ searchParams ] = useSearchParams()
+    const category = searchParams.get('category')
+
     useEffect(() => {
-        // Fetch products based on category
-        if (category) {
-            const filteredData = productData.filter((product) => product.category === category);
-            setData(filteredData);
-        } else {
-            setData(productData);
-        }
-    }, [category]);
-        
-    
-    
+      dispatch(getAllProducts())
+    }, [dispatch])
+
+    const allProducts = [...productData, ...(products || [])]
+    const data = category
+      ? allProducts.filter((p) => p.category === category)
+      : allProducts
 
     return (
         <>
@@ -34,7 +33,7 @@ const ProductsPage = () => {
 
             <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
                 {data.map((product, idx) => (
-                    <ProductCard key={`${product.id}-${idx}`} data={product} />
+                    <ProductCard key={`${product._id || product.id}-${idx}`} data={product} />
                 ))}
                     {data.length === 0 && (
                         <p className="text-gray-500 text-center my-2.5 col-span-full">No products found in this category.</p>

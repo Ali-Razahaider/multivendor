@@ -3,6 +3,8 @@ import asyncHandler from 'express-async-handler';
 import { isAuthenticated, isSeller } from '../middleware/authMiddleware.js';
 import Order from '../models/orderModel.js';
 import Product from '../models/productModel.js';
+import sendMail from '../utils/sendMail.js';
+import { orderConfirmationTemplate, statusUpdateTemplate } from '../utils/emailTemplates.js';
 
 const router = express.Router();
 
@@ -43,6 +45,15 @@ router.post(
         await product.save();
       }
     }
+
+    const total = Array.isArray(orders) ? orders.reduce((s, o) => s + (o.totalPrice || 0), 0) : 0;
+
+    await sendMail({
+      email: user.email,
+      subject: 'Order Confirmed',
+      message: `Hello ${user.name}, your order has been placed successfully. Order ID: ${orders.map(o => o._id).join(', ')}`,
+      html: orderConfirmationTemplate(user.name, orders.map(o => o._id).join(', '), total.toFixed(2), cart),
+    });
 
     res.status(201).json({
       success: true,
@@ -103,6 +114,13 @@ router.put(
     }
 
     await order.save({ validateBeforeSave: false });
+
+    await sendMail({
+      email: order.user?.email,
+      subject: 'Order Status Updated',
+      message: `Hello ${order.user?.name}, your order #${order._id} status has been updated to ${order.status}.`,
+      html: statusUpdateTemplate(order.user?.name, order._id, order.status),
+    });
 
     res.status(200).json({
       success: true,

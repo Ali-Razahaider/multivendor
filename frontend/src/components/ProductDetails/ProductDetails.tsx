@@ -181,8 +181,14 @@ function ProductDetails({ data }) {
                         <h1 className={`${styles.productTitle} mb-3`}>{data.name}</h1>
                         <p className="text-gray-700 text-md leading-relaxed mb-4">{data.description}</p>
                         <div className={`${styles.normalFlex} gap-4 mb-4`}>
-                            <h4 className={`${styles.productDiscountPrice}`}>${data.discountedPrice || data.discount_price}</h4>
-                            {data.price && <h3 className={`${styles.price} !pl-0`}>${data.price}</h3>}
+                            {data.discountedPrice || data.discount_price ? (
+                              <>
+                                <h4 className={`${styles.productDiscountPrice}`}>${data.discountedPrice || data.discount_price}</h4>
+                                <h3 className={`${styles.price} !pl-0`}>${data.price}</h3>
+                              </>
+                            ) : (
+                              <h4 className={`${styles.productDiscountPrice}`}>${data.price}</h4>
+                            )}
                         </div>
                         <div className={`${styles.normalFlex} justify-between pr-3`}>
                             <div className="flex items-center border border-gray-300 rounded-lg overflow-hidden">

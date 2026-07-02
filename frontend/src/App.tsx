@@ -27,7 +27,7 @@ import { loadSeller } from './redux/actions/sellerActions.js';
 import ProtectedRoute from './routes/ProtectedRoute';
 
 import SellerProtectedRoute from './routes/SellerProtectedRoute';
-import { ShopHomePage, ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopAllOrders, ShopCreateEvent, ShopAllEvents, ShopDiscountCodes, ShopPreviewPage } from './routes/shopRoutes';
+import { ShopHomePage, ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopAllOrders, ShopOrderDetails, ShopCreateEvent, ShopAllEvents, ShopDiscountCodes, ShopPreviewPage } from './routes/shopRoutes';
 
 axios.defaults.withCredentials = true;
 
@@ -154,6 +154,14 @@ const App = () => {
           element={
             <SellerProtectedRoute>
               <ShopDiscountCodes />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard-order/:id"
+          element={
+            <SellerProtectedRoute>
+              <ShopOrderDetails />
             </SellerProtectedRoute>
           }
         />

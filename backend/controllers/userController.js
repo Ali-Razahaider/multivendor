@@ -3,6 +3,7 @@ import User from '../models/userModel.js';
 import generateToken from '../utils/generateToken.js';
 import asyncHandler from 'express-async-handler';
 import sendMail from '../utils/sendMail.js';
+import { activationTemplate, welcomeTemplate } from '../utils/emailTemplates.js';
 import jwt from 'jsonwebtoken';
 import { isAuthenticated } from '../middleware/authMiddleware.js';
 const router = express.Router();
@@ -35,6 +36,7 @@ router.post(
       email: user.email,
       subject: 'Activate your account',
       message: `Hello ${user.name}, please click on the link to activate your account: ${activationUrl}`,
+      html: activationTemplate(user.name, activationUrl),
     });
 
     res.status(201).json({
@@ -71,6 +73,13 @@ router.post(
     });
 
     generateToken(res, user._id);
+
+    await sendMail({
+      email: user.email,
+      subject: 'Welcome to Our Platform',
+      message: `Hello ${user.name}, welcome to our platform! Your account has been activated successfully.`,
+      html: welcomeTemplate(user.name),
+    });
 
     res.status(201).json({
       success: true,

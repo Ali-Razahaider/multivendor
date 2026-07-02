@@ -4,6 +4,7 @@ import Shop from '../models/shopModel.js';
 import { isAuthenticated, isSeller } from '../middleware/authMiddleware.js';
 import sendShopToken from '../utils/sendShopToken.js';
 import sendMail from '../utils/sendMail.js';
+import { activationTemplate, welcomeTemplate } from '../utils/emailTemplates.js';
 import jwt from 'jsonwebtoken';
 
 const router = express.Router();
@@ -53,6 +54,7 @@ router.post(
                 email: shopData.email,
                 subject: 'Activate your shop',
                 message: `Hello ${shopData.name}, please click on the link to activate your shop: ${activationUrl}`,
+                html: activationTemplate(shopData.name, activationUrl),
             });
         } catch (mailErr) {
             res.status(500);
@@ -94,6 +96,7 @@ router.post(
                 email: shop.email,
                 subject: 'Welcome to Our Platform',
                 message: `Hello ${shop.name}, welcome to our platform! Your shop has been successfully activated. You can now log in and start managing your shop.`,
+                html: welcomeTemplate(shop.name),
             });
         } catch (mailErr) {
             res.status(500);
