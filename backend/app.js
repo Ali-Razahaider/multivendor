@@ -8,6 +8,7 @@ import product from './controllers/productController.js'
 import event from './controllers/eventController.js'
 import coupon from './controllers/couponController.js'
 import order from './controllers/orderController.js'
+import payment from './controllers/paymentController.js'
 import cors from 'cors';
 const app = express();
 
@@ -39,6 +40,7 @@ app.use('/api/product', product);
 app.use('/api/event', event);
 app.use('/api/coupon', coupon);
 app.use('/api/order', order);
+app.use('/api/payment', payment);
 
 // error handling (traversy media)
 app.use(notFound);

@@ -6,13 +6,49 @@ import { useSelector, useDispatch } from 'react-redux'
 import { addToWishlist, removeFromWishlist } from '../../redux/actions/wishlistActions'
 import { addToCart } from '../../redux/actions/cartActions'
 import { toast } from 'react-toastify'
+import Ratings from '../Ratings'
+import axios from 'axios'
+import server from '../../server'
 
 const ProductDetailsInfo = ({ data }) => {
     const [active, setActive] = useState(1)
+    const [rating, setRating] = useState(0)
+    const [comment, setComment] = useState('')
+    const [hover, setHover] = useState(0)
+    const { user, isAuthenticated } = useSelector((state) => state.user)
 
     if (!data) return null
 
     const reviews = data.reviews || []
+    const avgRating = reviews.length
+      ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1)
+      : 0
+
+    const handleReviewSubmit = async (e) => {
+      e.preventDefault()
+      if (!isAuthenticated) {
+        toast.error('Please login to submit a review')
+        return
+      }
+      if (rating === 0) {
+        toast.error('Please select a rating')
+        return
+      }
+      try {
+        await axios.put(`${server}product/create-new-review`, {
+          user: { _id: user._id, name: user.name, avatar: user.avatar },
+          rating,
+          comment,
+          productId: data._id,
+          orderId: null,
+        }, { withCredentials: true })
+        toast.success('Review submitted successfully!')
+        setRating(0)
+        setComment('')
+      } catch (err) {
+        toast.error(err.response?.data?.message || 'Failed to submit review')
+      }
+    }
 
     return (
         <div className="bg-[#f5f6fb] px-3 800px:px-10 py-2 rounded mt-8">
@@ -32,7 +68,7 @@ const ProductDetailsInfo = ({ data }) => {
                         className="text-black text-lg px-1 leading-5 font-semibold cursor-pointer 800px:text-xl"
                         onClick={() => setActive(2)}
                     >
-                        Product Reviews
+                        Product Reviews ({reviews.length})
                     </h5>
                     {active === 2 ? <div className={`${styles.active_indicator}`} /> : null}
                 </div>
@@ -49,59 +85,106 @@ const ProductDetailsInfo = ({ data }) => {
 
             {/* tab content with fixed height */}
             <div className="h-[400px] overflow-y-auto">
-                {/* product details tab — product description text */}
+                {/* product details tab */}
                 {active === 1 && (
                     <p className="py-2 text-md leading-8 pb-10 whitespace-pre-line">{data.description}</p>
                 )}
 
-                {/* reviews tab — user avatars, names, star ratings, and comments */}
+                {/* reviews tab */}
                 {active === 2 && (
                     <div className="w-full flex flex-col py-3">
-                    {reviews.length === 0 ? (
-                        <div className="w-full flex justify-center">
+                      {/* average rating summary */}
+                      {reviews.length > 0 && (
+                        <div className="flex items-center mb-4 pb-4 border-b">
+                          <span className="text-3xl font-bold mr-3">{avgRating}</span>
+                          <div>
+                            <Ratings rating={Number(avgRating)} />
+                            <span className="text-sm text-gray-500">{reviews.length} reviews</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* review list */}
+                      {reviews.length === 0 ? (
+                        <div className="w-full flex justify-center mb-4">
                             <h5 className="text-gray-500">No Reviews have for this product!</h5>
                         </div>
-                    ) : (
+                      ) : (
                         reviews.map((item, index) => (
                             <div key={index} className="w-full flex my-2">
-                                <div className="w-12.5 h-12.5 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
-                                    <img src={item.user?.avatar?.url} alt="" className="w-full h-full rounded-full object-cover" />
+                                <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center shrink-0 overflow-hidden">
+                                    <img src={item.user?.avatar?.url || item.user?.avatar} alt="" className="w-full h-full object-cover" />
                                 </div>
                                 <div className="pl-2">
                                     <div className="w-full flex items-center">
                                         <h1 className="font-medium mr-3">{item.user?.name || "Anonymous"}</h1>
-                                        <div className="flex items-center">
-                                            {[1, 2, 3, 4, 5].map((star) => (
-                                                item.rating >= star ? (
-                                                    <AiFillStar key={star} size={14} className="text-yellow-500" />
-                                                ) : (
-                                                    <AiOutlineStar key={star} size={14} className="text-gray-400" />
-                                                )
-                                            ))}
-                                        </div>
+                                        <Ratings rating={item.rating} />
                                     </div>
                                     <p className="text-gray-600">{item.comment}</p>
                                 </div>
                             </div>
                         ))
-                    )}
-                </div>
-            )}
+                      )}
 
-            {/* seller information tab — shop avatar, name, ratings, description, joined date, total products/reviews, visit shop button */}
+                      {/* review submission form */}
+                      {isAuthenticated && (
+                        <form onSubmit={handleReviewSubmit} className="mt-6 pt-4 border-t">
+                          <h4 className="font-semibold mb-2">Write a Review</h4>
+                          <div className="flex items-center mb-3">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                              <span
+                                key={star}
+                                className="cursor-pointer text-2xl mr-1"
+                                onClick={() => setRating(star)}
+                                onMouseEnter={() => setHover(star)}
+                                onMouseLeave={() => setHover(0)}
+                              >
+                                {star <= (hover || rating) ? (
+                                  <AiFillStar color="#f6b100" />
+                                ) : (
+                                  <AiOutlineStar color="#f6b100" />
+                                )}
+                              </span>
+                            ))}
+                          </div>
+                          <textarea
+                            rows={3}
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
+                            placeholder="Share your thoughts about this product..."
+                            className="w-full border rounded-md p-2 text-sm mb-3"
+                            required
+                          />
+                          <button
+                            type="submit"
+                            className="bg-teal-500 text-white px-4 py-2 rounded-md text-sm hover:bg-teal-600"
+                          >
+                            Submit Review
+                          </button>
+                        </form>
+                      )}
+                      {!isAuthenticated && (
+                        <div className="mt-4 text-center">
+                          <Link to="/login" className="text-blue-500 text-sm">Login to write a review</Link>
+                        </div>
+                      )}
+                    </div>
+                )}
+
+            {/* seller information tab */}
             {active === 3 && data.shop && (
                 <div className="w-full block 800px:flex p-5">
                     <div className="w-full 800px:w-1/2">
                         <Link to={`/shop/preview/${data.shop._id || data.shopId}`}>
                             <div className="flex items-center">
                                 <img
-                                    src={data?.shop?.shop_avatar?.url}
-                                    className="w-12.5 h-12.5 rounded-full"
+                                    src={data?.shop?.shop_avatar?.url || data?.shop?.avatar}
+                                    className="w-12 h-12 rounded-full"
                                     alt=""
                                 />
                                 <div className="pl-3">
                                     <h3 className={`${styles.shop_name}`}>{data.shop.name}</h3>
-                                    <h5 className="pb-2 text-sm">({data.shop?.ratings || 0}/5) Ratings</h5>
+                                    <h5 className="pb-2 text-sm">({avgRating}/5) Ratings</h5>
                                 </div>
                             </div>
                         </Link>

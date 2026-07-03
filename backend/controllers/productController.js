@@ -1,7 +1,8 @@
 import express from "express";
 import Product from "../models/productModel.js";
+import Order from "../models/orderModel.js";
 import asyncHandler from "express-async-handler";
-import { isSeller } from "../middleware/authMiddleware.js";
+import { isAuthenticated, isSeller } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -51,6 +52,57 @@ router.get(
   asyncHandler(async (req, res, next) => {
     const products = await Product.find({ shopId: req.params.shopId }).sort({ createdAt: -1 });
     res.status(200).json({ success: true, products });
+  })
+);
+
+router.put(
+  "/create-new-review",
+  isAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const { user, rating, comment, productId, orderId } = req.body;
+
+    const product = await Product.findById(productId);
+    if (!product) {
+      res.status(404);
+      throw new Error("Product not found");
+    }
+
+    const review = { user, rating, comment, productId };
+
+    const isReviewed = product.reviews.find(
+      (rev) => rev.user?._id === req.user._id
+    );
+
+    if (isReviewed) {
+      product.reviews.forEach((rev) => {
+        if (rev.user._id === req.user._id) {
+          rev.rating = rating;
+          rev.comment = comment;
+          rev.user = user;
+        }
+      });
+    } else {
+      product.reviews.push(review);
+    }
+
+    let avg = 0;
+    product.reviews.forEach((rev) => {
+      avg += rev.rating;
+    });
+    product.ratings = avg / product.reviews.length;
+
+    await product.save({ validateBeforeSave: false });
+
+    await Order.findByIdAndUpdate(
+      orderId,
+      { $set: { "cart.$[elem].isReviewed": true } },
+      { arrayFilters: [{ "elem._id": productId }], new: true }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Reviewed successfully!",
+    });
   })
 );
 
