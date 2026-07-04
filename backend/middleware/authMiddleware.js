@@ -31,4 +31,12 @@ const isSeller = asyncHandler(async (req, res, next) => {
   next();
 });
 
-export { isAuthenticated, isSeller };
+const isAdmin = asyncHandler(async (req, res, next) => {
+  if (!req.user || req.user.role !== 'admin') {
+    res.status(403);
+    throw new Error('Admin access only');
+  }
+  next();
+});
+
+export { isAuthenticated, isSeller, isAdmin };

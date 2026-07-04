@@ -2,7 +2,7 @@ import express from "express";
 import Product from "../models/productModel.js";
 import Order from "../models/orderModel.js";
 import asyncHandler from "express-async-handler";
-import { isAuthenticated, isSeller } from "../middleware/authMiddleware.js";
+import { isAuthenticated, isSeller, isAdmin } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -159,6 +159,16 @@ router.delete(
 
     await Product.findByIdAndDelete(req.params.id);
     res.status(200).json({ success: true, message: "Product deleted" });
+  })
+);
+
+router.get(
+  "/admin-all-products",
+  isAuthenticated,
+  isAdmin,
+  asyncHandler(async (req, res) => {
+    const products = await Product.find().sort({ createdAt: -1 });
+    res.json({ success: true, products });
   })
 );
 

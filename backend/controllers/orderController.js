@@ -1,6 +1,6 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
-import { isAuthenticated, isSeller } from '../middleware/authMiddleware.js';
+import { isAuthenticated, isSeller, isAdmin } from '../middleware/authMiddleware.js';
 import Order from '../models/orderModel.js';
 import Product from '../models/productModel.js';
 import sendMail from '../utils/sendMail.js';
@@ -149,6 +149,16 @@ router.put(
       order,
       message: 'Order Refund Request sent successfully!',
     });
+  })
+);
+
+router.get(
+  '/admin-all-orders',
+  isAuthenticated,
+  isAdmin,
+  asyncHandler(async (req, res) => {
+    const orders = await Order.find().sort({ createdAt: -1 });
+    res.json({ success: true, orders });
   })
 );
 

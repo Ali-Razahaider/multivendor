@@ -15,6 +15,12 @@ import {
   OrderSuccessPage,
   ShopCreatePage,
   ShopLoginPage,
+  AdminDashboardPage,
+  AdminUsersPage,
+  AdminSellersPage,
+  AdminOrdersPage,
+  AdminProductsPage,
+  AdminEventsPage,
 } from './routes/Routes';
 import './App.css';
 import { ToastContainer } from 'react-toastify';
@@ -25,6 +31,7 @@ import Store from './redux/store.js';
 import { loadUser } from './redux/actions/userActions.js';
 import { loadSeller } from './redux/actions/sellerActions.js';
 import ProtectedRoute from './routes/ProtectedRoute';
+import ProtectedAdminRoute from './routes/ProtectedAdminRoute';
 
 import SellerProtectedRoute from './routes/SellerProtectedRoute';
 import { ShopHomePage, ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopAllOrders, ShopOrderDetails, ShopCreateEvent, ShopAllEvents, ShopDiscountCodes, ShopPreviewPage } from './routes/shopRoutes';
@@ -163,6 +170,54 @@ const App = () => {
             <SellerProtectedRoute>
               <ShopOrderDetails />
             </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedAdminRoute>
+              <AdminDashboardPage />
+            </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedAdminRoute>
+              <AdminUsersPage />
+            </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/admin/sellers"
+          element={
+            <ProtectedAdminRoute>
+              <AdminSellersPage />
+            </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/admin/orders"
+          element={
+            <ProtectedAdminRoute>
+              <AdminOrdersPage />
+            </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/admin/products"
+          element={
+            <ProtectedAdminRoute>
+              <AdminProductsPage />
+            </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/admin/events"
+          element={
+            <ProtectedAdminRoute>
+              <AdminEventsPage />
+            </ProtectedAdminRoute>
           }
         />
       </Routes>

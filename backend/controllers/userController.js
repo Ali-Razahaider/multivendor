@@ -5,7 +5,7 @@ import asyncHandler from 'express-async-handler';
 import sendMail from '../utils/sendMail.js';
 import { activationTemplate, welcomeTemplate } from '../utils/emailTemplates.js';
 import jwt from 'jsonwebtoken';
-import { isAuthenticated } from '../middleware/authMiddleware.js';
+import { isAuthenticated, isAdmin } from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 router.post(
@@ -193,6 +193,30 @@ router.put(
       message: 'Profile updated successfully',
       user: updatedUser,
     });
+  })
+);
+
+router.get(
+  '/admin-all-users',
+  isAuthenticated,
+  isAdmin,
+  asyncHandler(async (req, res) => {
+    const users = await User.find().sort({ createdAt: -1 });
+    res.json({ success: true, users });
+  })
+);
+
+router.delete(
+  '/admin-delete-user/:id',
+  isAuthenticated,
+  isAdmin,
+  asyncHandler(async (req, res) => {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      res.status(404);
+      throw new Error('User not found');
+    }
+    res.json({ success: true, message: 'User deleted successfully' });
   })
 );
 

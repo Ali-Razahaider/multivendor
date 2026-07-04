@@ -1,7 +1,7 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
 import Shop from '../models/shopModel.js';
-import { isAuthenticated, isSeller } from '../middleware/authMiddleware.js';
+import { isAuthenticated, isSeller, isAdmin } from '../middleware/authMiddleware.js';
 import sendShopToken from '../utils/sendShopToken.js';
 import sendMail from '../utils/sendMail.js';
 import { activationTemplate, welcomeTemplate } from '../utils/emailTemplates.js';
@@ -179,6 +179,30 @@ router.post(
             success: true,
             message: 'Logged out successfully',
         });
+    })
+);
+
+router.get(
+    '/admin-all-sellers',
+    isAuthenticated,
+    isAdmin,
+    asyncHandler(async (req, res) => {
+        const sellers = await Shop.find().sort({ createdAt: -1 });
+        res.json({ success: true, sellers });
+    })
+);
+
+router.delete(
+    '/admin-delete-seller/:id',
+    isAuthenticated,
+    isAdmin,
+    asyncHandler(async (req, res) => {
+        const shop = await Shop.findByIdAndDelete(req.params.id);
+        if (!shop) {
+            res.status(404);
+            throw new Error('Seller not found');
+        }
+        res.json({ success: true, message: 'Seller deleted successfully' });
     })
 );
 

@@ -13,5 +13,11 @@ import PaymentPage from '../pages/PaymentPage';
 import OrderSuccessPage from '../pages/OrderSuccessPage';
 import ShopCreatePage from '../pages/ShopCreatePage';
 import ShopLoginPage from '../pages/ShopLoginPage';
+import AdminDashboardPage from '../pages/AdminDashboardPage';
+import AdminUsersPage from '../pages/AdminUsersPage';
+import AdminSellersPage from '../pages/AdminSellersPage';
+import AdminOrdersPage from '../pages/AdminOrdersPage';
+import AdminProductsPage from '../pages/AdminProductsPage';
+import AdminEventsPage from '../pages/AdminEventsPage';
 
-export { LoginPage, HomePage, RegisterPage, ActivationPage, ProductsPage, BestSellingPage, EventPage, FaqPage, ProductDetailsPage, ProfilePage, CheckoutPage, PaymentPage, OrderSuccessPage, ShopCreatePage, ShopLoginPage };
+export { LoginPage, HomePage, RegisterPage, ActivationPage, ProductsPage, BestSellingPage, EventPage, FaqPage, ProductDetailsPage, ProfilePage, CheckoutPage, PaymentPage, OrderSuccessPage, ShopCreatePage, ShopLoginPage, AdminDashboardPage, AdminUsersPage, AdminSellersPage, AdminOrdersPage, AdminProductsPage, AdminEventsPage };

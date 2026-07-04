@@ -1,7 +1,7 @@
 import express from 'express';
 import Events from '../models/eventModel.js';
 import asyncHandler from 'express-async-handler';
-import { isSeller } from '../middleware/authMiddleware.js';
+import { isAuthenticated, isSeller, isAdmin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -90,5 +90,16 @@ router.delete('/:id', isSeller, asyncHandler(async (req, res, next) => {
     await Events.findByIdAndDelete(req.params.id);
     res.status(200).json({ success: true, message: "Event deleted" });
 }))
+
+router.get(
+    '/admin-all-events',
+    isSeller,
+    isAuthenticated,
+    isAdmin,
+    asyncHandler(async (req, res) => {
+        const events = await Events.find().sort({ createdAt: -1 });
+        res.json({ success: true, events });
+    })
+);
 
 export default router;
