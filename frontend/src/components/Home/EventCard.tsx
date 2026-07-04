@@ -42,8 +42,8 @@ function EventCard({active}) {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <button className="px-6 py-3 bg-black text-white rounded-lg shadow">See Details</button>
-                        <button className="px-6 py-3 bg-black text-white rounded-lg shadow">Buy Now</button>
+                        <button className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow transition-colors">See Details</button>
+                        <button className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow transition-colors">Buy Now</button>
                         
                     </div>
                 </div>

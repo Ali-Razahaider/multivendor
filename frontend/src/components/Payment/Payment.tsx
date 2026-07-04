@@ -82,11 +82,11 @@ const Payment = () => {
           <div className="w-full 800px:w-[95%] bg-white rounded-md p-5 pb-8">
             {/* Debit/Credit Card */}
             <div>
-              <div className="flex w-full pb-5 border-b mb-2">
-                <div className="w-[25px] h-[25px] rounded-full bg-transparent border-[3px] border-[#1d1a1ab4] relative flex items-center justify-center cursor-pointer" onClick={() => setSelect(1)}>
-                  {select === 1 && <div className="w-[13px] h-[13px] bg-[#1d1a1acb] rounded-full" />}
+                <div className="flex w-full pb-5 border-b mb-2">
+                <div className="w-[25px] h-[25px] rounded-full bg-transparent border-[3px] border-gray-400 relative flex items-center justify-center cursor-pointer" onClick={() => setSelect(1)}>
+                  {select === 1 && <div className="w-[13px] h-[13px] bg-indigo-600 rounded-full" />}
                 </div>
-                <h4 className="text-[18px] pl-2 font-[600] text-[#000000b1]">Pay with Debit/Credit Card</h4>
+                <h4 className="text-[18px] pl-2 font-[600] text-gray-700">Pay with Debit/Credit Card</h4>
               </div>
               {select === 1 && (
                 <div className="w-full flex border-b pb-4">
@@ -122,7 +122,7 @@ const Payment = () => {
                         }} />
                       </div>
                     </div>
-                    <input type="submit" value="Pay Now" className={`${styles.button} !bg-[#f63b60] text-white h-[45px] rounded-[5px] cursor-pointer text-[18px] font-[600]`} />
+                    <input type="submit" value="Pay Now" className="w-full bg-indigo-600 text-white h-[45px] rounded-[5px] cursor-pointer text-[18px] font-[600] hover:bg-indigo-700 transition-colors" />
                   </form>
                 </div>
               )}
@@ -133,14 +133,14 @@ const Payment = () => {
             {/* Cash on Delivery */}
             <div>
               <div className="flex w-full pb-5 border-b mb-2">
-                <div className="w-[25px] h-[25px] rounded-full bg-transparent border-[3px] border-[#1d1a1ab4] relative flex items-center justify-center cursor-pointer" onClick={() => setSelect(3)}>
-                  {select === 3 && <div className="w-[13px] h-[13px] bg-[#1d1a1acb] rounded-full" />}
+                <div className="w-[25px] h-[25px] rounded-full bg-transparent border-[3px] border-gray-400 relative flex items-center justify-center cursor-pointer" onClick={() => setSelect(3)}>
+                  {select === 3 && <div className="w-[13px] h-[13px] bg-indigo-600 rounded-full" />}
                 </div>
-                <h4 className="text-[18px] pl-2 font-[600] text-[#000000b1]">Cash on Delivery</h4>
+                <h4 className="text-[18px] pl-2 font-[600] text-gray-700">Cash on Delivery</h4>
               </div>
               {select === 3 && (
                 <form onSubmit={cashOnDeliveryHandler}>
-                  <input type="submit" value="Confirm Order" className={`${styles.button} !bg-[#f63b60] text-white h-[45px] rounded-[5px] cursor-pointer text-[18px] font-[600]`} />
+                  <input type="submit" value="Confirm Order" className="w-full bg-indigo-600 text-white h-[45px] rounded-[5px] cursor-pointer text-[18px] font-[600] hover:bg-indigo-700 transition-colors" />
                 </form>
               )}
             </div>

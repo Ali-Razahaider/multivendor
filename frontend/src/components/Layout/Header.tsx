@@ -57,10 +57,13 @@ const Header = ({ activeHeading }) => {
       <div className="flex 800px:h-12.5 800px:my-2.5 w-11/12 m-auto items-center justify-between">
         <div>
           <Link to="/">
-            <img
-              src="https://shopo.quomodothemes.website/assets/images/logo.svg"
-              alt=""
-            />
+            <div className="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 text-white">
+                <path d="M2.25 2.25a.75.75 0 0 0 0 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 0 0-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 0 0 0-1.5H5.378A2.25 2.25 0 0 1 7.5 15h11.218a.75.75 0 0 0 .674-.421 60.358 60.358 0 0 0 2.96-7.228.75.75 0 0 0-.525-.96A58.734 58.734 0 0 0 5.69 4.38l-.692-2.587a.75.75 0 0 0-.724-.543H2.25Z" />
+                <path d="M10 20a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" />
+              </svg>
+              <span className="text-white text-xl font-extrabold tracking-tight">MultiShop</span>
+            </div>
           </Link>
         </div>
         {/* search box */}
@@ -106,9 +109,9 @@ const Header = ({ activeHeading }) => {
         </div>
       </div>
 
-      <div
-        className={`${styles.section} ${active ? 'fixed top-0' : 'relative'} w-full bg-blue-500 shadow-md z-50 hidden 800px:block`}
-      >
+        <div
+          className={`${styles.section} ${active ? 'fixed top-0' : 'relative'} w-full bg-indigo-600 shadow-md z-50 hidden 800px:block`}
+        >
         <div
           className={`${styles.section} relative  flex items-center justify-between`}
         >
@@ -116,7 +119,7 @@ const Header = ({ activeHeading }) => {
             <BiMenuAltLeft size={30} className="absolute top-3 left-2" />
             <button
               onClick={() => setDropDown(!dropdown)}
-              className="h-full w-full flex items-center pl-10 bg-gray-200 rounded-tl-md rounded-tr-md text-gray-700 font-medium hover:bg-gray-300 transition duration-300"
+              className="h-full w-full flex items-center pl-10 bg-indigo-50 rounded-tl-md rounded-tr-md text-indigo-700 font-medium hover:bg-indigo-100 transition duration-300"
             >
               All Categories
               <IoIosArrowDown size={20} className="ml-1" />
@@ -185,13 +188,15 @@ const Header = ({ activeHeading }) => {
             />
           </div>
           <div>
-            <Link to="/">
-              <img
-                src="https://shopo.quomodothemes.website/assets/images/logo.svg"
-                alt=""
-                className="mt-3 cursor-pointer"
-              />
-            </Link>
+          <Link to="/">
+            <div className="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 text-indigo-700">
+                <path d="M2.25 2.25a.75.75 0 0 0 0 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 0 0-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 0 0 0-1.5H5.378A2.25 2.25 0 0 1 7.5 15h11.218a.75.75 0 0 0 .674-.421 60.358 60.358 0 0 0 2.96-7.228.75.75 0 0 0-.525-.96A58.734 58.734 0 0 0 5.69 4.38l-.692-2.587a.75.75 0 0 0-.724-.543H2.25Z" />
+                <path d="M10 20a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" />
+              </svg>
+              <span className="text-gray-900 text-xl font-extrabold tracking-tight">MultiShop</span>
+            </div>
+          </Link>
           </div>
           <div>
             <div
@@ -199,7 +204,7 @@ const Header = ({ activeHeading }) => {
               onClick={() => setOpenCart(true)}
             >
               <AiOutlineShoppingCart size={30} />
-              <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 text-white font-mono text-[12px] leading-tight text-center">
+              <span className="absolute right-0 top-0 rounded-full bg-emerald-500 w-4 h-4 text-white font-mono text-[12px] leading-tight text-center">
                 {cart?.length || 0}
               </span>
             </div>
@@ -218,7 +223,7 @@ const Header = ({ activeHeading }) => {
                     onClick={() => { setOpenWishlist(true); setOpen(false); }}
                   >
                     <AiOutlineHeart size={30} className="mt-5 ml-3" />
-                    <span className="absolute right-0 top-0 rounded-full bg-[#3bc177] w-4 h-4 text-white font-mono text-[12px] leading-tight text-center">
+                    <span className="absolute right-0 top-0 rounded-full bg-emerald-500 w-4 h-4 text-white font-mono text-[12px] leading-tight text-center">
                       {wishlist?.length || 0}
                     </span>
                   </div>
@@ -234,7 +239,7 @@ const Header = ({ activeHeading }) => {
                 <input
                   type="search"
                   placeholder="Search Product..."
-                  className="h-[40px] w-full px-2 border-[#3957db] border-[2px] rounded-md"
+                  className="h-[40px] w-full px-2 border-indigo-300 border-[2px] rounded-md focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none"
                   value={searchTerm}
                   onChange={handleSearchChange}
                 />
@@ -261,7 +266,7 @@ const Header = ({ activeHeading }) => {
               </div>
 
               {navItems && navItems.map((i, index) => (
-                <Link to={i.url} key={index} className={`block py-2 pl-4 font-medium ${activeHeading === index + 1 ? 'text-green-900' : 'text-gray-700'}`} onClick={() => setOpen(false)}>
+                <Link to={i.url} key={index} className={`block py-2 pl-4 font-medium ${activeHeading === index + 1 ? 'text-indigo-600' : 'text-gray-700'}`} onClick={() => setOpen(false)}>
                   {i.title}
                 </Link>
               ))}

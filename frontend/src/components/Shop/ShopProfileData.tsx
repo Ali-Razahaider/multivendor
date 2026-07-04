@@ -35,10 +35,10 @@ const ShopProfileData = ({ isOwner }) => {
           {tabs.map((tab) => (
             <div
               key={tab.id}
-              className={`mr-8 pb-2 cursor-pointer ${active === tab.id ? 'border-b-2 border-b-[#f63b60]' : ''}`}
+              className={`mr-8 pb-2 cursor-pointer ${active === tab.id ? 'border-b-2 border-b-indigo-500' : ''}`}
               onClick={() => setActive(tab.id)}
             >
-              <h5 className={`font-[600] text-[18px] ${active === tab.id ? 'text-[#f63b60]' : 'text-gray-500'}`}>
+              <h5 className={`font-[600] text-[18px] ${active === tab.id ? 'text-indigo-600' : 'text-gray-500'}`}>
                 {tab.label}
               </h5>
             </div>

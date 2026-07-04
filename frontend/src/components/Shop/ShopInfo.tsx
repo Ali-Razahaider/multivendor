@@ -24,15 +24,22 @@ const ShopInfo = ({ isOwner }) => {
 
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(false)
-  const products = []
-  const averageRating = 0
+  const [products, setProducts] = useState([])
+
+  const averageRating = products.length
+    ? (products.reduce((sum, p) => sum + (p.ratings ?? p.rating ?? 0), 0) / products.length).toFixed(1)
+    : 0
 
   useEffect(() => {
     if (!isOwner && id) {
       setLoading(true)
-      axios.get(`${server}shop/get-shop-info/${id}`)
-        .then((res) => {
-          setData(res.data.shop)
+      Promise.all([
+        axios.get(`${server}shop/get-shop-info/${id}`),
+        axios.get(`${server}product/shop/${id}`),
+      ])
+        .then(([shopRes, prodRes]) => {
+          setData(shopRes.data.shop)
+          setProducts(prodRes.data.products || [])
           setLoading(false)
         })
         .catch(() => {
@@ -75,14 +82,6 @@ const ShopInfo = ({ isOwner }) => {
             </p>
           </div>
           <div className="p-3">
-            <h5 className="font-[600]">Address</h5>
-            <h4 className="text-[#000000a6]">{displayData?.address}</h4>
-          </div>
-          <div className="p-3">
-            <h5 className="font-[600]">Phone Number</h5>
-            <h4 className="text-[#000000a6]">{displayData?.phoneNumber}</h4>
-          </div>
-          <div className="p-3">
             <h5 className="font-[600]">Total Products</h5>
             <h4 className="text-[#000000a6]">{products && products.length}</h4>
           </div>
@@ -94,6 +93,18 @@ const ShopInfo = ({ isOwner }) => {
             <h5 className="font-[600]">Joined On</h5>
             <h4 className="text-[#000000b0]">{displayData?.createdAt?.slice(0, 10)}</h4>
           </div>
+          {isOwner && (
+            <>
+              <div className="p-3">
+                <h5 className="font-[600]">Address</h5>
+                <h4 className="text-[#000000a6]">{displayData?.address}</h4>
+              </div>
+              <div className="p-3">
+                <h5 className="font-[600]">Phone Number</h5>
+                <h4 className="text-[#000000a6]">{displayData?.phoneNumber}</h4>
+              </div>
+            </>
+          )}
           {isOwner && (
             <div className="py-3 px-4">
               <Link to="/settings">

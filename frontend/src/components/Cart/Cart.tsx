@@ -42,7 +42,7 @@ const CartSingle = ({ data }) => {
         <div className="flex items-center mt-2 justify-between">
           <div className="flex items-center">
             <button
-              className="w-7 h-7 flex items-center justify-center bg-[#e44343] rounded-full text-white"
+              className="w-7 h-7 flex items-center justify-center bg-red-500 hover:bg-red-600 transition-colors rounded-full text-white"
               onClick={handleIncrement}
             >
               <HiPlus size={14} />
@@ -100,7 +100,7 @@ function Cart({ setOpenCart }) {
         </div>
         <div className="px-5 mb-3">
           <Link to="/checkout" onClick={() => setOpenCart(false)}>
-            <div className="h-[45px] flex items-center justify-center w-full bg-black rounded-[5px]">
+            <div               className="h-[45px] flex items-center justify-center w-full bg-indigo-600 hover:bg-indigo-700 transition-colors rounded-[5px]">
               <h1 className="text-white text-lg font-semibold">Checkout Now (${totalPrice.toFixed(2)})</h1>
             </div>
           </Link>

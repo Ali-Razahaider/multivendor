@@ -15,7 +15,7 @@ function Navbar({ active }) {
           <div className="flex " key={index}>
             <Link
               to={i.url}
-              className={`${active === index + 1 ? 'text-green-900' : 'text-white'} font-semibold text-lg px-3 py-2 rounded-md`}
+              className={`${active === index + 1 ? 'text-indigo-200' : 'text-white'} font-semibold text-lg px-3 py-2 rounded-md hover:text-indigo-100 transition-colors`}
             >
               {i.title}
             </Link>

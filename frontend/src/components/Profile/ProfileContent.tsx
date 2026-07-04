@@ -182,7 +182,7 @@ const ProfileContent = ({ active }) => {
           <div className="w-full 800px:w-[80%] mx-auto">
             <div className="flex flex-col 800px:flex-row items-start 800px:items-center justify-between mb-4 gap-2">
               <h2 className="text-lg 800px:text-xl font-semibold text-gray-800">Saved Payment Methods</h2>
-              <button className="bg-black text-white text-xs 800px:text-sm font-medium px-3 800px:px-4 py-2 rounded-md cursor-pointer w-full 800px:w-auto text-center">+ Add Payment Method</button>
+              <button className="bg-indigo-600 hover:bg-indigo-700 text-white text-xs 800px:text-sm font-medium px-3 800px:px-4 py-2 rounded-md cursor-pointer w-full 800px:w-auto text-center transition-colors">+ Add Payment Method</button>
             </div>
             <div className="flex flex-col 800px:flex-row items-start 800px:items-center gap-3 border rounded-lg px-3 800px:px-4 py-3 shadow-sm bg-white">
               <div className="flex items-center gap-3 w-full 800px:w-auto">

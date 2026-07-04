@@ -59,11 +59,11 @@ function AdminDashboardPage() {
   }, [])
 
   const statCards = [
-    { icon: AiOutlineUser, label: "Total Users", value: stats.users, color: "#077f9c" },
-    { icon: IoStorefrontOutline, label: "Total Sellers", value: stats.sellers, color: "#c44569" },
-    { icon: FiShoppingBag, label: "Total Orders", value: stats.orders, color: "#e67e22" },
-    { icon: FiPackage, label: "Total Products", value: stats.products, color: "#27ae60" },
-    { icon: AiOutlineMoneyCollect, label: "Total Earnings", value: `$${stats.totalEarnings.toFixed(2)}`, color: "#2980b9" },
+    { icon: AiOutlineUser, label: "Total Users", value: stats.users, color: "#4F46E5" },
+    { icon: IoStorefrontOutline, label: "Total Sellers", value: stats.sellers, color: "#7C3AED" },
+    { icon: FiShoppingBag, label: "Total Orders", value: stats.orders, color: "#0891B2" },
+    { icon: FiPackage, label: "Total Products", value: stats.products, color: "#059669" },
+    { icon: AiOutlineMoneyCollect, label: "Total Earnings", value: `$${stats.totalEarnings.toFixed(2)}`, color: "#D97706" },
   ]
 
   return (
@@ -129,7 +129,7 @@ function AdminDashboardPage() {
                         </TableCell>
                         <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
                         <TableCell>
-                          <Link to={`/admin/orders`} className="text-[crimson] hover:underline">
+                          <Link to={`/admin/orders`} className="text-indigo-600 hover:underline">
                             View
                           </Link>
                         </TableCell>

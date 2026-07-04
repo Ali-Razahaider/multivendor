@@ -9,14 +9,14 @@ const CheckoutSteps = ({active}) => {
                        <span className={`${styles.cart_button_text}`}>1.Shipping</span>
                 </div>
                 <div className={`${
-                    active > 1 ? "w-[30px] 800px:w-[70px] h-[4px] !bg-[#f63b60]"
-                    : "w-[30px] 800px:w-[70px] h-[4px] !bg-[#FDE1E6]"
+                    active > 1 ? "w-[30px] 800px:w-[70px] h-[4px] !bg-indigo-500"
+                    : "w-[30px] 800px:w-[70px] h-[4px] !bg-indigo-100"
                 }`} />
                </div>
 
                <div className={`${styles.normalFlex}`}>
-                <div className={`${active > 1 ? `${styles.cart_button}` : `${styles.cart_button} !bg-[#FDE1E6]`}`}>
-                    <span className={`${active > 1 ? `${styles.cart_button_text}` : `${styles.cart_button_text} !text-[#f63b60]`}`}>
+                <div className={`${active > 1 ? `${styles.cart_button}` : `${styles.cart_button} !bg-indigo-100`}`}>
+                    <span className={`${active > 1 ? `${styles.cart_button_text}` : `${styles.cart_button_text} !text-indigo-600`}`}>
                         2.Payment
                     </span>
                 </div>
@@ -24,11 +24,11 @@ const CheckoutSteps = ({active}) => {
 
                <div className={`${styles.normalFlex}`}>
                <div className={`${
-                    active > 3 ? "w-[30px] 800px:w-[70px] h-[4px] !bg-[#f63b60]"
-                    : "w-[30px] 800px:w-[70px] h-[4px] !bg-[#FDE1E6]"
+                    active > 3 ? "w-[30px] 800px:w-[70px] h-[4px] !bg-indigo-500"
+                    : "w-[30px] 800px:w-[70px] h-[4px] !bg-indigo-100"
                 }`} />
-                <div className={`${active > 2 ? `${styles.cart_button}` : `${styles.cart_button} !bg-[#FDE1E6]`}`}>
-                    <span className={`${active > 2 ? `${styles.cart_button_text}` : `${styles.cart_button_text} !text-[#f63b60]`}`}>
+                <div className={`${active > 2 ? `${styles.cart_button}` : `${styles.cart_button} !bg-indigo-100`}`}>
+                    <span className={`${active > 2 ? `${styles.cart_button_text}` : `${styles.cart_button_text} !text-indigo-600`}`}>
                         3.Success
                     </span>
                 </div>

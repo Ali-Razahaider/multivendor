@@ -57,7 +57,7 @@ function DashboardHero() {
                   {stat.value}
                 </h5>
                 <Link to={stat.link}>
-                  <h5 className="pt-4 pl-[2] text-[#077f9c] cursor-pointer">
+                  <h5 className="pt-4 pl-[2] text-indigo-600 cursor-pointer">
                     {stat.linkText}
                   </h5>
                 </Link>

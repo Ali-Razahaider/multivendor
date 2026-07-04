@@ -31,10 +31,10 @@ function DashboardSideBar({ active }) {
         return (
           <div key={item.id} className="w-full flex items-center p-4">
             <Link to={item.path} className="w-full flex items-center">
-              <Icon size={30} color={isActive ? "crimson" : "#555"} />
+              <Icon size={30} color={isActive ? "#4F46E5" : "#555"} />
               <h5
                 className={`hidden 800px:block pl-2 text-[18px] font-[400] ${
-                  isActive ? "text-[crimson]" : "text-[#555]"
+                  isActive ? "text-indigo-600" : "text-[#555]"
                 }`}
               >
                 {item.label}
