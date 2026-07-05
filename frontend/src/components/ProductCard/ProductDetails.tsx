@@ -1,20 +1,46 @@
 import { useState, useEffect } from "react"
 import { AiFillHeart, AiOutlineHeart, AiOutlineMessage, AiOutlineShoppingCart, AiOutlineClose, AiFillStar, AiOutlineStar } from "react-icons/ai"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import styles from "../../styles/styles"
 import { useSelector, useDispatch } from 'react-redux'
 import { addToCart } from '../../redux/actions/cartActions'
 import { addToWishlist, removeFromWishlist } from '../../redux/actions/wishlistActions'
 import { toast } from 'react-toastify'
+import axios from 'axios'
+import server from '../../server'
 
 const ProductDetails = ({ data, setOpen }) => {
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const { wishlist } = useSelector((state) => state.wishlist)
+  const { user, isAuthenticated } = useSelector((state) => state.user)
   const [count, setCount] = useState(1)
   const [select, setSelect] = useState(0)
   const isWishlisted = wishlist?.find((i) => (i._id || i.id) === (data._id || data.id))
 
   const images = data.image_Url || data.images
+
+  const handleSendMessage = async () => {
+    if (!isAuthenticated) {
+      toast.error('Please login to send a message')
+      return
+    }
+    const sellerId = data.shop?._id || data.shopId
+    if (!sellerId) return
+    const members = [user._id, sellerId].sort()
+    const groupTitle = members.join('_')
+    try {
+      await axios.post(`${server}conversation/create-new-conversation`, {
+        groupTitle,
+        userId: user._id,
+        sellerId,
+      }, { withCredentials: true })
+      setOpen(false)
+      navigate('/inbox')
+    } catch {
+      toast.error('Failed to start conversation')
+    }
+  }
 
   const handleAddToCart = () => {
     dispatch(addToCart({
@@ -104,7 +130,10 @@ const ProductDetails = ({ data, setOpen }) => {
                         ({data.shop?.ratings || 0}/5) Ratings
                       </h5>
                     </div>
-                    <div className={`${styles.button} bg-gray-600 hover:bg-blue-700 transition-colors !rounded-md !h-10 ml-auto cursor-pointer`}>
+                    <div
+                      className={`${styles.button} bg-gray-600 hover:bg-blue-700 transition-colors !rounded-md !h-10 ml-auto cursor-pointer`}
+                      onClick={handleSendMessage}
+                    >
                       <span className="text-white flex items-center text-sm">
                         Send Message <AiOutlineMessage className="ml-2" />
                       </span>

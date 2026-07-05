@@ -1,131 +1,236 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+import { useSelector } from 'react-redux'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Send, Image as ImageIcon, ChevronLeft, MessageSquare } from 'lucide-react'
+import axios from 'axios'
+import { io } from 'socket.io-client'
+import server from '../../server'
+import { format } from '../../utils/timeago'
+
+const ENDPOINT = 'http://localhost:8000'
 
 const DashboardMessages = () => {
+  const { seller } = useSelector((state) => state.seller)
   const [conversations, setConversations] = useState([])
   const [selected, setSelected] = useState(null)
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [showChat, setShowChat] = useState(false)
+  const [arrivalMessage, setArrivalMessage] = useState(null)
+  const [onlineUsers, setOnlineUsers] = useState([])
+  const [participants, setParticipants] = useState({})
+  const socketRef = useRef(null)
+  const scrollRef = useRef(null)
 
-  const sendMessage = () => {
-    if (!input.trim()) return
-    setMessages([...messages, {
-      id: Date.now().toString(),
-      text: input,
-      sender: 'me',
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    }])
-    setInput('')
+  useEffect(() => {
+    socketRef.current = io(ENDPOINT, { transports: ['websocket'] })
+    socketRef.current.on('getMessage', (data) => {
+      setArrivalMessage({ sender: data.senderId, text: data.text, createdAt: Date.now() })
+    })
+    socketRef.current.on('getUsers', setOnlineUsers)
+    return () => socketRef.current.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (seller) socketRef.current.emit('addUser', seller._id)
+  }, [seller])
+
+  useEffect(() => {
+    if (arrivalMessage && selected?.members.includes(arrivalMessage.sender)) {
+      setMessages((prev) => [...prev, arrivalMessage])
+    }
+  }, [arrivalMessage, selected])
+
+  useEffect(() => {
+    if (!seller?._id) return
+    ;(async () => {
+      try {
+        const { data } = await axios.get(
+          `${server}conversation/get-all-conversation-seller/${seller._id}`,
+          { withCredentials: true }
+        )
+        setConversations(data.conversations)
+        const ids = [...new Set(data.conversations.map((c) => c.members.find((m) => m !== seller._id)).filter(Boolean))]
+        const info = {}
+        await Promise.all(ids.map(async (id) => {
+          try {
+            const { data: userData } = await axios.get(`${server}user/user-info/${id}`)
+            info[id] = userData.user
+          } catch {}
+        }))
+        setParticipants((prev) => ({ ...prev, ...info }))
+      } catch (err) {
+        console.error(err?.response?.data || err.message)
+      }
+    })()
+  }, [seller, messages])
+
+  useEffect(() => {
+    if (!selected?._id) return
+    ;(async () => {
+      try {
+        const { data } = await axios.get(`${server}message/get-all-messages/${selected._id}`)
+        setMessages(data.messages)
+      } catch (err) {
+        console.error(err?.response?.data || err.message)
+      }
+    })()
+  }, [selected])
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
+  const getParticipant = useCallback((chat) => {
+    const id = chat?.members?.find((m) => m !== seller?._id)
+    return participants[id] || null
+  }, [seller?._id, participants])
+
+  const getAvatarUrl = (p) => {
+    if (!p) return null
+    return typeof p.avatar === 'string' ? p.avatar : p.avatar?.url || null
   }
 
-  const ConversationList = () => (
-    <div className="w-full md:w-[350px] border-r bg-white flex-shrink-0">
-      <div className="p-4 border-b">
-        <h2 className="text-lg font-semibold">Conversations</h2>
-      </div>
-      <div className="overflow-y-auto h-[calc(100vh-200px)]">
-        {conversations.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 text-gray-400">
-            <MessageSquare className="h-10 w-10 mb-3" />
-            <p className="text-sm">No conversations yet</p>
-          </div>
-        ) : (
-          conversations.map((c) => (
-            <div
-              key={c._id}
-              onClick={() => { setSelected(c); setShowChat(true) }}
-              className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50 border-b transition-colors ${selected?._id === c._id ? 'bg-indigo-50' : ''}`}
-            >
-              <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold flex-shrink-0">
-                {c.name?.[0] || '?'}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex justify-between items-center">
-                  <p className="font-medium text-sm truncate">{c.name}</p>
-                  <span className="text-xs text-gray-400 flex-shrink-0">{c.lastMessageTime}</span>
-                </div>
-                <p className="text-xs text-gray-500 truncate">{c.lastMessage}</p>
-              </div>
-              {c.unread > 0 && (
-                <div className="h-5 w-5 rounded-full bg-indigo-600 text-white text-xs flex items-center justify-center flex-shrink-0">
-                  {c.unread}
-                </div>
-              )}
-            </div>
-          ))
-        )}
-      </div>
-    </div>
-  )
+  const onlineCheck = useCallback((chat) => {
+    const member = chat.members.find((m) => m !== seller?._id)
+    return onlineUsers.some((u) => u.userId === member)
+  }, [seller?._id, onlineUsers])
 
-  const ChatPanel = () => {
-    if (!selected) {
-      return (
+  const sendMessage = async () => {
+    if (!input.trim() || !selected) return
+    const receiverId = selected.members.find((m) => m !== seller._id)
+    socketRef.current.emit('sendMessage', { senderId: seller._id, receiverId, text: input })
+    try {
+      const { data } = await axios.post(`${server}message/create-new-message`, {
+        sender: seller._id, text: input, conversationId: selected._id,
+      })
+      setMessages((prev) => [...prev, data.message])
+      await axios.put(`${server}conversation/update-last-message/${selected._id}`, {
+        lastMessage: input, lastMessageId: seller._id,
+      })
+      setInput('')
+    } catch {}
+  }
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0]
+    if (!file || !selected) return
+    const reader = new FileReader()
+    reader.onload = async () => {
+      const imageData = reader.result
+      const receiverId = selected.members.find((m) => m !== seller._id)
+      socketRef.current.emit('sendMessage', { senderId: seller._id, receiverId, images: imageData })
+      try {
+        const { data } = await axios.post(`${server}message/create-new-message`, {
+          images: imageData, sender: seller._id, text: '', conversationId: selected._id,
+        })
+        setMessages((prev) => [...prev, data.message])
+        await axios.put(`${server}conversation/update-last-message/${selected._id}`, {
+          lastMessage: 'Photo', lastMessageId: seller._id,
+        })
+      } catch {}
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const selectConversation = (c) => {
+    setSelected(c)
+    setShowChat(true)
+  }
+
+  const p = getParticipant(selected)
+  const avatar = getAvatarUrl(p)
+
+  return (
+    <div className="h-[calc(100vh-80px)] flex border rounded-lg overflow-hidden bg-white shadow-sm">
+      {/* Conversation List */}
+      <div className="w-full md:w-[350px] border-r bg-white flex-shrink-0">
+        <div className="p-4 border-b"><h2 className="text-lg font-semibold">Conversations</h2></div>
+        <div className="overflow-y-auto h-[calc(100vh-200px)]">
+          {conversations.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 text-gray-400">
+              <MessageSquare className="h-10 w-10 mb-3" />
+              <p className="text-sm">No conversations yet</p>
+            </div>
+          ) : conversations.map((c) => {
+            const cp = getParticipant(c)
+            const cavatar = getAvatarUrl(cp)
+            return (
+              <div
+                key={c._id}
+                onClick={() => selectConversation(c)}
+                className={`flex items-center gap-3 p-4 cursor-pointer hover:bg-gray-50 border-b transition-colors ${selected?._id === c._id ? 'bg-indigo-50' : ''}`}
+              >
+                <div className="h-10 w-10 rounded-full flex-shrink-0 overflow-hidden bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold">
+                  {cavatar ? <img src={cavatar} alt="" className="w-full h-full object-cover" /> : cp?.name?.[0] || '?'}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-center">
+                    <p className="font-medium text-sm truncate">{cp?.name || 'User'}</p>
+                    <span className="text-xs text-gray-400 flex-shrink-0">{c.lastMessageTime}</span>
+                  </div>
+                  <p className="text-xs text-gray-500 truncate">{c.lastMessage}</p>
+                </div>
+                {onlineCheck(c) && <div className="h-2 w-2 rounded-full bg-green-400 flex-shrink-0" />}
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Chat Panel */}
+      {!selected ? (
         <div className="hidden md:flex flex-1 items-center justify-center text-gray-400">
           <div className="text-center">
             <MessageSquare className="h-12 w-12 mx-auto mb-3" />
             <p className="text-sm">Select a conversation to reply</p>
           </div>
         </div>
-      )
-    }
-    return (
-      <div className="flex-1 flex flex-col">
-        <div className="flex items-center gap-3 p-4 border-b bg-white">
-          <button className="md:hidden" onClick={() => setShowChat(false)}>
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-          <div className="h-9 w-9 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold flex-shrink-0">
-            {selected.name?.[0] || '?'}
-          </div>
-          <div>
-            <p className="font-medium text-sm">{selected.name}</p>
-          </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50" style={{ maxHeight: 'calc(100vh - 320px)' }}>
-          {messages.length === 0 ? (
-            <div className="flex items-center justify-center h-full text-gray-400 text-sm">
-              No messages yet.
+      ) : (
+        <div className="flex-1 flex flex-col">
+          <div className="flex items-center gap-3 p-4 border-b bg-white">
+            <button className="md:hidden" onClick={() => setShowChat(false)}>
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <div className="h-9 w-9 rounded-full flex-shrink-0 overflow-hidden bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold">
+              {avatar ? <img src={avatar} alt="" className="w-full h-full object-cover" /> : p?.name?.[0] || '?'}
             </div>
-          ) : (
-            messages.map((m) => (
-              <div key={m._id || m.id} className={`flex ${m.sender === 'me' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[75%] rounded-2xl px-4 py-2 ${m.sender === 'me' ? 'bg-indigo-600 text-white rounded-br-md' : 'bg-white text-gray-800 rounded-bl-md shadow-sm'}`}>
-                  <p className="text-sm">{m.text}</p>
-                  <p className={`text-xs mt-1 ${m.sender === 'me' ? 'text-indigo-200' : 'text-gray-400'}`}>{m.time}</p>
+            <div><p className="font-medium text-sm">{p?.name || 'User'}</p></div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50" style={{ maxHeight: 'calc(100vh - 320px)' }}>
+            {messages.length === 0 ? (
+              <div className="flex items-center justify-center h-full text-gray-400 text-sm">No messages yet.</div>
+            ) : messages.map((m) => (
+              <div key={m._id} ref={scrollRef} className={`flex ${m.sender === seller._id ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[75%] rounded-2xl px-4 py-2 ${m.sender === seller._id ? 'bg-indigo-600 text-white rounded-br-md' : 'bg-white text-gray-800 rounded-bl-md shadow-sm'}`}>
+                  {m.images?.url && <img src={m.images.url} className="w-[200px] h-[200px] object-cover rounded-lg mb-2" alt="" />}
+                  {m.text && <p className="text-sm">{m.text}</p>}
+                  <p className={`text-xs mt-1 ${m.sender === seller._id ? 'text-indigo-200' : 'text-gray-400'}`}>{format(m.createdAt)}</p>
                 </div>
               </div>
-            ))
-          )}
-        </div>
+            ))}
+          </div>
 
-        <div className="p-4 border-t bg-white flex items-center gap-2">
-          <button className="p-2 hover:bg-gray-100 rounded-full text-gray-400">
-            <ImageIcon className="h-5 w-5" />
-          </button>
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-            placeholder="Type a message..."
-            className="flex-1"
-          />
-          <Button size="icon" onClick={sendMessage} disabled={!input.trim()}>
-            <Send className="h-4 w-4" />
-          </Button>
+          <div className="p-4 border-t bg-white flex items-center gap-2">
+            <label className="p-2 hover:bg-gray-100 rounded-full text-gray-400 cursor-pointer">
+              <ImageIcon className="h-5 w-5" />
+              <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+            </label>
+            <Input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+              placeholder="Type a message..."
+              className="flex-1"
+            />
+            <Button size="icon" onClick={sendMessage} disabled={!input.trim()}>
+              <Send className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
-      </div>
-    )
-  }
-
-  return (
-    <div className="h-[calc(100vh-80px)] flex border rounded-lg overflow-hidden bg-white shadow-sm">
-      <ConversationList />
-      <ChatPanel />
+      )}
     </div>
   )
 }

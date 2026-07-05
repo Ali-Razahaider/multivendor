@@ -218,4 +218,16 @@ router.delete(
   })
 );
 
+router.get(
+  '/user-info/:id',
+  asyncHandler(async (req, res) => {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      res.status(404);
+      throw new Error('User not found');
+    }
+    res.json({ success: true, user });
+  })
+);
+
 export default router;

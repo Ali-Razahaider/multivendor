@@ -7,6 +7,8 @@ import axios from 'axios'
 import server from '../../server'
 import { useNavigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react'
+import { AiOutlineMessage } from 'react-icons/ai'
+import { toast } from 'react-toastify'
 
 const fallbackShop = {
   _id: 'fallback-shop-1',
@@ -20,6 +22,7 @@ const fallbackShop = {
 
 const ShopInfo = ({ isOwner }) => {
   const { seller, isLoading: sellerLoading } = useSelector((state) => state.seller)
+  const { user, isAuthenticated } = useSelector((state) => state.user)
   const navigate = useNavigate()
   const { id } = useParams()
 
@@ -71,6 +74,27 @@ const ShopInfo = ({ isOwner }) => {
 
   const displayData = isOwner ? seller : data
 
+  const handleSendMessage = async () => {
+    if (!isAuthenticated) {
+      toast.error('Please login to send a message')
+      return
+    }
+    const sellerId = displayData?._id
+    if (!sellerId) return
+    const members = [user._id, sellerId].sort()
+    const groupTitle = members.join('_')
+    try {
+      await axios.post(`${server}conversation/create-new-conversation`, {
+        groupTitle,
+        userId: user._id,
+        sellerId,
+      }, { withCredentials: true })
+      navigate('/inbox')
+    } catch {
+      toast.error('Failed to start conversation')
+    }
+  }
+
   return (
     <>
       {isOwner ? (sellerLoading ? <Loader /> : null) : (loading ? <Loader /> : null)}
@@ -101,6 +125,19 @@ const ShopInfo = ({ isOwner }) => {
             <h5 className="font-[600]">Joined On</h5>
             <h4 className="text-[#000000b0]">{displayData?.createdAt?.slice(0, 10)}</h4>
           </div>
+          {!isOwner && (
+            <div className="px-3 pb-3">
+              <div
+                className={`${styles.button} !w-full !h-[42px] !rounded-[5px]`}
+                onClick={handleSendMessage}
+              >
+                <span className="text-white flex items-center justify-center gap-2">
+                  <AiOutlineMessage size={18} />
+                  Send Message
+                </span>
+              </div>
+            </div>
+          )}
           {isOwner && (
             <>
               <div className="p-3">

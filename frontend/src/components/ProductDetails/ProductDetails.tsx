@@ -1,6 +1,6 @@
 import { useState } from "react"
-import { AiFillHeart, AiOutlineHeart, AiOutlineShoppingCart, AiFillStar, AiOutlineStar } from "react-icons/ai"
-import { Link } from "react-router-dom"
+import { AiFillHeart, AiOutlineHeart, AiOutlineShoppingCart, AiFillStar, AiOutlineStar, AiOutlineMessage } from "react-icons/ai"
+import { Link, useNavigate } from "react-router-dom"
 import styles from "../../styles/styles"
 import { useSelector, useDispatch } from 'react-redux'
 import { addToWishlist, removeFromWishlist } from '../../redux/actions/wishlistActions'
@@ -11,6 +11,7 @@ import axios from 'axios'
 import server from '../../server'
 
 const ProductDetailsInfo = ({ data }) => {
+    const navigate = useNavigate()
     const [active, setActive] = useState(1)
     const [rating, setRating] = useState(0)
     const [comment, setComment] = useState('')
@@ -20,6 +21,27 @@ const ProductDetailsInfo = ({ data }) => {
     if (!data) return null
 
     const reviews = data.reviews || []
+
+    const handleSendMessage = async () => {
+      if (!isAuthenticated) {
+        toast.error('Please login to send a message')
+        return
+      }
+      const sellerId = data.shop?._id || data.shopId
+      if (!sellerId) return
+      const members = [user._id, sellerId].sort()
+      const groupTitle = members.join('_')
+      try {
+        const { data: res } = await axios.post(`${server}conversation/create-new-conversation`, {
+          groupTitle,
+          userId: user._id,
+          sellerId,
+        }, { withCredentials: true })
+        navigate('/inbox')
+      } catch {
+        toast.error('Failed to start conversation')
+      }
+    }
     const avgRating = reviews.length
       ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1)
       : 0
@@ -206,6 +228,15 @@ const ProductDetailsInfo = ({ data }) => {
                                     <h4 className="text-white">Visit Shop</h4>
                                 </div>
                             </Link>
+                            <div
+                              className={`${styles.button} !rounded !h-10 mt-2 !bg-indigo-600 hover:!bg-indigo-700`}
+                              onClick={handleSendMessage}
+                            >
+                              <h4 className="text-white flex items-center gap-2">
+                                <AiOutlineMessage size={16} />
+                                Send Message
+                              </h4>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -217,7 +248,9 @@ const ProductDetailsInfo = ({ data }) => {
 
 function ProductDetails({ data }) {
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const { wishlist } = useSelector((state) => state.wishlist)
+    const { user, isAuthenticated } = useSelector((state) => state.user)
     const [count, setCount] = useState(1)
     const [select, setSelect] = useState(0)
     const isWishlisted = wishlist?.find((i) => (i._id || i.id) === (data?._id || data?.id))
@@ -225,6 +258,27 @@ function ProductDetails({ data }) {
     if (!data) return <div className="text-center py-20 text-gray-500">Product not found</div>
 
     const images = data.images || data.image_Url
+
+    const handleSendMessage = async () => {
+      if (!isAuthenticated) {
+        toast.error('Please login to send a message')
+        return
+      }
+      const sellerId = data.shop?._id || data.shopId
+      if (!sellerId) return
+      const members = [user._id, sellerId].sort()
+      const groupTitle = members.join('_')
+      try {
+        const { data: res } = await axios.post(`${server}conversation/create-new-conversation`, {
+          groupTitle,
+          userId: user._id,
+          sellerId,
+        }, { withCredentials: true })
+        navigate('/inbox')
+      } catch {
+        toast.error('Failed to start conversation')
+      }
+    }
 
     return (
         <div className={`${styles.section} my-8`}>
@@ -252,12 +306,19 @@ function ProductDetails({ data }) {
                                 alt=""
                                 className="w-12.5 h-12.5 rounded-full border-2 border-gray-300 p-0.5"
                             />
-                            <div className="ml-3">
+                            <div className="ml-3 flex-1">
                                 <Link to={`/shop/preview/${data?.shop?._id || data?.shopId}`}>
                                     <h3 className={`${styles.shop_name} pb-0`}>{data.shop?.name}</h3>
                                 </Link>
                                 <h5 className="text-sm text-gray-500">({data.shop?.ratings || 0}/5) Ratings</h5>
                             </div>
+                            <button
+                              onClick={handleSendMessage}
+                              className="flex items-center gap-1 bg-indigo-600 text-white text-xs px-3 py-1.5 rounded-md hover:bg-indigo-700 transition-colors"
+                            >
+                              <AiOutlineMessage size={14} />
+                              Message
+                            </button>
                         </div>
                     </div>
                     <div className="w-full 800px:w-1/2 pt-5">
