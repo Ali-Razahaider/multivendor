@@ -42,7 +42,11 @@ const WithdrawMoney = () => {
   }
 
   useEffect(() => {
-    if (seller?._id) fetchWithdraws()
+    if (seller?._id) {
+      fetchWithdraws()
+      const interval = setInterval(fetchWithdraws, 30000)
+      return () => clearInterval(interval)
+    }
   }, [seller])
 
   const handleBankSubmit = async (e) => {
