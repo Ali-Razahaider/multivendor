@@ -10,6 +10,8 @@ import coupon from './controllers/couponController.js'
 import order from './controllers/orderController.js'
 import payment from './controllers/paymentController.js'
 import withdraw from './controllers/withdrawController.js'
+import conversation from './controllers/conversationController.js'
+import message from './controllers/messageController.js'
 import cors from 'cors';
 const app = express();
 
@@ -43,6 +45,8 @@ app.use('/api/coupon', coupon);
 app.use('/api/order', order);
 app.use('/api/payment', payment);
 app.use('/api/withdraw', withdraw);
+app.use('/api/conversation', conversation);
+app.use('/api/message', message);
 
 // error handling (traversy media)
 app.use(notFound);
