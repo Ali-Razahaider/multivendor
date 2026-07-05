@@ -11,4 +11,5 @@ import ShopPreviewPage from '../pages/ShopPreviewPage';
 import ShopWithdrawMoneyPage from '../pages/ShopWithdrawMoneyPage';
 import ShopRefundsPage from '../pages/ShopRefundsPage';
 import ShopSettingsPage from '../pages/ShopSettingsPage';
-export { ShopHomePage, ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopAllOrders, ShopOrderDetails, ShopCreateEvent, ShopAllEvents, ShopDiscountCodes, ShopPreviewPage, ShopWithdrawMoneyPage, ShopRefundsPage, ShopSettingsPage };
+import ShopInboxPage from '../pages/ShopInboxPage';
+export { ShopHomePage, ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopAllOrders, ShopOrderDetails, ShopCreateEvent, ShopAllEvents, ShopDiscountCodes, ShopPreviewPage, ShopWithdrawMoneyPage, ShopRefundsPage, ShopSettingsPage, ShopInboxPage };

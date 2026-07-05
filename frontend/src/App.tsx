@@ -22,6 +22,7 @@ import {
   AdminProductsPage,
   AdminEventsPage,
   AdminWithdrawPage,
+  UserInbox,
 } from './routes/Routes';
 import './App.css';
 import { ToastContainer } from 'react-toastify';
@@ -36,7 +37,7 @@ import ProtectedAdminRoute from './routes/ProtectedAdminRoute';
 
 import SellerProtectedRoute from './routes/SellerProtectedRoute';
 import {
-  ShopHomePage, ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopAllOrders, ShopOrderDetails, ShopCreateEvent, ShopAllEvents, ShopDiscountCodes, ShopPreviewPage, ShopWithdrawMoneyPage, ShopRefundsPage, ShopSettingsPage,
+  ShopHomePage, ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopAllOrders, ShopOrderDetails, ShopCreateEvent, ShopAllEvents, ShopDiscountCodes, ShopPreviewPage, ShopWithdrawMoneyPage, ShopRefundsPage, ShopSettingsPage, ShopInboxPage,
 } from './routes/shopRoutes';
 
 axios.defaults.withCredentials = true;
@@ -103,6 +104,14 @@ const App = () => {
         <Route path="/shop/preview/:id" element={<ShopPreviewPage />} />
         <Route path="/shop-create" element={<ShopCreatePage />} />
         <Route path="/shop-login" element={<ShopLoginPage />} />
+        <Route
+          path="/inbox"
+          element={
+            <ProtectedRoute>
+              <UserInbox />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/shop/:id"
           element={
@@ -252,6 +261,14 @@ const App = () => {
           element={
             <SellerProtectedRoute>
               <ShopSettingsPage />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard-messages"
+          element={
+            <SellerProtectedRoute>
+              <ShopInboxPage />
             </SellerProtectedRoute>
           }
         />
