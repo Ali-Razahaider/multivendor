@@ -32,10 +32,18 @@ const isSeller = asyncHandler(async (req, res, next) => {
 });
 
 const isAdmin = asyncHandler(async (req, res, next) => {
-  if (!req.user || req.user.role !== 'admin') {
+  const { auth_token } = req.cookies;
+  if (!auth_token) {
+    res.status(401);
+    throw new Error('Not authorized');
+  }
+  const userData = jwt.verify(auth_token, process.env.JWT_SECRET);
+  const user = await User.findById(userData.userId);
+  if (!user || user.role !== 'admin') {
     res.status(403);
     throw new Error('Admin access only');
   }
+  req.user = user;
   next();
 });
 

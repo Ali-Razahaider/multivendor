@@ -184,7 +184,6 @@ router.post(
 
 router.get(
     '/admin-all-sellers',
-    isAuthenticated,
     isAdmin,
     asyncHandler(async (req, res) => {
         const sellers = await Shop.find().sort({ createdAt: -1 });
@@ -194,7 +193,6 @@ router.get(
 
 router.delete(
     '/admin-delete-seller/:id',
-    isAuthenticated,
     isAdmin,
     asyncHandler(async (req, res) => {
         const shop = await Shop.findByIdAndDelete(req.params.id);
@@ -203,6 +201,55 @@ router.delete(
             throw new Error('Seller not found');
         }
         res.json({ success: true, message: 'Seller deleted successfully' });
+    })
+);
+
+router.put(
+    '/update-shop',
+    isSeller,
+    asyncHandler(async (req, res) => {
+        const { name, description, address, phoneNumber, zipCode, avatar } = req.body;
+        const shop = await Shop.findById(req.shop._id);
+        if (!shop) {
+            res.status(404);
+            throw new Error('Shop not found');
+        }
+        if (name) shop.name = name;
+        if (description !== undefined) shop.description = description;
+        if (address) shop.address = address;
+        if (phoneNumber) shop.phoneNumber = phoneNumber;
+        if (zipCode) shop.zipCode = zipCode;
+        if (avatar) shop.avatar = avatar;
+        await shop.save();
+        shop.password = undefined;
+        res.json({ success: true, shop });
+    })
+);
+
+router.put(
+    '/update-payment-methods',
+    isSeller,
+    asyncHandler(async (req, res) => {
+        const { withdrawMethod } = req.body;
+        const seller = await Shop.findByIdAndUpdate(req.shop._id, { withdrawMethod }, { new: true });
+        seller.password = undefined;
+        res.json({ success: true, seller });
+    })
+);
+
+router.delete(
+    '/delete-withdraw-method',
+    isSeller,
+    asyncHandler(async (req, res) => {
+        const seller = await Shop.findById(req.shop._id);
+        if (!seller) {
+            res.status(404);
+            throw new Error('Seller not found');
+        }
+        seller.withdrawMethod = null;
+        await seller.save();
+        seller.password = undefined;
+        res.json({ success: true, seller });
     })
 );
 

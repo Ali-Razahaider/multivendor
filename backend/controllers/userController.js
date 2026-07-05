@@ -198,7 +198,6 @@ router.put(
 
 router.get(
   '/admin-all-users',
-  isAuthenticated,
   isAdmin,
   asyncHandler(async (req, res) => {
     const users = await User.find().sort({ createdAt: -1 });
@@ -208,7 +207,6 @@ router.get(
 
 router.delete(
   '/admin-delete-user/:id',
-  isAuthenticated,
   isAdmin,
   asyncHandler(async (req, res) => {
     const user = await User.findByIdAndDelete(req.params.id);

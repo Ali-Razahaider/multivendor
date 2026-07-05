@@ -6,6 +6,7 @@ import styles from '../../styles/styles'
 import axios from 'axios'
 import server from '../../server'
 import { useNavigate } from 'react-router-dom'
+import { Loader2 } from 'lucide-react'
 
 const fallbackShop = {
   _id: 'fallback-shop-1',
@@ -25,31 +26,36 @@ const ShopInfo = ({ isOwner }) => {
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(false)
   const [products, setProducts] = useState([])
+  const [loggingOut, setLoggingOut] = useState(false)
 
   const averageRating = products.length
     ? (products.reduce((sum, p) => sum + (p.ratings ?? p.rating ?? 0), 0) / products.length).toFixed(1)
     : 0
 
   useEffect(() => {
-    if (!isOwner && id) {
-      setLoading(true)
-      Promise.all([
-        axios.get(`${server}shop/get-shop-info/${id}`),
-        axios.get(`${server}product/shop/${id}`),
-      ])
-        .then(([shopRes, prodRes]) => {
-          setData(shopRes.data.shop)
-          setProducts(prodRes.data.products || [])
-          setLoading(false)
-        })
-        .catch(() => {
-          setData(fallbackShop)
-          setLoading(false)
-        })
-    }
-  }, [id, isOwner])
+    const shopId = isOwner ? seller?._id : id
+    if (!shopId) return
+    setLoading(true)
+    const promises = [
+      isOwner
+        ? Promise.resolve({ data: { shop: seller } })
+        : axios.get(`${server}shop/get-shop-info/${shopId}`),
+      axios.get(`${server}product/shop/${shopId}`),
+    ]
+    Promise.all(promises)
+      .then(([shopRes, prodRes]) => {
+        if (!isOwner) setData(shopRes.data.shop)
+        setProducts(prodRes.data.products || [])
+        setLoading(false)
+      })
+      .catch(() => {
+        if (!isOwner) setData(fallbackShop)
+        setLoading(false)
+      })
+  }, [id, seller])
 
   const logoutHandler = async () => {
+    setLoggingOut(true)
     try {
       const res = await axios.post(`${server}shop/logout`, {}, { withCredentials: true })
       if (res.data.success) {
@@ -58,6 +64,8 @@ const ShopInfo = ({ isOwner }) => {
       }
     } catch (error) {
       console.error('Logout failed:', error)
+    } finally {
+      setLoggingOut(false)
     }
   }
 
@@ -113,10 +121,13 @@ const ShopInfo = ({ isOwner }) => {
                 </div>
               </Link>
               <div
-                className={`${styles.button} !w-full !h-[42px] !rounded-[5px]`}
+                className={`${styles.button} !w-full !h-[42px] !rounded-[5px] ${loggingOut ? 'opacity-50 pointer-events-none' : ''}`}
                 onClick={logoutHandler}
               >
-                <span className="text-white">Log Out</span>
+                <span className="text-white flex items-center justify-center gap-2">
+                  {loggingOut && <Loader2 className="h-4 w-4 animate-spin" />}
+                  Log Out
+                </span>
               </div>
             </div>
           )}

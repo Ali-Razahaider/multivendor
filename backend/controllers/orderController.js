@@ -153,8 +153,19 @@ router.put(
 );
 
 router.get(
+  '/seller-refund-orders/:shopId',
+  isSeller,
+  asyncHandler(async (req, res) => {
+    const orders = await Order.find({
+      'cart.shopId': req.params.shopId,
+      status: 'Processing Refund',
+    }).sort({ createdAt: -1 });
+    res.json({ success: true, orders });
+  })
+);
+
+router.get(
   '/admin-all-orders',
-  isAuthenticated,
   isAdmin,
   asyncHandler(async (req, res) => {
     const orders = await Order.find().sort({ createdAt: -1 });

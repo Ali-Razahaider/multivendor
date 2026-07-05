@@ -164,7 +164,6 @@ router.delete(
 
 router.get(
   "/admin-all-products",
-  isAuthenticated,
   isAdmin,
   asyncHandler(async (req, res) => {
     const products = await Product.find().sort({ createdAt: -1 });

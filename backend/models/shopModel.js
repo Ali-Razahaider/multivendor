@@ -20,15 +20,29 @@ const shopSchema = new mongoose.Schema(
             default: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
         },
         description: { type: String },
+        withdrawMethod: {
+          type: Object,
+          default: null,
+        },
+        availableBalance: {
+          type: Number,
+          default: 0,
+        },
+        transections: [
+          {
+            _id: String,
+            amount: Number,
+            updatedAt: Date,
+            status: String,
+          },
+        ],
         createdAt: { type: Date, default: Date.now },
         resetPasswordToken: String,
         resetPasswordTime: Date,
     });
 
-shopSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
-    next();
-  }
+shopSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
   this.password = await bcrypt.hash(this.password, await bcrypt.genSalt(10));
 });
 

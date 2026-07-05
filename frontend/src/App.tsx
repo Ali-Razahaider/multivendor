@@ -21,6 +21,7 @@ import {
   AdminOrdersPage,
   AdminProductsPage,
   AdminEventsPage,
+  AdminWithdrawPage,
 } from './routes/Routes';
 import './App.css';
 import { ToastContainer } from 'react-toastify';
@@ -34,7 +35,9 @@ import ProtectedRoute from './routes/ProtectedRoute';
 import ProtectedAdminRoute from './routes/ProtectedAdminRoute';
 
 import SellerProtectedRoute from './routes/SellerProtectedRoute';
-import { ShopHomePage, ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopAllOrders, ShopOrderDetails, ShopCreateEvent, ShopAllEvents, ShopDiscountCodes, ShopPreviewPage } from './routes/shopRoutes';
+import {
+  ShopHomePage, ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopAllOrders, ShopOrderDetails, ShopCreateEvent, ShopAllEvents, ShopDiscountCodes, ShopPreviewPage, ShopWithdrawMoneyPage, ShopRefundsPage, ShopSettingsPage,
+} from './routes/shopRoutes';
 
 axios.defaults.withCredentials = true;
 
@@ -218,6 +221,38 @@ const App = () => {
             <ProtectedAdminRoute>
               <AdminEventsPage />
             </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/admin/withdraw"
+          element={
+            <ProtectedAdminRoute>
+              <AdminWithdrawPage />
+            </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/dashboard-withdraw-money"
+          element={
+            <SellerProtectedRoute>
+              <ShopWithdrawMoneyPage />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard-refunds"
+          element={
+            <SellerProtectedRoute>
+              <ShopRefundsPage />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <SellerProtectedRoute>
+              <ShopSettingsPage />
+            </SellerProtectedRoute>
           }
         />
       </Routes>

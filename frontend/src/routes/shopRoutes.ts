@@ -8,4 +8,7 @@ import ShopCreateEvent from '../pages/ShopCreateEvent';
 import ShopAllEvents from '../pages/ShopAllEvents';
 import ShopDiscountCodes from '../pages/ShopDiscountCodes';
 import ShopPreviewPage from '../pages/ShopPreviewPage';
-export { ShopHomePage, ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopAllOrders, ShopOrderDetails, ShopCreateEvent, ShopAllEvents, ShopDiscountCodes, ShopPreviewPage };
+import ShopWithdrawMoneyPage from '../pages/ShopWithdrawMoneyPage';
+import ShopRefundsPage from '../pages/ShopRefundsPage';
+import ShopSettingsPage from '../pages/ShopSettingsPage';
+export { ShopHomePage, ShopDashboardPage, ShopCreateProduct, ShopAllProducts, ShopAllOrders, ShopOrderDetails, ShopCreateEvent, ShopAllEvents, ShopDiscountCodes, ShopPreviewPage, ShopWithdrawMoneyPage, ShopRefundsPage, ShopSettingsPage };

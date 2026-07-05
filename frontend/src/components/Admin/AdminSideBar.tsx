@@ -3,6 +3,7 @@ import { FiShoppingBag, FiUsers, FiPackage } from "react-icons/fi"
 import { MdOutlineLocalOffer } from "react-icons/md"
 import { VscNewFile } from "react-icons/vsc"
 import { IoStorefrontOutline } from "react-icons/io5"
+import { GiPayMoney } from "react-icons/gi"
 import { Link } from "react-router-dom"
 
 const menuItems = [
@@ -12,6 +13,7 @@ const menuItems = [
   { id: 4, icon: FiShoppingBag, label: "All Orders", path: "/admin/orders" },
   { id: 5, icon: FiPackage, label: "All Products", path: "/admin/products" },
   { id: 6, icon: MdOutlineLocalOffer, label: "All Events", path: "/admin/events" },
+  { id: 7, icon: GiPayMoney, label: "Withdraw Requests", path: "/admin/withdraw" },
 ]
 
 function AdminSideBar({ active }) {

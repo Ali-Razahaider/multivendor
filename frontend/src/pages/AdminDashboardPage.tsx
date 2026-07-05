@@ -13,6 +13,7 @@ import {
 import { AiOutlineMoneyCollect, AiOutlineUser } from "react-icons/ai"
 import { FiShoppingBag, FiPackage } from "react-icons/fi"
 import { IoStorefrontOutline } from "react-icons/io5"
+import { GiPayMoney } from "react-icons/gi"
 import { Link } from "react-router-dom"
 import axios from 'axios'
 import server from '../server'
@@ -24,22 +25,25 @@ function AdminDashboardPage() {
     orders: 0,
     products: 0,
     totalEarnings: 0,
+    withdraws: 0,
   })
   const [latestOrders, setLatestOrders] = useState([])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [usersRes, sellersRes, ordersRes, productsRes] = await Promise.all([
-          axios.get(`${server}user/admin-all-users`),
-          axios.get(`${server}shop/admin-all-sellers`),
-          axios.get(`${server}order/admin-all-orders`),
-          axios.get(`${server}product/admin-all-products`),
+        const [usersRes, sellersRes, ordersRes, productsRes, withdrawRes] = await Promise.all([
+          axios.get(`${server}user/admin-all-users`, { withCredentials: true }),
+          axios.get(`${server}shop/admin-all-sellers`, { withCredentials: true }),
+          axios.get(`${server}order/admin-all-orders`, { withCredentials: true }),
+          axios.get(`${server}product/admin-all-products`, { withCredentials: true }),
+          axios.get(`${server}withdraw/admin-all-withdraws`, { withCredentials: true }),
         ])
         const users = usersRes.data.users || []
         const sellers = sellersRes.data.sellers || []
         const orders = ordersRes.data.orders || []
         const products = productsRes.data.products || []
+        const withdraws = withdrawRes.data.withdraws || []
 
         const totalEarnings = orders.reduce((sum, o) => sum + (o.totalPrice || 0), 0)
 
@@ -49,6 +53,7 @@ function AdminDashboardPage() {
           orders: orders.length,
           products: products.length,
           totalEarnings,
+          withdraws: withdraws.length,
         })
         setLatestOrders(orders.slice(0, 5))
       } catch (err) {
@@ -63,6 +68,7 @@ function AdminDashboardPage() {
     { icon: IoStorefrontOutline, label: "Total Sellers", value: stats.sellers, color: "#7C3AED" },
     { icon: FiShoppingBag, label: "Total Orders", value: stats.orders, color: "#0891B2" },
     { icon: FiPackage, label: "Total Products", value: stats.products, color: "#059669" },
+    { icon: GiPayMoney, label: "Withdraw Requests", value: stats.withdraws, color: "#DC2626" },
     { icon: AiOutlineMoneyCollect, label: "Total Earnings", value: `$${stats.totalEarnings.toFixed(2)}`, color: "#D97706" },
   ]
 
@@ -79,7 +85,7 @@ function AdminDashboardPage() {
             {statCards.map((card, index) => {
               const Icon = card.icon
               return (
-                <Card key={index} className="w-full 800px:w-[18%]">
+                <Card key={index} className="w-full 800px:w-[15%]">
                   <CardContent className="p-5">
                     <div className="flex items-center">
                       <Icon size={30} color={card.color} />

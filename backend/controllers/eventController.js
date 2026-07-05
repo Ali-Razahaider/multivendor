@@ -1,7 +1,7 @@
 import express from 'express';
 import Events from '../models/eventModel.js';
 import asyncHandler from 'express-async-handler';
-import { isAuthenticated, isSeller, isAdmin } from '../middleware/authMiddleware.js';
+import { isSeller, isAdmin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -93,8 +93,6 @@ router.delete('/:id', isSeller, asyncHandler(async (req, res, next) => {
 
 router.get(
     '/admin-all-events',
-    isSeller,
-    isAuthenticated,
     isAdmin,
     asyncHandler(async (req, res) => {
         const events = await Events.find().sort({ createdAt: -1 });

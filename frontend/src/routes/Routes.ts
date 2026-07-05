@@ -19,5 +19,6 @@ import AdminSellersPage from '../pages/AdminSellersPage';
 import AdminOrdersPage from '../pages/AdminOrdersPage';
 import AdminProductsPage from '../pages/AdminProductsPage';
 import AdminEventsPage from '../pages/AdminEventsPage';
+import AdminWithdrawPage from '../pages/AdminWithdrawPage';
 
-export { LoginPage, HomePage, RegisterPage, ActivationPage, ProductsPage, BestSellingPage, EventPage, FaqPage, ProductDetailsPage, ProfilePage, CheckoutPage, PaymentPage, OrderSuccessPage, ShopCreatePage, ShopLoginPage, AdminDashboardPage, AdminUsersPage, AdminSellersPage, AdminOrdersPage, AdminProductsPage, AdminEventsPage };
+export { LoginPage, HomePage, RegisterPage, ActivationPage, ProductsPage, BestSellingPage, EventPage, FaqPage, ProductDetailsPage, ProfilePage, CheckoutPage, PaymentPage, OrderSuccessPage, ShopCreatePage, ShopLoginPage, AdminDashboardPage, AdminUsersPage, AdminSellersPage, AdminOrdersPage, AdminProductsPage, AdminEventsPage, AdminWithdrawPage };
