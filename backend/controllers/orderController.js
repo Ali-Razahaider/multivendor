@@ -2,6 +2,7 @@ import express from 'express';
 import asyncHandler from 'express-async-handler';
 import { isAuthenticated, isSeller, isAdmin } from '../middleware/authMiddleware.js';
 import Order from '../models/orderModel.js';
+import Shop from '../models/shopModel.js';
 import Product from '../models/productModel.js';
 import sendMail from '../utils/sendMail.js';
 import { orderConfirmationTemplate, statusUpdateTemplate } from '../utils/emailTemplates.js';
@@ -111,6 +112,16 @@ router.put(
     if (req.body.status === 'Delivered') {
       order.deliveredAt = Date.now();
       order.paymentInfo.status = 'Succeeded';
+
+      let sellerEarnings = 0;
+      for (const item of order.cart) {
+        sellerEarnings += (item.dPrice || 0) * (item.qty || 1);
+      }
+      const shop = await Shop.findById(req.shop._id);
+      if (shop) {
+        shop.availableBalance = (shop.availableBalance || 0) + sellerEarnings;
+        await shop.save();
+      }
     }
 
     await order.save({ validateBeforeSave: false });
