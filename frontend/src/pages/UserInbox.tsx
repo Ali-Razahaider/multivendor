@@ -8,7 +8,7 @@ import { io } from 'socket.io-client'
 import server from '../server'
 import { format } from '../utils/timeago'
 
-const ENDPOINT = 'http://localhost:8000'
+const ENDPOINT = import.meta.env.VITE_SOCKET_SERVER
 
 const UserInbox = () => {
   const { user } = useSelector((state) => state.user)
