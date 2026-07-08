@@ -1,13 +1,14 @@
 import { Link } from 'react-router-dom';
 import styles from '../../styles/styles';
 import { useState, useEffect } from 'react';
-import { productData, categoriesData, navItems } from '../../static/data';
+import { categoriesData, navItems } from '../../static/data';
 import { AiOutlineHeart, AiOutlineSearch, AiOutlineShoppingCart } from 'react-icons/ai';
 import { BiMenuAltLeft } from 'react-icons/bi';
 import { IoIosArrowDown, IoIosArrowForward } from 'react-icons/io';
 import DropDown from './DropDown';
 import { IoHeartOutline, IoPersonOutline } from 'react-icons/io5';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { getAllProducts } from '../../redux/actions/productActions';
 import Cart from '../Cart/Cart';
 import Wishlist from '../Wishlist/Wishlist';
 import { RxCross1 } from 'react-icons/rx';
@@ -15,12 +16,14 @@ import { RxCross1 } from 'react-icons/rx';
 import Navbar from './Navbar';
 
 const Header = ({ activeHeading }) => {
+  const dispatch = useDispatch();
   const [searchTerm, setSearchTerm] = useState('');
   const [searchData, setSearchData] = useState([]);
   const [active, setActive] = useState(false);
   const [dropdown, setDropDown] = useState(false);
   const { isAuthenticated, user } = useSelector((state) => state.user);
   const { isSeller, seller } = useSelector((state) => state.seller);
+  const { products } = useSelector((state) => state.product);
   const { cart } = useSelector((state) => state.cart);
   const { wishlist } = useSelector((state) => state.wishlist);
   const [openCart, setOpenCart] = useState(false);
@@ -36,6 +39,10 @@ const Header = ({ activeHeading }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    dispatch(getAllProducts());
+  }, [dispatch]);
+
   const handleSearchChange = (e) => {
     const term = e.target.value;
     setSearchTerm(term);
@@ -44,8 +51,8 @@ const Header = ({ activeHeading }) => {
       return;
     }
     const filteredProducts =
-      productData &&
-      productData.filter((product) =>
+      products &&
+      products.filter((product) =>
         product.name.toLowerCase().includes(term.toLowerCase())
       );
     setSearchData(filteredProducts);
@@ -88,7 +95,7 @@ const Header = ({ activeHeading }) => {
                   <Link to={`/product/${ProductName}`} key={index}>
                     <div className="flex items-center w-full p-3 hover:bg-slate-200 cursor-pointer">
                       <img
-                        src={i.image_Url[0].url}
+                        src={i.images?.[0]?.url || i.image_Url?.[0]?.url || i.images?.[0] || '/placeholder.jpg'}
                         alt=""
                         className="w-10 h-10 object-cover rounded-full"
                       />

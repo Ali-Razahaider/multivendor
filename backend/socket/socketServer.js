@@ -1,9 +1,17 @@
 import { Server } from 'socket.io'
 
 const setupSocket = (server) => {
+  const origins = ['http://localhost:5173'];
+  if (process.env.FRONTEND_URL) {
+    origins.push(process.env.FRONTEND_URL.replace(/\/$/, ''));
+  }
+  if (process.env.BACKEND_URL) {
+    origins.push(process.env.BACKEND_URL.replace(/\/$/, ''));
+  }
+
   const io = new Server(server, {
     cors: {
-      origin: ['http://localhost:5173', 'https://multivendor-4bi5.onrender.com'],
+      origin: origins,
       credentials: true,
     },
   })

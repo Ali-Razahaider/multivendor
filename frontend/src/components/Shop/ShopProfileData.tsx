@@ -56,7 +56,7 @@ const ShopProfileData = ({ isOwner }) => {
       {active === 'products' && (
         <div className="py-5">
           {(() => {
-            const displayProducts = products?.length > 0 ? products : productData
+            const displayProducts = products || []
             return displayProducts.length === 0 ? (
               <div className="flex items-center justify-center h-[300px]">
                 <p className="text-[#000000a6] text-[16px]">No products yet</p>
@@ -75,7 +75,7 @@ const ShopProfileData = ({ isOwner }) => {
       {active === 'reviews' && (
         <div className="py-5">
           {(() => {
-            const displayProducts = products?.length > 0 ? products : productData
+            const displayProducts = products || []
             const allReviews = displayProducts.flatMap(
               (product) => product.reviews?.map((review) => ({ ...review, productName: product.name })) || []
             )

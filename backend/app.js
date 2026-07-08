@@ -22,15 +22,35 @@ if (process.env.NODE_ENV !== 'PRODUCTION') {
   });
 }
 
+const allowedOrigins = ['http://localhost:5173'];
+if (process.env.FRONTEND_URL) {
+  const cleanUrl = process.env.FRONTEND_URL.replace(/\/$/, '');
+  allowedOrigins.push(cleanUrl);
+}
+
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, postman)
+      if (!origin) return callback(null, true);
+      
+      const cleanOrigin = origin.replace(/\/$/, '');
+      if (allowedOrigins.includes(cleanOrigin)) {
+        callback(null, true);
+      } else {
+        callback(new Error(`Origin ${origin} not allowed by CORS`));
+      }
+    },
     credentials: true,
   })
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', timestamp: Date.now() });
+});
 
 app.get('/', (req, res) => {
   res.send('Hello ');

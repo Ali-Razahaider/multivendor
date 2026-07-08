@@ -10,11 +10,15 @@ import server from '../server'
 
 const PaymentPage = () => {
   const [stripeApiKey, setStripeApiKey] = useState('')
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     axios.get(`${server}payment/stripeapikey`).then((res) => {
-      setStripeApiKey(res.data.stripeApikey)
-    }).catch(() => {})
+      setStripeApiKey(res.data.stripeApikey || '')
+      setLoading(false)
+    }).catch(() => {
+      setLoading(false)
+    })
   }, [])
 
   return (
@@ -23,12 +27,15 @@ const PaymentPage = () => {
       <br />
       <br />
       <CheckoutSteps active={2} />
-      {stripeApiKey && (
-        <Elements stripe={loadStripe(stripeApiKey)}>
+      {loading ? (
+        <div className="flex justify-center items-center min-h-[50vh]">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+        </div>
+      ) : (
+        <Elements stripe={loadStripe(stripeApiKey || "pk_test_dummy_key_to_prevent_elements_context_error")}>
           <Payment />
         </Elements>
       )}
-      {!stripeApiKey && <Payment />}
       <br />
       <br />
       <Footer />

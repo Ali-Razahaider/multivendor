@@ -9,6 +9,7 @@ import { MdTrackChanges } from "react-icons/md";
 import { toast } from "react-toastify";
 import { updateProfile } from "../../redux/actions/userActions";
 import { getAllOrdersOfUser } from "../../redux/actions/orderActions";
+import UserInbox from "../../pages/UserInbox";
 
 const ProfileContent = ({ active }) => {
   const { user, error, loading } = useSelector((state) => state.user);
@@ -150,8 +151,8 @@ const ProfileContent = ({ active }) => {
 
       {/* Inbox */}
       {active === 3 && (
-        <div className="flex justify-center items-center h-[50vh]">
-          <p className="text-gray-500 text-lg">Inbox - Coming Soon</p>
+        <div className="w-full">
+          <UserInbox />
         </div>
       )}
 
@@ -276,7 +277,7 @@ const AllOrders = () => {
     },
   ];
 
-  const rows = ((orders?.length > 0 ? orders : fallbackOrders) || []).map((item) => ({
+  const rows = (orders || []).map((item) => ({
     id: item._id,
     itemsQty: item.cart?.reduce((acc, c) => acc + c.qty, 0) || 0,
     total: item.totalPrice || 0,
@@ -359,7 +360,7 @@ const AllRefundOrders = () => {
     },
   ];
 
-  const rows = ((orders?.length > 0 ? orders : fallbackOrders) || [])
+  const rows = (orders || [])
     .filter((item) => item.status === "Processing refund" || item.status === "Refund Success")
     .map((item) => ({
       id: item._id,
@@ -444,7 +445,7 @@ const TrackOrder = () => {
     },
   ];
 
-  const rows = ((orders?.length > 0 ? orders : fallbackOrders) || []).map((item) => ({
+  const rows = (orders || []).map((item) => ({
     id: item._id,
     itemsQty: item.cart?.reduce((acc, c) => acc + c.qty, 0) || 0,
     total: item.totalPrice || 0,

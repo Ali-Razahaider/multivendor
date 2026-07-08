@@ -22,7 +22,8 @@ const server = http.createServer(app);
 setupSocket(server);
 
 server.listen(process.env.PORT, () => {
-  console.log(`Server is running on http://localhost:${process.env.PORT}`);
+  const url = process.env.BACKEND_URL || `http://localhost:${process.env.PORT}`;
+  console.log(`Server is running on ${url}`);
 });
 
 process.on('unhandledRejection', (err) => {

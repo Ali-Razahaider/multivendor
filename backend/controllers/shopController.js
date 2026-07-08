@@ -47,7 +47,7 @@ router.post(
         };
 
         const activationToken = createActivationToken(shopData);
-        const activationUrl = `http://localhost:5173/activation/${activationToken}?type=shop`;
+        const activationUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/activation/${activationToken}?type=shop`;
 
         try {
             await sendMail({
@@ -174,7 +174,12 @@ router.post(
     '/logout',
     isSeller,
     asyncHandler(async (req, res, next) => {
-        res.clearCookie('shop_token');
+        const isProduction = process.env.NODE_ENV === 'PRODUCTION' || process.env.NODE_ENV === 'production';
+        res.clearCookie('shop_token', {
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: isProduction ? 'none' : 'lax',
+        });
         res.status(200).json({
             success: true,
             message: 'Logged out successfully',

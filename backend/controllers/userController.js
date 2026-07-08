@@ -30,14 +30,14 @@ router.post(
       },
     };
     const activation_token = createActivationToken(user);
-    const activationUrl = `http://localhost:5173/activation/${activation_token}`;
+    const activationUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/activation/${activation_token}`;
 
-    await sendMail({
+    sendMail({
       email: user.email,
       subject: 'Activate your account',
       message: `Hello ${user.name}, please click on the link to activate your account: ${activationUrl}`,
       html: activationTemplate(user.name, activationUrl),
-    });
+    }).catch(err => console.error('Email send failed:', err));
 
     res.status(201).json({
       success: true,
@@ -139,7 +139,12 @@ router.get(
 //logout user
 
 router.post('/logout', isAuthenticated, asyncHandler(async (req, res, next) => {
-  res.clearCookie('auth_token');
+  const isProduction = process.env.NODE_ENV === 'PRODUCTION' || process.env.NODE_ENV === 'production';
+  res.clearCookie('auth_token', {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
+  });
   res.status(200).json({
     success: true,
     message: 'Logged out successfully',
