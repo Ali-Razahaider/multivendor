@@ -3,11 +3,10 @@ import asyncHandler from 'express-async-handler';
 
 const router = express.Router();
 
-const stripeKey = process.env.STRIPE_SECRET_KEY;
-
 router.post(
   '/process',
   asyncHandler(async (req, res) => {
+    const stripeKey = process.env.STRIPE_SECRET_KEY;
     if (!stripeKey) {
       res.status(503);
       throw new Error('Payment not configured');

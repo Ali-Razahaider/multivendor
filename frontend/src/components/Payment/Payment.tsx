@@ -10,13 +10,15 @@ import server from "../../server"
 
 const Payment = () => {
   const [orderData, setOrderData] = useState(null)
-  const [select, setSelect] = useState(1)
+  const [select, setSelect] = useState(3)
   const [open, setOpen] = useState(false)
   const { user } = useSelector((state) => state.user)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const stripe = useStripe()
   const elements = useElements()
+  const [cardName, setCardName] = useState("")
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const data = JSON.parse(localStorage.getItem("latestOrder"))
@@ -41,6 +43,7 @@ const Payment = () => {
 
   const paymentHandler = async (e) => {
     e.preventDefault()
+    setLoading(true)
     try {
       const { data } = await axios.post(
         `${server}payment/process`,
@@ -48,12 +51,16 @@ const Payment = () => {
         { headers: { "Content-Type": "application/json" } }
       )
       const client_secret = data.client_secret
-      if (!stripe || !elements) return
+      if (!stripe || !elements) {
+        setLoading(false)
+        return
+      }
       const result = await stripe.confirmCardPayment(client_secret, {
         payment_method: { card: elements.getElement(CardNumberElement) },
       })
       if (result.error) {
         toast.error(result.error.message)
+        setLoading(false)
       } else if (result.paymentIntent.status === "succeeded") {
         await placeOrder({
           id: result.paymentIntent.id,
@@ -64,13 +71,20 @@ const Payment = () => {
       }
     } catch (error) {
       toast.error(error.message)
+      setLoading(false)
     }
   }
 
   const cashOnDeliveryHandler = async (e) => {
     e.preventDefault()
-    await placeOrder({ type: "Cash On Delivery" })
-    toast.success("Order successful!")
+    setLoading(true)
+    try {
+      await placeOrder({ type: "Cash On Delivery" })
+      toast.success("Order successful!")
+    } catch (error) {
+      toast.error(error.message)
+      setLoading(false)
+    }
   }
 
   const shipping = orderData?.shipping?.toFixed(2)
@@ -82,8 +96,8 @@ const Payment = () => {
           <div className="w-full 800px:w-[95%] bg-white rounded-md p-5 pb-8">
             {/* Debit/Credit Card */}
             <div>
-                <div className="flex w-full pb-5 border-b mb-2">
-                <div className="w-[25px] h-[25px] rounded-full bg-transparent border-[3px] border-gray-400 relative flex items-center justify-center cursor-pointer" onClick={() => setSelect(1)}>
+              <div className="flex w-full pb-5 border-b mb-2 cursor-pointer items-center" onClick={() => setSelect(1)}>
+                <div className="w-[25px] h-[25px] rounded-full bg-transparent border-[3px] border-gray-400 relative flex items-center justify-center">
                   {select === 1 && <div className="w-[13px] h-[13px] bg-indigo-600 rounded-full" />}
                 </div>
                 <h4 className="text-[18px] pl-2 font-[600] text-gray-700">Pay with Debit/Credit Card</h4>
@@ -91,38 +105,52 @@ const Payment = () => {
               {select === 1 && (
                 <div className="w-full flex border-b pb-4">
                   <form className="w-full" onSubmit={paymentHandler}>
-                    <div className="w-full flex pb-3">
+                    <div className="w-full flex pb-3 gap-4">
                       <div className="w-[50%]">
-                        <label className="block pb-2">Name On Card</label>
+                        <label className="block pb-2 text-sm font-medium text-gray-700">Name On Card</label>
                         <input
                           required
-                          value={user?.name || ""}
-                          className={`${styles.input} !w-[95%] text-[#444]`}
-                          readOnly
+                          value={cardName || ""}
+                          onChange={(e) => setCardName(e.target.value)}
+                          className="w-full border border-gray-300 px-3 py-2 rounded-md h-[40px] text-gray-700 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                          placeholder="Name On Card"
                         />
                       </div>
                       <div className="w-[50%]">
-                        <label className="block pb-2">Exp Date</label>
-                        <CardExpiryElement className={`${styles.input}`} options={{
-                          style: { base: { fontSize: "19px", lineHeight: 1.5, color: "#444" } }
-                        }} />
+                        <label className="block pb-2 text-sm font-medium text-gray-700">Exp Date</label>
+                        <div className="w-full border border-gray-300 px-3 py-2.5 rounded-md h-[40px] bg-white shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500">
+                          <CardExpiryElement className="w-full" options={{
+                            style: { base: { fontSize: "14px", color: "#374151", "::placeholder": { color: "#9ca3af" } } }
+                          }} />
+                        </div>
                       </div>
                     </div>
-                    <div className="w-full flex pb-3">
+                    <div className="w-full flex pb-3 gap-4">
                       <div className="w-[50%]">
-                        <label className="block pb-2">Card Number</label>
-                        <CardNumberElement className={`${styles.input} !h-[35px] !w-[95%]`} options={{
-                          style: { base: { fontSize: "19px", lineHeight: 1.5, color: "#444" } }
-                        }} />
+                        <label className="block pb-2 text-sm font-medium text-gray-700">Card Number</label>
+                        <div className="w-full border border-gray-300 px-3 py-2.5 rounded-md h-[40px] bg-white shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500">
+                          <CardNumberElement className="w-full" options={{
+                            style: { base: { fontSize: "14px", color: "#374151", "::placeholder": { color: "#9ca3af" } } }
+                          }} />
+                        </div>
                       </div>
                       <div className="w-[50%]">
-                        <label className="block pb-2">CVV</label>
-                        <CardCvcElement className={`${styles.input} !h-[35px]`} options={{
-                          style: { base: { fontSize: "19px", lineHeight: 1.5, color: "#444" } }
-                        }} />
+                        <label className="block pb-2 text-sm font-medium text-gray-700">CVV</label>
+                        <div className="w-full border border-gray-300 px-3 py-2.5 rounded-md h-[40px] bg-white shadow-sm focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-indigo-500">
+                          <CardCvcElement className="w-full" options={{
+                            style: { base: { fontSize: "14px", color: "#374151", "::placeholder": { color: "#9ca3af" } } }
+                          }} />
+                        </div>
                       </div>
                     </div>
-                    <input type="submit" value="Pay Now" className="w-full bg-indigo-600 text-white h-[45px] rounded-[5px] cursor-pointer text-[18px] font-[600] hover:bg-indigo-700 transition-colors" />
+                    <input
+                      type="submit"
+                      value={loading ? "Processing..." : "Pay Now"}
+                      disabled={loading}
+                      className={`w-full bg-indigo-600 text-white h-[45px] rounded-[5px] text-[18px] font-[600] transition-colors mt-4 ${
+                        loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:bg-indigo-700"
+                      }`}
+                    />
                   </form>
                 </div>
               )}
@@ -132,15 +160,22 @@ const Payment = () => {
 
             {/* Cash on Delivery */}
             <div>
-              <div className="flex w-full pb-5 border-b mb-2">
-                <div className="w-[25px] h-[25px] rounded-full bg-transparent border-[3px] border-gray-400 relative flex items-center justify-center cursor-pointer" onClick={() => setSelect(3)}>
+              <div className="flex w-full pb-5 border-b mb-2 cursor-pointer items-center" onClick={() => setSelect(3)}>
+                <div className="w-[25px] h-[25px] rounded-full bg-transparent border-[3px] border-gray-400 relative flex items-center justify-center">
                   {select === 3 && <div className="w-[13px] h-[13px] bg-indigo-600 rounded-full" />}
                 </div>
                 <h4 className="text-[18px] pl-2 font-[600] text-gray-700">Cash on Delivery</h4>
               </div>
               {select === 3 && (
-                <form onSubmit={cashOnDeliveryHandler}>
-                  <input type="submit" value="Confirm Order" className="w-full bg-indigo-600 text-white h-[45px] rounded-[5px] cursor-pointer text-[18px] font-[600] hover:bg-indigo-700 transition-colors" />
+                <form onSubmit={cashOnDeliveryHandler} className="mt-4">
+                  <input
+                    type="submit"
+                    value={loading ? "Processing..." : "Confirm Order"}
+                    disabled={loading}
+                    className={`w-full bg-indigo-600 text-white h-[45px] rounded-[5px] text-[18px] font-[600] transition-colors ${
+                      loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:bg-indigo-700"
+                    }`}
+                  />
                 </form>
               )}
             </div>
