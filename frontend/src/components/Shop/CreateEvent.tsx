@@ -10,10 +10,8 @@ import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { categoriesData } from '../../static/data'
-import { createEvent, clearErrors } from '../../redux/actions/eventActions'
-
-const defaultImage =
-  'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+import axios from 'axios'
+import server from '../../server'
 
 const CreateEvent = () => {
   const dispatch = useDispatch()
@@ -24,12 +22,12 @@ const CreateEvent = () => {
   useEffect(() => {
     if (success) {
       toast.success('Event created successfully')
-      dispatch(clearErrors())
+      dispatch({ type: 'clearErrors' })
       navigate(`/dashboard-events`)
     }
     if (error) {
       toast.error(error)
-      dispatch(clearErrors())
+      dispatch({ type: 'clearErrors' })
     }
   }, [success, error])
   const [name, setName] = useState('')
@@ -41,27 +39,47 @@ const CreateEvent = () => {
   const [discountedPrice, setDiscountedPrice] = useState(0)
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
+  const [images, setImages] = useState<string[]>([])
 
-  const handleSubmit = (e) => {
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files || [])
+    const readers = files.map((file) => new Promise<string>((resolve) => {
+      const reader = new FileReader()
+      reader.onload = () => {
+        if (reader.readyState === 2) resolve(reader.result as string)
+      }
+      reader.readAsDataURL(file as Blob)
+    }))
+    Promise.all(readers).then((results) => setImages(results))
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (!startDate || !endDate) {
       toast.error('Start and end dates are required')
       return
     }
-    dispatch(
-      createEvent({
-        name,
-        description,
-        price,
-        category,
-        countInStock,
-        tags,
-        discountedPrice: discountedPrice || undefined,
-        startDate,
-        endDate,
-        images: [defaultImage],
+    const data = {
+      name, description, price, category, countInStock, tags, startDate, endDate,
+      discountedPrice: discountedPrice || undefined,
+      images,
+    }
+    try {
+      dispatch({ type: 'eventCreateRequest' })
+      const res = await axios.post(`${server}event/create-event`, data, {
+        withCredentials: true,
+        headers: { 'Content-Type': 'application/json' },
       })
-    )
+      dispatch({ type: 'eventCreateSuccess', payload: res.data.event })
+      toast.success('Event created successfully')
+      dispatch({ type: 'clearErrors' })
+      navigate(`/dashboard-events`)
+    } catch (error) {
+      dispatch({
+        type: 'eventCreateFail',
+        payload: error.response?.data?.message || error.message,
+      })
+    }
   }
 
   return (
@@ -192,6 +210,32 @@ const CreateEvent = () => {
                   placeholder="e.g. electronics, sale"
                 />
               </div>
+            </div>
+
+            <Separator />
+
+            <div className="space-y-2">
+              <Label>Event Images</Label>
+              <label className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-indigo-500 transition-colors">
+                <div className="text-center">
+                  <p className="text-sm text-gray-500">Click to upload images</p>
+                  <p className="text-xs text-gray-400 mt-1">PNG, JPG, WEBP</p>
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageChange}
+                  className="sr-only"
+                />
+              </label>
+              {images.length > 0 && (
+                <div className="flex gap-2 mt-2 flex-wrap">
+                  {images.map((img, i) => (
+                    <img key={i} src={img} className="size-16 object-cover rounded border" alt="" />
+                  ))}
+                </div>
+              )}
             </div>
 
             <Separator />

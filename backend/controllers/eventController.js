@@ -2,15 +2,27 @@ import express from 'express';
 import Events from '../models/eventModel.js';
 import asyncHandler from 'express-async-handler';
 import { isSeller, isAdmin } from '../middleware/authMiddleware.js';
+import { v2 as cloudinary } from 'cloudinary';
 
 const router = express.Router();
 
 router.post('/create-event', isSeller, asyncHandler(async (req, res, next) => {
-    const { name, description, price, images, category, startDate, endDate, countInStock, tags, discountedPrice } = req.body;
+    const { name, description, price, category, startDate, endDate, countInStock, tags, discountedPrice, images } = req.body;
 
     if (!name || !description || !price || !category || !startDate || !endDate || countInStock === undefined) {
         res.status(400);
         throw new Error("Name, description, price, category, start/end date, and stock are required");
+    }
+
+    const imagesLinks = [];
+    if (images && images.length > 0) {
+        const imgArray = typeof images === 'string' ? [images] : images;
+        for (const img of imgArray) {
+            const result = await cloudinary.uploader.upload(img, {
+                folder: "products",
+            });
+            imagesLinks.push(result.secure_url);
+        }
     }
 
     const shop = req.shop;
@@ -18,7 +30,7 @@ router.post('/create-event', isSeller, asyncHandler(async (req, res, next) => {
         name,
         description,
         price,
-        images: images || [],
+        images: imagesLinks,
         category,
         startDate,
         endDate,

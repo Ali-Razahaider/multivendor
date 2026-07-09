@@ -116,20 +116,24 @@ const DashboardMessages = () => {
   const handleImageUpload = async (e) => {
     const file = e.target.files[0]
     if (!file || !selected) return
+    const receiverId = selected.members.find((m) => m !== seller._id)
+    socketRef.current.emit('sendMessage', { senderId: seller._id, receiverId, images: '' })
     const reader = new FileReader()
     reader.onload = async () => {
-      const imageData = reader.result
-      const receiverId = selected.members.find((m) => m !== seller._id)
-      socketRef.current.emit('sendMessage', { senderId: seller._id, receiverId, images: imageData })
-      try {
-        const { data } = await axios.post(`${server}message/create-new-message`, {
-          images: imageData, sender: seller._id, text: '', conversationId: selected._id,
-        })
-        setMessages((prev) => [...prev, data.message])
-        await axios.put(`${server}conversation/update-last-message/${selected._id}`, {
-          lastMessage: 'Photo', lastMessageId: seller._id,
-        })
-      } catch {}
+      if (reader.readyState === 2) {
+        try {
+          const { data } = await axios.post(`${server}message/create-new-message`, {
+            images: reader.result,
+            sender: seller._id,
+            text: '',
+            conversationId: selected._id,
+          })
+          setMessages((prev) => [...prev, data.message])
+          await axios.put(`${server}conversation/update-last-message/${selected._id}`, {
+            lastMessage: 'Photo', lastMessageId: seller._id,
+          })
+        } catch {}
+      }
     }
     reader.readAsDataURL(file)
   }
@@ -216,7 +220,7 @@ const DashboardMessages = () => {
           <div className="p-4 border-t bg-white flex items-center gap-2">
             <label className="p-2 hover:bg-gray-100 rounded-full text-gray-400 cursor-pointer">
               <ImageIcon className="h-5 w-5" />
-              <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+              <input type="file" accept="image/*" className="sr-only" onChange={handleImageUpload} />
             </label>
             <Input
               value={input}

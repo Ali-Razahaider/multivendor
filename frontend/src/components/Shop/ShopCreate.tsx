@@ -14,19 +14,18 @@ function ShopCreate() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [address, setAddress] = useState('');
   const [zipCode, setZipCode] = useState('');
+  const [avatar, setAvatar] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const config = { headers: { 'Content-Type': 'application/json' } };
+    const data = { name, email, password, phoneNumber, address, zipCode };
+    if (avatar) data.avatar = avatar;
 
     try {
       const res = await axios.post(
         `${server}shop/create-shop`,
-        { name, email, password, phoneNumber, address, zipCode },
-        {
-          ...config,
-          withCredentials: true,
-        }
+        data,
+        { withCredentials: true, headers: { 'Content-Type': 'application/json' } }
       );
 
       toast.success(res.data.message);
@@ -37,9 +36,22 @@ function ShopCreate() {
       setPhoneNumber('');
       setAddress('');
       setZipCode('');
+      setAvatar('');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Shop registration failed');
     }
+  };
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setAvatar(reader.result as string);
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   return (
@@ -157,6 +169,19 @@ function ShopCreate() {
                 onChange={(e) => setZipCode(e.target.value)}
                 className="block px-3 py-2 w-full rounded-md border border-gray-300 text-sm sm:mt-0 sm:border-r sm:rounded-bl-md"
                 placeholder="Enter your zip code"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="avatar" className="block py-2 w-full text-sm font-medium text-gray-900">
+                Shop Avatar
+              </label>
+              <input
+                type="file"
+                id="avatar"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                className="block px-3 py-2 w-full rounded-md border border-gray-300 text-sm"
               />
             </div>
 

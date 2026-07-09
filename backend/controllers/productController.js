@@ -3,6 +3,7 @@ import Product from "../models/productModel.js";
 import Order from "../models/orderModel.js";
 import asyncHandler from "express-async-handler";
 import { isAuthenticated, isSeller, isAdmin } from "../middleware/authMiddleware.js";
+import { v2 as cloudinary } from 'cloudinary';
 
 const router = express.Router();
 
@@ -10,11 +11,22 @@ router.post(
   "/create-product",
   isSeller,
   asyncHandler(async (req, res, next) => {
-    const { name, description, price, images, category, countInStock, tags, discountedPrice } = req.body;
+    const { name, description, price, category, countInStock, tags, discountedPrice, images } = req.body;
 
     if (!name || !description || !price || !category || countInStock === undefined) {
       res.status(400);
       throw new Error("Name, description, price, category, and stock are required");
+    }
+
+    const imagesLinks = [];
+    if (images && images.length > 0) {
+      const imgArray = typeof images === 'string' ? [images] : images;
+      for (const img of imgArray) {
+        const result = await cloudinary.uploader.upload(img, {
+          folder: "products",
+        });
+        imagesLinks.push(result.secure_url);
+      }
     }
 
     const shop = req.shop;
@@ -22,7 +34,7 @@ router.post(
       name,
       description,
       price,
-      images: images || [],
+      images: imagesLinks,
       category,
       countInStock,
       tags: tags || "",
@@ -133,7 +145,24 @@ router.put(
       throw new Error("You can only update your own products");
     }
 
-    const updated = await Product.findByIdAndUpdate(req.params.id, req.body, {
+    const body = { ...req.body };
+
+    if (body.images && Array.isArray(body.images)) {
+      const uploaded = [];
+      for (const img of body.images) {
+        if (typeof img === 'string' && img.startsWith('data:')) {
+          const result = await cloudinary.uploader.upload(img, {
+            folder: "products",
+          });
+          uploaded.push(result.secure_url);
+        } else {
+          uploaded.push(img);
+        }
+      }
+      body.images = uploaded;
+    }
+
+    const updated = await Product.findByIdAndUpdate(req.params.id, body, {
       new: true,
       runValidators: true,
     });

@@ -6,6 +6,7 @@ import sendMail from '../utils/sendMail.js';
 import { activationTemplate, welcomeTemplate } from '../utils/emailTemplates.js';
 import jwt from 'jsonwebtoken';
 import { isAuthenticated, isAdmin } from '../middleware/authMiddleware.js';
+import { v2 as cloudinary } from 'cloudinary';
 const router = express.Router();
 
 router.post(
@@ -197,6 +198,43 @@ router.put(
       success: true,
       message: 'Profile updated successfully',
       user: updatedUser,
+    });
+  })
+);
+
+//update user avatar
+router.put(
+  '/update-avatar',
+  isAuthenticated,
+  asyncHandler(async (req, res, next) => {
+    const { avatar } = req.body;
+
+    if (!avatar) {
+      res.status(400);
+      throw new Error('No avatar provided');
+    }
+
+    let existsUser = await User.findById(req.user._id);
+
+    if (existsUser.avatar?.public_id && existsUser.avatar.public_id !== 'default_avatar_id') {
+      await cloudinary.uploader.destroy(existsUser.avatar.public_id);
+    }
+
+    const myCloud = await cloudinary.uploader.upload(avatar, {
+      folder: 'avatars',
+      width: 150,
+    });
+
+    existsUser.avatar = {
+      public_id: myCloud.public_id,
+      url: myCloud.secure_url,
+    };
+
+    await existsUser.save();
+
+    res.status(200).json({
+      success: true,
+      user: existsUser,
     });
   })
 );

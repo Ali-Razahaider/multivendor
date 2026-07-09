@@ -10,10 +10,8 @@ import { Select } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { categoriesData } from '../../static/data'
-import { createProduct, clearErrors } from '../../redux/actions/productActions'
-
-const defaultImage =
-  'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png'
+import axios from 'axios'
+import server from '../../server'
 
 const CreateProduct = () => {
   const dispatch = useDispatch()
@@ -24,12 +22,12 @@ const CreateProduct = () => {
   useEffect(() => {
     if (success) {
       toast.success('Product created successfully')
-      dispatch(clearErrors())
+      dispatch({ type: 'clearErrors' })
       navigate(`/shop/${seller._id}`)
     }
     if (error) {
       toast.error(error)
-      dispatch(clearErrors())
+      dispatch({ type: 'clearErrors' })
     }
   }, [success, error])
   const [name, setName] = useState('')
@@ -39,21 +37,43 @@ const CreateProduct = () => {
   const [tags, setTags] = useState('')
   const [price, setPrice] = useState(0)
   const [discountedPrice, setDiscountedPrice] = useState<number | undefined>(undefined)
+  const [images, setImages] = useState<string[]>([])
 
-  const handleSubmit = (e) => {
+  const handleImageChange = (e) => {
+    const files = Array.from(e.target.files || [])
+    const readers = files.map((file) => new Promise<string>((resolve) => {
+      const reader = new FileReader()
+      reader.onload = () => {
+        if (reader.readyState === 2) resolve(reader.result as string)
+      }
+      reader.readAsDataURL(file as Blob)
+    }))
+    Promise.all(readers).then((results) => setImages(results))
+  }
+
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    dispatch(
-      createProduct({
-        name,
-        description,
-        price,
-        category,
-        countInStock,
-        tags,
-        discountedPrice: discountedPrice ?? null,
-        images: [defaultImage],
+    const data = {
+      name, description, price, category, countInStock, tags,
+      discountedPrice: discountedPrice !== undefined && discountedPrice !== null ? discountedPrice : undefined,
+      images,
+    }
+    try {
+      dispatch({ type: 'productCreateRequest' })
+      const res = await axios.post(`${server}product/create-product`, data, {
+        withCredentials: true,
+        headers: { 'Content-Type': 'application/json' },
       })
-    )
+      dispatch({ type: 'productCreateSuccess', payload: res.data.product })
+      toast.success('Product created successfully')
+      dispatch({ type: 'clearErrors' })
+      navigate(`/shop/${seller._id}`)
+    } catch (error) {
+      dispatch({
+        type: 'productCreateFail',
+        payload: error.response?.data?.message || error.message,
+      })
+    }
   }
 
   return (
@@ -159,6 +179,32 @@ const CreateProduct = () => {
                   placeholder="e.g. electronics, sale"
                 />
               </div>
+            </div>
+
+            <Separator />
+
+            <div className="space-y-2">
+              <Label>Product Images</Label>
+              <label className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-indigo-500 transition-colors">
+                <div className="text-center">
+                  <p className="text-sm text-gray-500">Click to upload images</p>
+                  <p className="text-xs text-gray-400 mt-1">PNG, JPG, WEBP</p>
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageChange}
+                  className="sr-only"
+                />
+              </label>
+              {images.length > 0 && (
+                <div className="flex gap-2 mt-2 flex-wrap">
+                  {images.map((img, i) => (
+                    <img key={i} src={img} className="size-16 object-cover rounded border" alt="" />
+                  ))}
+                </div>
+              )}
             </div>
 
             <Separator />

@@ -1,6 +1,7 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
 import Messages from '../models/messageModel.js';
+import { v2 as cloudinary } from 'cloudinary';
 
 const router = express.Router();
 
@@ -10,12 +11,23 @@ router.post(
   asyncHandler(async (req, res) => {
     const { conversationId, text, sender, images } = req.body;
 
-    const message = await Messages.create({
+    const messageData = {
       conversationId,
       text,
       sender,
-      images: images || undefined,
-    });
+    };
+
+    if (images) {
+      const myCloud = await cloudinary.uploader.upload(images, {
+        folder: "messages",
+      });
+      messageData.images = {
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url,
+      };
+    }
+
+    const message = await Messages.create(messageData);
 
     res.status(201).json({ success: true, message });
   })

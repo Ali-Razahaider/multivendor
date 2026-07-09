@@ -7,8 +7,10 @@ import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
 import { MdTrackChanges } from "react-icons/md";
 import { toast } from "react-toastify";
-import { updateProfile } from "../../redux/actions/userActions";
+import axios from "axios";
+import server from "../../server.js";
 import { getAllOrdersOfUser } from "../../redux/actions/orderActions";
+import { loadUser } from "../../redux/actions/userActions";
 import UserInbox from "../../pages/UserInbox";
 
 const ProfileContent = ({ active }) => {
@@ -36,19 +38,49 @@ const ProfileContent = ({ active }) => {
     }
   }, [error, dispatch]);
 
-  const handleSubmit = (e) => {
+  const handleImage = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async () => {
+      if (reader.readyState === 2) {
+        try {
+          const res = await axios.put(`${server}user/update-avatar`,
+            { avatar: reader.result },
+            { withCredentials: true },
+          );
+          dispatch(loadUser());
+          toast.success('Avatar updated successfully!');
+        } catch (error) {
+          toast.error(error.response?.data?.message || error.message);
+        }
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = {};
-    if (name && name !== user?.name) data.name = name;
-    if (email && email !== user?.email) data.email = email;
-    if (phoneNumber && phoneNumber !== user?.phoneNumber) data.phoneNumber = phoneNumber;
-    if (oldPassword) data.oldPassword = oldPassword;
-    if (newPassword) data.newPassword = newPassword;
-    dispatch(updateProfile(data));
-    if (!error) {
-      toast.success("Profile updated successfully");
+    const data = { name, email, phoneNumber };
+    if (oldPassword || newPassword) {
+      data.oldPassword = oldPassword;
+      data.newPassword = newPassword;
+    }
+    try {
+      dispatch({ type: 'UpdateProfileRequest' });
+      const res = await axios.put(`${server}user/update-profile`, data, {
+        withCredentials: true,
+        headers: { 'Content-Type': 'application/json' },
+      });
+      dispatch({ type: 'UpdateProfileSuccess', payload: res.data.user });
+      toast.success('Profile updated successfully');
       setOldPassword("");
       setNewPassword("");
+    } catch (error) {
+      dispatch({
+        type: 'UpdateProfileFail',
+        payload: error.response?.data?.message || error.message,
+      });
     }
   };
 
@@ -64,12 +96,10 @@ const ProfileContent = ({ active }) => {
                 className="size-[150px] rounded-full object-cover border-[3px] border-[#3ad132]"
                 alt=""
               />
-              <div className="size-[30px] bg-[#E3E9EE] rounded-full flex items-center justify-center cursor-pointer absolute bottom-1 right-1">
-                <input type="file" id="image" className="hidden" />
-                <label htmlFor="image">
-                  <AiOutlineCamera />
-                </label>
-              </div>
+              <label className="size-[30px] bg-[#E3E9EE] rounded-full flex items-center justify-center cursor-pointer absolute bottom-1 right-1">
+                <input type="file" className="sr-only" accept="image/*" onChange={handleImage} />
+                <AiOutlineCamera />
+              </label>
             </div>
           </div>
           <br />

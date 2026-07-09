@@ -3,6 +3,7 @@ import http from 'http';
 import dotenv from 'dotenv';
 import connectDB from './db/database.js';
 import setupSocket from './socket/socketServer.js';
+import { v2 as cloudinary } from 'cloudinary';
 
 process.on('uncaughtException', (err) => {
   console.log(`Error: ${err.message}`);
@@ -15,6 +16,12 @@ if (process.env.NODE_ENV !== 'PRODUCTION') {
     path: 'backend/config/.env',
   });
 }
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 connectDB();
 

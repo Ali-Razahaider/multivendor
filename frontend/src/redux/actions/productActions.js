@@ -60,6 +60,7 @@ export const updateProduct = (id, data) => async (dispatch) => {
     dispatch({ type: 'productUpdateRequest' });
     const res = await axios.put(`${server}product/${id}`, data, {
       withCredentials: true,
+      headers: { 'Content-Type': 'application/json' },
     });
     dispatch({ type: 'productUpdateSuccess', payload: res.data.product });
   } catch (error) {

@@ -6,6 +6,7 @@ import sendShopToken from '../utils/sendShopToken.js';
 import sendMail from '../utils/sendMail.js';
 import { activationTemplate, welcomeTemplate } from '../utils/emailTemplates.js';
 import jwt from 'jsonwebtoken';
+import { v2 as cloudinary } from 'cloudinary';
 
 const router = express.Router();
 
@@ -19,7 +20,7 @@ const createActivationToken = (payload) => {
 router.post(
     '/create-shop',
     asyncHandler(async (req, res, next) => {
-        const { name, email, password, phoneNumber, address, zipCode } = req.body;
+        const { name, email, password, phoneNumber, address, zipCode, avatar } = req.body;
 
         if (!name || !email || !password || !phoneNumber || !address || !zipCode) {
             res.status(400);
@@ -37,6 +38,14 @@ router.post(
             throw new Error('Shop with this email already exists');
         }
 
+        let avatarUrl;
+        if (avatar) {
+            const myCloud = await cloudinary.uploader.upload(avatar, {
+                folder: 'avatars',
+            });
+            avatarUrl = myCloud.secure_url;
+        }
+
         const shopData = {
             name,
             email,
@@ -44,6 +53,7 @@ router.post(
             phoneNumber,
             address,
             zipCode,
+            avatar: avatarUrl,
         };
 
         const activationToken = createActivationToken(shopData);
@@ -213,7 +223,7 @@ router.put(
     '/update-shop',
     isSeller,
     asyncHandler(async (req, res) => {
-        const { name, description, address, phoneNumber, zipCode, avatar } = req.body;
+        const { name, description, address, phoneNumber, zipCode } = req.body;
         const shop = await Shop.findById(req.shop._id);
         if (!shop) {
             res.status(404);
@@ -224,7 +234,31 @@ router.put(
         if (address) shop.address = address;
         if (phoneNumber) shop.phoneNumber = phoneNumber;
         if (zipCode) shop.zipCode = zipCode;
-        if (avatar) shop.avatar = avatar;
+        await shop.save();
+        shop.password = undefined;
+        res.json({ success: true, shop });
+    })
+);
+
+router.put(
+    '/update-shop-avatar',
+    isSeller,
+    asyncHandler(async (req, res) => {
+        const { avatar } = req.body;
+        if (!avatar) {
+            res.status(400);
+            throw new Error('No avatar provided');
+        }
+        const shop = await Shop.findById(req.shop._id);
+        if (!shop) {
+            res.status(404);
+            throw new Error('Shop not found');
+        }
+        const myCloud = await cloudinary.uploader.upload(avatar, {
+            folder: 'avatars',
+            width: 150,
+        });
+        shop.avatar = myCloud.secure_url;
         await shop.save();
         shop.password = undefined;
         res.json({ success: true, shop });
