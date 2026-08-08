@@ -1,6 +1,7 @@
 import app from './app.js';
 import http from 'http';
 import dotenv from 'dotenv';
+import { existsSync } from 'fs';
 import connectDB from './db/database.js';
 import setupSocket from './socket/socketServer.js';
 import { v2 as cloudinary } from 'cloudinary';
@@ -11,10 +12,12 @@ process.on('uncaughtException', (err) => {
   process.exit(1);
 });
 
-if (process.env.NODE_ENV !== 'PRODUCTION') {
-  dotenv.config({
-    path: 'backend/config/.env',
-  });
+// Load .env only if present. Real environment variables (set by Docker,
+// compose, or the cloud platform) always take precedence — dotenv never
+// overrides them. Checking file existence instead of NODE_ENV avoids
+// crashes when the file is missing (e.g. inside a container).
+if (existsSync('backend/config/.env')) {
+  dotenv.config({ path: 'backend/config/.env' });
 }
 
 cloudinary.config({

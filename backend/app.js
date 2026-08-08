@@ -1,6 +1,7 @@
 import express from 'express';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import dotenv from 'dotenv';
+import { existsSync } from 'fs';
 import cookieParser from 'cookie-parser';
 import user from './controllers/userController.js'
 import shop from './controllers/shopController.js'
@@ -16,7 +17,7 @@ import cors from 'cors';
 const app = express();
 
 // Config
-if (process.env.NODE_ENV !== 'PRODUCTION') {
+if (existsSync('backend/config/.env')) {
   dotenv.config({
     path: 'backend/config/.env',
   });
