@@ -3,7 +3,7 @@
 
 services:
   backend:
-    image: ghcr.io/alirazahaider/multivendor:backend-latest
+    image: ghcr.io/ali-razahaider/multivendor:backend-latest
     restart: unless-stopped
     environment:
       NODE_ENV: PRODUCTION
@@ -24,7 +24,7 @@ services:
       - mongo
 
   frontend:
-    image: ghcr.io/alirazahaider/multivendor:frontend-latest
+    image: ghcr.io/ali-razahaider/multivendor:frontend-latest
     restart: unless-stopped
     ports:
       - "8080:80"

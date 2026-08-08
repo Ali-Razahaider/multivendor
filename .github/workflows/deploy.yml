@@ -19,7 +19,7 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.repository_owner }}
+          username: ali-razahaider
           password: ${{ secrets.GHCR_TOKEN }}
 
       - name: Build & push backend
@@ -28,7 +28,7 @@ jobs:
           context: .
           file: backend/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}:backend-latest
+          tags: ghcr.io/ali-razahaider/multivendor:backend-latest
 
       - name: Build & push frontend
         uses: docker/build-push-action@v6
@@ -39,7 +39,7 @@ jobs:
             VITE_BACKEND_URL=${{ secrets.VITE_BACKEND_URL }}
             VITE_SOCKET_URL=${{ secrets.VITE_SOCKET_URL }}
           push: true
-          tags: ghcr.io/${{ github.repository }}:frontend-latest
+          tags: ghcr.io/ali-razahaider/multivendor:frontend-latest
 
   deploy:
     needs: build
@@ -60,4 +60,4 @@ jobs:
       - name: Pull images & start containers
         run: |
           ssh -i ~/.ssh/deploy_key ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
-            'echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ${{ github.repository_owner }} --password-stdin && cd ~/multivendor && docker compose -f docker-compose.prod.yml pull && docker compose -f docker-compose.prod.yml up -d'
+            'echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u ali-razahaider --password-stdin && cd ~/multivendor && docker compose -f docker-compose.prod.yml pull && docker compose -f docker-compose.prod.yml up -d'
