@@ -29,8 +29,6 @@ jobs:
           file: backend/Dockerfile
           push: true
           tags: ghcr.io/alirazahaider/multivendor:backend-latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Build & push frontend
         uses: docker/build-push-action@v6
@@ -42,8 +40,6 @@ jobs:
             VITE_SOCKET_URL=${{ secrets.VITE_SOCKET_URL }}
           push: true
           tags: ghcr.io/alirazahaider/multivendor:frontend-latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
   deploy:
     needs: build
