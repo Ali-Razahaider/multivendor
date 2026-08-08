@@ -1,0 +1,41 @@
+# Production compose: pulls pre-built images from GHCR (built by GitHub Actions)
+# Secrets come from ~/multivendor/.env on the server - never in git.
+
+services:
+  backend:
+    image: ghcr.io/alirazahaider/multivendor:backend-latest
+    restart: unless-stopped
+    environment:
+      NODE_ENV: PRODUCTION
+      PORT: "8000"
+      MONGO_DB_URI: ${MONGO_DB_URI}
+      JWT_SECRET: ${JWT_SECRET}
+      FRONTEND_URL: ${FRONTEND_URL}
+      BACKEND_URL: ${BACKEND_URL}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+      STRIPE_API_KEY: ${STRIPE_API_KEY}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      BREVO_API_KEY: ${BREVO_API_KEY}
+      BREVO_SENDER_EMAIL: ${BREVO_SENDER_EMAIL}
+      BREVO_SENDER_NAME: ${BREVO_SENDER_NAME}
+    depends_on:
+      - mongo
+
+  frontend:
+    image: ghcr.io/alirazahaider/multivendor:frontend-latest
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
