@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import styles from '../../styles/styles';
 import { useState, useEffect } from 'react';
 import { categoriesData, navItems } from '../../static/data';
-import { AiOutlineHeart, AiOutlineSearch, AiOutlineShoppingCart } from 'react-icons/ai';
+import { AiFillShopping, AiOutlineHeart, AiOutlineSearch } from 'react-icons/ai';
 import { BiMenuAltLeft } from 'react-icons/bi';
 import { IoIosArrowDown, IoIosArrowForward } from 'react-icons/io';
 import DropDown from './DropDown';
@@ -65,11 +65,11 @@ const Header = ({ activeHeading }) => {
         <div>
           <Link to="/">
             <div className="flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 text-gray-900">
                 <path d="M2.25 2.25a.75.75 0 0 0 0 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 0 0-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 0 0 0-1.5H5.378A2.25 2.25 0 0 1 7.5 15h11.218a.75.75 0 0 0 .674-.421 60.358 60.358 0 0 0 2.96-7.228.75.75 0 0 0-.525-.96A58.734 58.734 0 0 0 5.69 4.38l-.692-2.587a.75.75 0 0 0-.724-.543H2.25Z" />
                 <path d="M10 20a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" />
               </svg>
-              <span className="text-white text-xl font-extrabold tracking-tight">MultiShop</span>
+              <span className="merchora-wordmark text-gray-900 font-extrabold tracking-tight">Merchora</span>
             </div>
           </Link>
         </div>
@@ -169,7 +169,7 @@ const Header = ({ activeHeading }) => {
             </div>
             {/* cart icon */}
             <div className="relative cursor-pointer" onClick={() => setOpenCart(true)}>
-              <AiOutlineShoppingCart size={25} className="text-white" />
+              <AiFillShopping size={25} className="text-white" />
               <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
                 {cart?.length || 0}
               </span>
@@ -197,11 +197,11 @@ const Header = ({ activeHeading }) => {
           <div>
           <Link to="/">
             <div className="flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 text-indigo-700">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7 text-gray-900">
                 <path d="M2.25 2.25a.75.75 0 0 0 0 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 0 0-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 0 0 0-1.5H5.378A2.25 2.25 0 0 1 7.5 15h11.218a.75.75 0 0 0 .674-.421 60.358 60.358 0 0 0 2.96-7.228.75.75 0 0 0-.525-.96A58.734 58.734 0 0 0 5.69 4.38l-.692-2.587a.75.75 0 0 0-.724-.543H2.25Z" />
                 <path d="M10 20a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" />
               </svg>
-              <span className="text-gray-900 text-xl font-extrabold tracking-tight">MultiShop</span>
+              <span className="merchora-wordmark text-gray-900 font-extrabold tracking-tight">Merchora</span>
             </div>
           </Link>
           </div>
@@ -210,7 +210,7 @@ const Header = ({ activeHeading }) => {
               className="relative mr-[20px]"
               onClick={() => setOpenCart(true)}
             >
-              <AiOutlineShoppingCart size={30} />
+              <AiFillShopping size={30} className="text-gray-900" />
               <span className="absolute right-0 top-0 rounded-full bg-emerald-500 w-4 h-4 text-white font-mono text-[12px] leading-tight text-center">
                 {cart?.length || 0}
               </span>
