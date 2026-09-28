@@ -9,16 +9,16 @@ interface EventCardProps {
 function EventCard({ active, data }: EventCardProps) {
     // If no dynamic data is passed, use a placeholder representation
     const eventData = data || {
-        name: "Iphone 14 pro max 8/256gb",
-        description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit, ducimus eum similique corporis dolor molestias labore accusantium sed accusamus illo voluptate aut reprehenderit sit reiciendis blanditiis doloribus quos cupiditate corrupti. Lorem ipsum dolor sit amet consectetur adipisicing elit. Velit, ducimus eum similique corporis dolor molestias labore accusantium sed accusamus illo voluptate aut reprehenderit sit reiciendis blanditiis doloribus quos cupiditate corrupti.",
-        price: 1099,
+        name: "iPhone 15 Pro Max 256GB Natural Titanium",
+        description: "Experience the ultimate iPhone with a strong and lightweight titanium design, groundbreaking A17 Pro chip with 6-core GPU, and a 48MP Pro camera system featuring 5x optical zoom. The 6.7-inch Super Retina XDR display with ProMotion delivers stunning visuals.",
+        price: 1199,
         discountedPrice: 999,
         totalSell: 120,
-        endDate: "2026-06-10T12:00:00Z",
-        images: ["https://www.apple.com/newsroom/images/2024/09/apple-debuts-iphone-16-pro-and-iphone-16-pro-max/article/Apple-iPhone-16-Pro-hero-240909_inline.jpg.large_2x.jpg"]
+        endDate: "2026-12-31T12:00:00Z",
+        images: ["https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=80"]
     };
 
-    const imageUrl = eventData.images && eventData.images[0] ? eventData.images[0] : "https://www.apple.com/newsroom/images/2024/09/apple-debuts-iphone-16-pro-and-iphone-16-pro-max/article/Apple-iPhone-16-Pro-hero-240909_inline.jpg.large_2x.jpg";
+    const imageUrl = eventData.images && eventData.images[0] ? (eventData.images[0]?.url || eventData.images[0]) : "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=80";
 
     return (
         <div className={`w-full bg-white rounded-lg p-6 flex mt-12 flex-col lg:flex-row gap-6 items-center ${active ? 'unset' : 'mb-12'}`}>

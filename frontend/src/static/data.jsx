@@ -194,70 +194,70 @@ export const categoriesData = [
     title: "Computers and Laptops",
     subTitle: "",
     image_Url:
-      "https://cdn.shopify.com/s/files/1/1706/9177/products/NEWAppleMacbookProwithM1ProChip14InchLaptop2021ModelMKGQ3LL_A_16GB_1TBSSD_custommacbd.jpg?v=1659592838",
+      "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: 6,
     title: "cosmetics and body care",
     subTitle: "",
     image_Url:
-      "https://indian-retailer.s3.ap-south-1.amazonaws.com/s3fs-public/2021-07/kosme1.png",
+      "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: 7,
     title: "Accesories",
     subTitle: "",
     image_Url:
-      "https://img.freepik.com/free-vector/ordering-goods-online-internet-store-online-shopping-niche-e-commerce-website-mother-buying-babies-clothes-footwear-toys-infant-accessories_335657-2345.jpg?w=2000",
+      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: 8,
     title: "Cloths",
     subTitle: "",
     image_Url:
-      "https://www.shift4shop.com/2015/images/industries/clothing/clothing-apparel.png",
+      "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: 9,
     title: "Shoes",
     subTitle: "",
     image_Url:
-      "https://img.freepik.com/free-vector/sneakers-collection_23-2148607883.jpg",
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: 10,
     title: "Gifts",
     subTitle: "",
     image_Url:
-      "https://img.freepik.com/free-vector/sneakers-collection_23-2148607883.jpg",
+      "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: 11,
     title: "Pet Care",
     subTitle: "",
     image_Url:
-      "https://img.freepik.com/free-vector/pet-shop-background-with-cute-animals_23-2147961629.jpg",
+      "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: 12,
     title: "Mobile and Tablets",
     subTitle: "",
     image_Url:
-      "https://st-troy.mncdn.com/mnresize/1500/1500/Content/media/ProductImg/original/mpwp3tua-apple-iphone-14-256gb-mavi-mpwp3tua-637986832343472449.jpg",
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: 13,
     title: "Music and Gaming",
     subTitle: "",
     image_Url:
-      "https://static.vecteezy.com/system/resources/previews/011/996/555/original/3d-black-headphone-illustration-ecommerce-icon-png.png",
+      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: 14,
     title: "Others",
     subTitle: "",
     image_Url:
-      "https://searchspring.com/wp-content/uploads/2022/10/Hero-Image-Platform-Others-2.png",
+      "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=80",
   },
 ];
 
@@ -271,10 +271,10 @@ export const productData = [
     description:
       "Experience unprecedented performance with the MacBook Pro 16 powered by the M3 Pro chip. Featuring an 18-core CPU, 18GB unified memory, and 512GB SSD, this laptop delivers exceptional power for coding, video editing, and creative workflows. The stunning 16.2-inch Liquid Retina XDR display with ProMotion technology brings your content to life, while the advanced thermal system keeps the machine cool under heavy loads. With up to 22 hours of battery life, this is the ultimate pro laptop for demanding users.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/macbook,pro,laptop?lock=1" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/macbook,pro,laptop?lock=2" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "Apple Inc.", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/apple,logo?lock=101" }, ratings: 4.8 },
+    shop: { name: "Apple Inc.", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=200&q=80" }, ratings: 4.8 },
     price: 2499,
     discount_price: 2299,
     rating: 4.8,
@@ -288,10 +288,10 @@ export const productData = [
     description:
       "The Dell XPS 15 combines a stunning 15.6-inch 3.5K OLED InfinityEdge touch display with blistering Intel Core i9-13900H performance. With 32GB of DDR5 RAM and a 1TB NVMe SSD, multitasking and storage are effortless. The premium CNC-machined aluminum chassis is both lightweight and durable, while the built-in Intel Arc graphics handle creative workloads with ease. Windows 11 Pro comes pre-installed.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/dell,xps,laptop?lock=3" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/dell,xps,laptop?lock=4" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "Dell Technologies", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/dell,logo?lock=102" }, ratings: 4.5 },
+    shop: { name: "Dell Technologies", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1526738549149-8e07eca6c147?auto=format&fit=crop&w=200&q=80" }, ratings: 4.5 },
     price: 2199,
     discount_price: 1999,
     rating: 4.6,
@@ -305,10 +305,10 @@ export const productData = [
     description:
       "The Lenovo ThinkPad X1 Carbon Gen 11 is the business laptop benchmark. Weighing just 2.48 lbs, this 14-inch laptop features a 13th Gen Intel Core i7 processor, 16GB LPDDR5 RAM, and a 512GB PCIe Gen 4 SSD. The 14-inch 2.8K OLED display delivers vibrant colors, while the legendary ThinkPad keyboard ensures comfortable typing. MIL-STD-810H certified for durability, it also includes a fingerprint reader and IR camera for enterprise-grade security.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/thinkpad,laptop,lenovo?lock=5" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/thinkpad,laptop,lenovo?lock=6" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "Lenovo Official", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/lenovo,logo?lock=103" }, ratings: 4.4 },
+    shop: { name: "Lenovo Official", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?auto=format&fit=crop&w=200&q=80" }, ratings: 4.4 },
     price: 1799,
     discount_price: 1599,
     rating: 4.5,
@@ -324,10 +324,10 @@ export const productData = [
     description:
       "The iPhone 15 Pro Max features a strong and lightweight titanium design, the A17 Pro chip with 6-core GPU, and a 48MP Pro camera system with 5x optical zoom. The 6.7-inch Super Retina XDR display with ProMotion offers an immersive viewing experience. With USB-C, Action button, and all-day battery life, this is the most powerful iPhone ever. Includes 256GB storage and premium natural titanium finish.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/iphone,pro,max?lock=7" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/iphone,pro,max?lock=8" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "Apple Inc.", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/apple,logo?lock=101" }, ratings: 4.8 },
+    shop: { name: "Apple Inc.", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=200&q=80" }, ratings: 4.8 },
     price: 1199,
     discount_price: 1099,
     rating: 4.9,
@@ -341,10 +341,10 @@ export const productData = [
     description:
       "The Galaxy S24 Ultra is Samsung's ultimate smartphone, built with a titanium frame and Corning Gorilla Armor. The 6.8-inch Dynamic AMOLED 2X display with 120Hz refresh rate is stunning. Powered by the Snapdragon 8 Gen 3 processor and 12GB RAM, it handles anything you throw at it. The 200MP camera with AI-enhanced photography captures incredible detail, and the built-in S Pen enables precise note-taking and creativity.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/samsung,galaxy,s24?lock=9" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/samsung,galaxy,s24?lock=10" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "Samsung Electronics", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/samsung,logo?lock=104" }, ratings: 4.6 },
+    shop: { name: "Samsung Electronics", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=200&q=80" }, ratings: 4.6 },
     price: 1299,
     discount_price: 1199,
     rating: 4.7,
@@ -358,10 +358,10 @@ export const productData = [
     description:
       "The iPad Air powered by the M2 chip delivers phenomenal performance for creativity, productivity, and gaming. The 11-inch Liquid Retina display with P3 wide color and True Tone is perfect for drawing with Apple Pencil Pro support. With 256GB storage, Wi-Fi 6E, and 5G cellular connectivity, this iPad Air is incredibly versatile. The all-day battery life and ultra-slim design make it the perfect companion for on-the-go professionals.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/ipad,air,tablet?lock=11" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/ipad,air,tablet?lock=12" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1561154464-82e9adf32764?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "Apple Inc.", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/apple,logo?lock=101" }, ratings: 4.7 },
+    shop: { name: "Apple Inc.", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=200&q=80" }, ratings: 4.7 },
     price: 899,
     discount_price: 799,
     rating: 4.7,
@@ -377,10 +377,10 @@ export const productData = [
     description:
       "Our premium Vitamin C serum is formulated with 20% pure L-Ascorbic Acid, Vitamin E, and Ferulic Acid to brighten skin, reduce fine lines, and protect against environmental damage. This lightweight, fast-absorbing serum penetrates deeply to stimulate collagen production and even out skin tone. Suitable for all skin types, including sensitive skin. Dermatologist tested and cruelty-free. Visible results in just 2 weeks of daily use.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/serum,skincare,vitamin?lock=13" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/serum,skincare,vitamin?lock=14" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1608248597261-83325764746f?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "Glow Beauty Lab", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/cosmetics,beauty?lock=105" }, ratings: 4.5 },
+    shop: { name: "Glow Beauty Lab", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=200&q=80" }, ratings: 4.5 },
     price: 49,
     discount_price: 39,
     rating: 4.6,
@@ -394,10 +394,10 @@ export const productData = [
     description:
       "Achieve salon-quality straight hair at home with our professional keratin smoothing kit. This duo includes a smoothing shampoo and conditioning treatment infused with argan oil and keratin protein. The formula deeply penetrates hair fibers to repair damage, reduce frizz, and create silky-smooth results lasting up to 3 months. Safe for all hair types including colored or chemically treated hair. Paraben-free and sulfate-free.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/hair,straightening,salon?lock=15" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/hair,straightening,salon?lock=16" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "SalonPro Essentials", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/salon,beauty,hair?lock=106" }, ratings: 4.3 },
+    shop: { name: "SalonPro Essentials", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=200&q=80" }, ratings: 4.3 },
     price: 68,
     discount_price: 54,
     rating: 4.4,
@@ -411,10 +411,10 @@ export const productData = [
     description:
       "Pamper your skin with our rich, organic body lotion made from fair-trade shea butter and virgin coconut oil. This deeply moisturizing formula absorbs quickly without greasiness, leaving your skin soft, supple, and delicately scented. Enriched with vitamin E and aloe vera for soothing hydration. Free from parabens, phthalates, and synthetic fragrances. Perfect for daily use on dry or normal skin. 400ml pump bottle.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/body,lotion,shea,organic?lock=17" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/body,lotion,shea,organic?lock=18" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "Nature's Touch", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/nature,organic,body?lock=107" }, ratings: 4.4 },
+    shop: { name: "Nature's Touch", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?auto=format&fit=crop&w=200&q=80" }, ratings: 4.4 },
     price: 28,
     discount_price: 22,
     rating: 4.3,
@@ -430,10 +430,10 @@ export const productData = [
     description:
       "The new AirPods Pro 2 feature Apple's H2 chip delivering 2x more active noise cancellation, adaptive transparency, and spatial audio with personalized sound. The USB-C MagSafe charging case includes Find My functionality and built-in speaker. With up to 6 hours of listening time and 30 hours total with the case, these are the most advanced AirPods yet. IPX4 sweat and water resistant for all-day wear.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/airpods,earphones,apple?lock=19" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/airpods,earphones,apple?lock=20" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1588423771073-b8903fbb85b5?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "Apple Inc.", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/apple,logo?lock=101" }, ratings: 4.7 },
+    shop: { name: "Apple Inc.", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=200&q=80" }, ratings: 4.7 },
     price: 249,
     discount_price: 219,
     rating: 4.8,
@@ -447,10 +447,10 @@ export const productData = [
     description:
       "Stay connected and active with the latest smart watch featuring a brilliant always-on Retina display, S9 chip for faster on-device processing, and advanced health sensors including blood oxygen and ECG. With GPS + cellular you can call, text, and stream without your phone. Track your workouts, sleep, and mindfulness with precision. Water resistant to 50m. Includes midnight aluminum case with matching sport band.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/smartwatch,apple,watch?lock=21" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/smartwatch,apple,watch?lock=22" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "TechWear Inc.", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/tech,wearable?lock=108" }, ratings: 4.5 },
+    shop: { name: "TechWear Inc.", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1510017803434-a899398421b3?auto=format&fit=crop&w=200&q=80" }, ratings: 4.5 },
     price: 429,
     discount_price: 379,
     rating: 4.6,
@@ -464,10 +464,10 @@ export const productData = [
     description:
       "Sony's industry-leading WH-1000XM5 headphones feature dual processors that control eight microphones for unprecedented noise cancellation. The lightweight design with soft-fit leather headband provides exceptional comfort for all-day wear. With 30-hour battery life, quick charging, and crystal-clear hands-free calling, these are the ultimate wireless headphones. Hi-Res Audio support and DSEE Extreme upscaling deliver remarkable sound quality.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/sony,headphones,noise?lock=23" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/sony,headphones,noise?lock=24" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1484704849700-f032a568e944?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "Sony Electronics", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/sony,logo?lock=109" }, ratings: 4.6 },
+    shop: { name: "Sony Electronics", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=200&q=80" }, ratings: 4.6 },
     price: 398,
     discount_price: 348,
     rating: 4.7,
@@ -483,10 +483,10 @@ export const productData = [
     description:
       "Elevate your everyday style with this premium Oxford shirt crafted from 100% organic cotton. The slim-fit design features a button-down collar, chest pocket, and adjustable cuffs for a polished look. Perfect for both casual and smart-casual occasions, this versatile shirt pairs effortlessly with chinos or jeans. Pre-shrunk fabric ensures consistent fit wash after wash. Available in classic blue with subtle texture.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/shirt,casual,oxford?lock=25" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/shirt,casual,oxford?lock=26" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "Urban Threads", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/urban,fashion,clothing?lock=110" }, ratings: 4.3 },
+    shop: { name: "Urban Threads", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=200&q=80" }, ratings: 4.3 },
     price: 59,
     discount_price: 45,
     rating: 4.4,
@@ -500,10 +500,10 @@ export const productData = [
     description:
       "Turn heads with this elegant floral maxi dress featuring a flattering V-neckline, adjustable waist belt, and flowing A-line skirt. Made from lightweight, breathable viscose blend fabric that drapes beautifully. The vibrant floral print on a deep navy background is perfect for summer weddings, garden parties, or romantic dinners. Machine washable and wrinkle-resistant for effortless care. Available in US sizes 2-16.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/dress,maxi,floral?lock=27" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/dress,maxi,floral?lock=28" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "Fashionista Boutique", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/fashion,boutique?lock=111" }, ratings: 4.4 },
+    shop: { name: "Fashionista Boutique", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=200&q=80" }, ratings: 4.4 },
     price: 89,
     discount_price: 69,
     rating: 4.5,
@@ -517,10 +517,10 @@ export const productData = [
     description:
       "A wardrobe essential — our classic denim jacket is made from heavyweight 14oz pure cotton denim with a vintage wash for that perfect lived-in look. Features include a point collar, button-front closure, chest flap pockets with button closure, and adjustable waist tabs. The unisex design fits all body types comfortably. Perfect layered over hoodies, tees, or dresses for that timeless casual style.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/denim,jacket,vintage?lock=29" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/denim,jacket,vintage?lock=30" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1543076447-215ad9ba6923?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "Vintage Republic", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/vintage,clothing?lock=112" }, ratings: 4.2 },
+    shop: { name: "Vintage Republic", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=200&q=80" }, ratings: 4.2 },
     price: 120,
     discount_price: 99,
     rating: 4.3,
@@ -532,14 +532,14 @@ export const productData = [
   {
     id: 19,
     category: "Shoes",
-    name: "Nike Air Max 270 React Men's Casual Sneakers White/Black",
+    name: "Nike Air Max 270 React Men's Casual Sneakers White/Red",
     description:
       "The Nike Air Max 270 React combines the huge Air unit at the heel with the lightweight, bouncy React foam midsole for all-day comfort. The stretchy inner sleeve and molded heel provide a snug, supportive fit. The mesh upper with synthetic overlays offers breathability and durability. Designed for lifestyle wear, these sneakers deliver iconic Air Max style with modern comfort technology.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/nike,air,max,sneaker?lock=31" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/nike,air,max,sneaker?lock=32" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "Nike Official Store", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/nike,logo?lock=113" }, ratings: 4.7 },
+    shop: { name: "Nike Official Store", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1511556532299-8f662fc26c06?auto=format&fit=crop&w=200&q=80" }, ratings: 4.7 },
     price: 150,
     discount_price: 129,
     rating: 4.7,
@@ -553,10 +553,10 @@ export const productData = [
     description:
       "Run further and feel better in the adidas Ultraboost Light — the lightest Ultraboost ever. The new Light BOOST midsole provides 30% more responsiveness with every stride. The Primeknit+ upper adapts to your foot's shape for a sock-like fit, while the Continental™ rubber outsole gives superior traction on wet and dry surfaces. With a 10mm drop and 30mm heel height, these shoes deliver plush comfort for daily training.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/adidas,ultraboost,sneaker?lock=33" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/adidas,ultraboost,sneaker?lock=34" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1584735935682-2f2b69dff9d2?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "adidas Official", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/adidas,logo?lock=114" }, ratings: 4.6 },
+    shop: { name: "adidas Official", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1518002171953-a080ee817e1f?auto=format&fit=crop&w=200&q=80" }, ratings: 4.6 },
     price: 180,
     discount_price: 149,
     rating: 4.6,
@@ -570,10 +570,10 @@ export const productData = [
     description:
       "Step out in style with these elegant slip-on loafers featuring a cushioned memory foam insole for all-day walking comfort. The soft vegan leather upper with gold-tone hardware adds a touch of sophistication to any outfit. The flexible rubber outsole provides reliable traction, while the padded collar prevents heel blisters. Perfect for office, shopping, or brunch dates. Available in beige, black, and taupe.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/loafers,women,shoes?lock=35" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/loafers,women,shoes?lock=36" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1560343090-f0409e92791a?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1595341888016-a392ef81b7de?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "ComfortStep Shoes", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/shoes,comfort?lock=115" }, ratings: 4.3 },
+    shop: { name: "ComfortStep Shoes", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1534653299134-96a171b61581?auto=format&fit=crop&w=200&q=80" }, ratings: 4.3 },
     price: 79,
     discount_price: 59,
     rating: 4.4,
@@ -589,10 +589,10 @@ export const productData = [
     description:
       "Create lasting memories with this customizable wooden photo frame featuring warm LED fairy lights. The natural bamboo frame can be personalized with engraved names, dates, or special messages. Holds a 6x8 inch photo and includes a stand for desk display or wall-mounting hardware. The built-in LED lights with remote control offer 8 color modes and brightness adjustment. A heartfelt gift for anniversaries, weddings, or Mother's Day.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/photo,frame,gift,wooden?lock=37" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/photo,frame,gift,wooden?lock=38" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1582562124811-c09040d0a901?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "Heartfelt Gifts Co.", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/gift,heart?lock=116" }, ratings: 4.5 },
+    shop: { name: "Heartfelt Gifts Co.", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=200&q=80" }, ratings: 4.5 },
     price: 45,
     discount_price: 35,
     rating: 4.6,
@@ -606,10 +606,10 @@ export const productData = [
     description:
       "Indulge in the finest Belgian chocolates with this beautifully presented 36-piece gift hamper. Each piece is handcrafted by master chocolatiers using premium cocoa from Ghana and Ecuador. The assortment includes dark truffles, milk chocolate pralines, white chocolate ganache, and fruit-infused delights. Packaged in an elegant gift box with satin ribbon, perfect for birthdays, anniversaries, or corporate gifting. Suitable for vegetarians.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/chocolate,gift,box?lock=39" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/chocolate,gift,box?lock=40" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1548907040-4baa42d10919?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "Chocolatier Deluxe", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/chocolate,luxury?lock=117" }, ratings: 4.6 },
+    shop: { name: "Chocolatier Deluxe", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1511381939415-e44015466834?auto=format&fit=crop&w=200&q=80" }, ratings: 4.6 },
     price: 89,
     discount_price: 72,
     rating: 4.8,
@@ -623,10 +623,10 @@ export const productData = [
     description:
       "This portable Bluetooth 5.3 speaker delivers rich 360-degree sound with deep bass while creating ambiance with dynamic RGB LED lights that sync to the music. IPX7 waterproof rating means it can survive complete submersion — perfect for pool parties, beach trips, or shower singalongs. With 20-hour battery life, built-in microphone for hands-free calls, and TWS pairing for stereo sound, it's the ultimate party companion.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/speaker,bluetooth,led?lock=41" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/speaker,bluetooth,led?lock=42" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "SoundWave Electronics", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/audio,speaker?lock=118" }, ratings: 4.4 },
+    shop: { name: "SoundWave Electronics", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=200&q=80" }, ratings: 4.4 },
     price: 59,
     discount_price: 45,
     rating: 4.5,
@@ -642,10 +642,10 @@ export const productData = [
     description:
       "Never worry about feeding your pet on time with this smart automatic pet feeder. Program up to 6 meals per day with customizable portion sizes (1-10 servings per meal). The large 5-liter capacity holds enough dry food for up to 30 days. Record a 10-second voice message to call your pet at mealtime, and the LCD display shows feeding schedules at a glance. Works with kibble up to 15mm. Battery backup ensures operation even during power outages.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/pet,feeder,dog,automatic?lock=43" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/pet,feeder,dog,automatic?lock=44" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "PetSmart Home", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/pet,dog,cat?lock=119" }, ratings: 4.3 },
+    shop: { name: "PetSmart Home", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=200&q=80" }, ratings: 4.3 },
     price: 79,
     discount_price: 64,
     rating: 4.4,
@@ -659,10 +659,10 @@ export const productData = [
     description:
       "Give your furry friend the ultimate sleeping experience with our orthopedic pet bed. The 4-inch thick memory foam base provides joint relief for older pets and supports proper spinal alignment. The plush velvet sleeping surface with bolsters offers a sense of security. The waterproof inner liner protects the foam, and the removable machine-washable cover makes cleaning easy. Available in large size for dogs up to 70 lbs. Non-slip bottom keeps it in place.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/dog,bed,pet,orthopedic?lock=45" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/dog,bed,pet,orthopedic?lock=46" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "CozyPaws", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/dog,bed,pet?lock=120" }, ratings: 4.5 },
+    shop: { name: "CozyPaws", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=200&q=80" }, ratings: 4.5 },
     price: 89,
     discount_price: 72,
     rating: 4.6,
@@ -676,10 +676,10 @@ export const productData = [
     description:
       "Keep your dog mentally stimulated and entertained with this challenging puzzle toy. Featuring sliding compartments, flip lids, and treat-dispensing drawers with adjustable difficulty levels, it engages your dog's natural problem-solving instincts. Made from food-grade, non-toxic ABS plastic that is durable and easy to clean. Suitable for medium to large breeds. Helps reduce anxiety, boredom, and destructive behavior. Dishwasher safe for easy cleaning.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/dog,toy,puzzle?lock=47" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/dog,toy,puzzle?lock=48" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1535930891776-0c2dfb7fda1a?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "Happy Paws Boutique", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/dog,paw,pet?lock=121" }, ratings: 4.2 },
+    shop: { name: "Happy Paws Boutique", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1544568100-847a948585b9?auto=format&fit=crop&w=200&q=80" }, ratings: 4.2 },
     price: 34,
     discount_price: 27,
     rating: 4.3,
@@ -695,10 +695,10 @@ export const productData = [
     description:
       "Immerse yourself in the game with this premium wireless gaming headset featuring 50mm neodymium drivers and 7.1 virtual surround sound. The flip-to-mute noise-cancelling microphone ensures crystal-clear communication with your teammates. With 30-hour battery life, memory foam ear cushions, and a lightweight aluminum frame, game all night in comfort. Low-latency 2.4GHz wireless connection ensures no audio delay. Compatible with PC, PS5, Xbox, and Nintendo Switch.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/gaming,headset,gamer?lock=49" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/gaming,headset,gamer?lock=50" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1599669454699-248893623440?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "GameOn Gear", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/gaming,esports?lock=122" }, ratings: 4.5 },
+    shop: { name: "GameOn Gear", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=200&q=80" }, ratings: 4.5 },
     price: 129,
     discount_price: 99,
     rating: 4.6,
@@ -712,10 +712,10 @@ export const productData = [
     description:
       "The PS5 Slim console delivers lightning-fast loading with a custom 825GB SSD, deep immersion with haptic feedback, adaptive triggers, and 3D Audio. The disc edition plays both physical and digital PS5 and PS4 games. Play thousands of hit games from every generation. The ultra-high-speed SSD, Tempest 3D AudioTech, and the innovative DualSense wireless controller combine to deliver a new generation of incredible PlayStation gaming.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/playstation,ps5,console?lock=51" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/playstation,ps5,console?lock=52" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "Sony Interactive Entertainment", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/playstation,sony?lock=123" }, ratings: 4.8 },
+    shop: { name: "Sony Interactive Entertainment", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?auto=format&fit=crop&w=200&q=80" }, ratings: 4.8 },
     price: 499,
     discount_price: 449,
     rating: 4.9,
@@ -729,10 +729,10 @@ export const productData = [
     description:
       "The Fender Player Stratocaster delivers classic Fender tone and feel at an accessible price. Featuring a solid alder body with gloss finish, comfortable 'C'-shaped maple neck with 9.5-inch radius fingerboard, and three Player Series single-coil pickups for that unmistakable Stratocaster sound. Includes 2-point tremolo bridge, master volume and tone controls, and sealed tuning machines for tuning stability. Perfect for beginners and pros alike.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/fender,stratocaster,guitar?lock=53" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/fender,stratocaster,guitar?lock=54" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1516924962500-2b4b3b99ea02?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1550291652-6ea9114a47b1?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "Fender Musical Instruments", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/fender,guitar,music?lock=124" }, ratings: 4.7 },
+    shop: { name: "Fender Musical Instruments", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=200&q=80" }, ratings: 4.7 },
     price: 799,
     discount_price: 699,
     rating: 4.7,
@@ -748,10 +748,10 @@ export const productData = [
     description:
       "Dominate your games with this full-size mechanical gaming keyboard featuring hot-swappable Gateron switches for customizable typing feel. Per-key RGB backlighting with 16.8 million colors and multiple lighting effects creates stunning visuals. The aircraft-grade aluminum frame provides durability, while the detachable USB-C cable and PBT double-shot keycaps ensure longevity. Includes a magnetic wrist rest and multimedia controls. NKRO and 100% anti-ghosting.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/mechanical,keyboard,gamer?lock=55" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/mechanical,keyboard,gamer?lock=56" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "TechGear Pro", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/keyboard,gaming,tech?lock=125" }, ratings: 4.4 },
+    shop: { name: "TechGear Pro", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1595225476474-87563907a212?auto=format&fit=crop&w=200&q=80" }, ratings: 4.4 },
     price: 89,
     discount_price: 69,
     rating: 4.5,
@@ -765,10 +765,10 @@ export const productData = [
     description:
       "Protect your home with this 2K QHD outdoor security camera featuring full-color night vision and AI-powered person, vehicle, and pet detection. The 360-degree pan/tilt motorized base covers every angle with no blind spots. Two-way audio with noise cancellation lets you communicate through the built-in speaker and microphone. IP65 weatherproof rating withstands rain, snow, and extreme temperatures. Supports Alexa and Google Assistant voice control. No hub required.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/security,camera,home?lock=57" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/security,camera,home?lock=58" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1557324232-b8917d3c3dcb?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1558002038-1055907df827?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "SafeHome Technologies", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/security,home,camera?lock=126" }, ratings: 4.3 },
+    shop: { name: "SafeHome Technologies", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1557324232-b8917d3c3dcb?auto=format&fit=crop&w=200&q=80" }, ratings: 4.3 },
     price: 69,
     discount_price: 54,
     rating: 4.4,
@@ -782,10 +782,10 @@ export const productData = [
     description:
       "Cook like a pro with this premium 8-piece knife set crafted from German X50CrMoV15 stainless steel. Each blade is ice-hardened to 58+ HRC and precision-honed to a 15-degree angle for razor-sharp performance out of the box. The set includes 8-inch chef knife, 8-inch bread knife, 7-inch santoku, 5-inch utility knife, 3.5-inch paring knife, kitchen shears, sharpening rod, and hardwood storage block. Ergonomic Pakkawood handles are balanced for comfortable all-day use.",
     image_Url: [
-      { public_id: "test", url: "https://loremflickr.com/400/400/knife,chef,kitchen,steel?lock=59" },
-      { public_id: "test", url: "https://loremflickr.com/400/400/knife,chef,kitchen,steel?lock=60" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1593618998160-e34014e67546?auto=format&fit=crop&w=800&q=80" },
+      { public_id: "test", url: "https://images.unsplash.com/photo-1589256469067-ea99122bbec9?auto=format&fit=crop&w=800&q=80" },
     ],
-    shop: { name: "Culinary Masters", shop_avatar: { public_id: "test", url: "https://loremflickr.com/200/200/kitchen,chef,knife?lock=127" }, ratings: 4.5 },
+    shop: { name: "Culinary Masters", shop_avatar: { public_id: "test", url: "https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=200&q=80" }, ratings: 4.5 },
     price: 149,
     discount_price: 119,
     rating: 4.6,
