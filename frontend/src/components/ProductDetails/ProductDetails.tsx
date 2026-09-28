@@ -286,7 +286,7 @@ function ProductDetails({ data }) {
             <div className="bg-white rounded-lg p-6">
                 <div className="block w-full 800px:flex gap-8">
                     <div className="w-full 800px:w-1/2">
-                        <div className="flex justify-center items-center bg-gray-50 rounded-lg p-4 mb-4 h-75 overflow-hidden">
+                        <div className="flex justify-center items-center bg-gray-50 rounded-2xl border border-gray-100 p-4 mb-4 h-80 overflow-hidden">
                             <img
                               src={images?.[select]?.url || images?.[select] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80'}
                               onError={(e) => {
@@ -294,14 +294,14 @@ function ProductDetails({ data }) {
                                 e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80';
                               }}
                               alt=""
-                              className="max-w-full max-h-full object-contain"
+                              className="max-w-full max-h-full object-cover rounded-xl shadow-xs"
                             />
                         </div>
                         <div className="flex flex-wrap gap-2">
                             {images?.map((i, index) => (
                                 <div
                                     key={index}
-                                    className={`${select === index ? "border-2 border-teal-500" : "border border-gray-300"} cursor-pointer rounded-md overflow-hidden w-15 h-15`}
+                                    className={`${select === index ? "border-2 border-indigo-600" : "border border-gray-200"} cursor-pointer rounded-xl overflow-hidden w-15 h-15 shadow-xs`}
                                     onClick={() => setSelect(index)}
                                 >
                                     <img

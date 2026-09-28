@@ -26,7 +26,7 @@ function EventCard({ active, data }: EventCardProps) {
                 <img
                     src={imageUrl}
                     alt={eventData.name}
-                    className="w-full h-64 sm:h-72 lg:h-[420px] object-contain rounded-lg shadow-sm"
+                    className="w-full h-64 sm:h-72 lg:h-[420px] object-cover rounded-2xl shadow-md border border-gray-100"
                 />
             </div>
 

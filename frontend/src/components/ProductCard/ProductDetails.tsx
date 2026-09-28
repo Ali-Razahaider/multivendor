@@ -91,7 +91,7 @@ const ProductDetails = ({ data, setOpen }) => {
             <div className="w-full p-6">
               <div className="block w-full 800px:flex gap-8">
                 <div className="w-full 800px:w-[50%] pt-30">
-                  <div className="flex justify-center items-center bg-gray-50 rounded-lg p-4 mb-4 h-[300px] overflow-hidden">
+                  <div className="flex justify-center items-center bg-gray-50 rounded-2xl border border-gray-100 p-4 mb-4 h-[300px] overflow-hidden">
                     <img
                       src={`${(data.images || data.image_Url)?.[select]?.url || (data.images || data.image_Url)?.[select] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80'}`}
                       onError={(e) => {
@@ -99,7 +99,7 @@ const ProductDetails = ({ data, setOpen }) => {
                         e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80';
                       }}
                       alt=""
-                      className="max-w-full max-h-full object-contain"
+                      className="max-w-full max-h-full object-cover rounded-xl"
                     />
                   </div>
                   <div className="w-full flex flex-wrap gap-2 justify-start">
@@ -107,8 +107,8 @@ const ProductDetails = ({ data, setOpen }) => {
                       (data.images || data.image_Url).map((i, index) => (
                         <div
                           key={index}
-                          className={`${select === index ? "border-2 border-teal-500" : "border border-gray-300"
-                            } cursor-pointer rounded-md overflow-hidden w-15 h-15`}
+                          className={`${select === index ? "border-2 border-indigo-600" : "border border-gray-200"
+                            } cursor-pointer rounded-xl overflow-hidden w-15 h-15 shadow-xs`}
                           onClick={() => setSelect(index)}
                         >
                           <img
@@ -118,7 +118,7 @@ const ProductDetails = ({ data, setOpen }) => {
                               e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80';
                             }}
                             alt=""
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover rounded-lg"
                           />
                         </div>
                       ))}

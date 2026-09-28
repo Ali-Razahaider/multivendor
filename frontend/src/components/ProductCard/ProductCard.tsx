@@ -83,7 +83,7 @@ const ProductCard = ({ data }) => {
             e.currentTarget.src = FALLBACK_IMAGE;
           }}
           alt={data.name}
-          className="w-full h-42.5 object-cover mt-8"
+          className="w-full h-42.5 object-cover mt-8 rounded-xl shadow-xs transition-transform duration-300 hover:scale-[1.02]"
         />
       </Link>
 

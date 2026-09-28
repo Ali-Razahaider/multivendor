@@ -48,7 +48,7 @@ const Categories = () => {
                 <img
                   src={item.image_Url}
                   alt={item.title}
-                  className="w-25  object-cover"
+                  className="w-24 h-20 object-cover rounded-xl shadow-xs ml-auto"
                 />
               </div>
             ))}
