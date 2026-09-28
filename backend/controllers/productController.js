@@ -51,11 +51,30 @@ router.post(
   })
 );
 
+const DEFAULT_PRODUCT_IMAGE = "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80";
+
+const sanitizeProduct = (p) => {
+  const prod = typeof p.toObject === 'function' ? p.toObject() : { ...p };
+  if (!prod.images || !Array.isArray(prod.images) || prod.images.length === 0) {
+    prod.images = [DEFAULT_PRODUCT_IMAGE];
+  } else {
+    prod.images = prod.images.map((img) => {
+      const url = typeof img === 'object' && img?.url ? img.url : img;
+      if (!url || typeof url !== 'string' || url.includes('loremflickr') || url.includes('localhost') || url.startsWith('/uploads')) {
+        return DEFAULT_PRODUCT_IMAGE;
+      }
+      return url;
+    });
+  }
+  return prod;
+};
+
 router.get(
   "/all",
   asyncHandler(async (req, res, next) => {
     const products = await Product.find().sort({ createdAt: -1 });
-    res.status(200).json({ success: true, products });
+    const sanitized = products.map(sanitizeProduct);
+    res.status(200).json({ success: true, products: sanitized });
   })
 );
 
@@ -63,7 +82,8 @@ router.get(
   "/shop/:shopId",
   asyncHandler(async (req, res, next) => {
     const products = await Product.find({ shopId: req.params.shopId }).sort({ createdAt: -1 });
-    res.status(200).json({ success: true, products });
+    const sanitized = products.map(sanitizeProduct);
+    res.status(200).json({ success: true, products: sanitized });
   })
 );
 
@@ -126,7 +146,7 @@ router.get(
       res.status(404);
       throw new Error("Product not found");
     }
-    res.status(200).json({ success: true, product });
+    res.status(200).json({ success: true, product: sanitizeProduct(product) });
   })
 );
 
@@ -167,7 +187,7 @@ router.put(
       runValidators: true,
     });
 
-    res.status(200).json({ success: true, product: updated });
+    res.status(200).json({ success: true, product: sanitizeProduct(updated) });
   })
 );
 
@@ -196,7 +216,8 @@ router.get(
   isAdmin,
   asyncHandler(async (req, res) => {
     const products = await Product.find().sort({ createdAt: -1 });
-    res.json({ success: true, products });
+    const sanitized = products.map(sanitizeProduct);
+    res.json({ success: true, products: sanitized });
   })
 );
 

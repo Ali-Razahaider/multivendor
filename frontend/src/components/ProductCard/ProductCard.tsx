@@ -18,8 +18,10 @@ const ProductCard = ({ data }) => {
   const d = data.name;
   const productName = d.replace(/\s+/g, '-');
 
-  const images = data.image_Url || data.images
-  const firstImage = images?.[0]?.url || images?.[0]
+  const FALLBACK_IMAGE = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80';
+  const images = data.image_Url || data.images;
+  const rawImg = images?.[0]?.url || images?.[0];
+  const firstImage = (typeof rawImg === 'string' && (rawImg.includes('loremflickr') || rawImg.startsWith('/uploads'))) ? FALLBACK_IMAGE : (rawImg || FALLBACK_IMAGE);
   const discountPrice = data.discount_price ?? data.discountedPrice
   const rating = data.rating ?? data.ratings ?? 0
   const totalSold = data.total_sell ?? data.totalSell ?? 0
@@ -76,6 +78,10 @@ const ProductCard = ({ data }) => {
       <Link to={`/product/${productName}`}>
         <img
           src={firstImage}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = FALLBACK_IMAGE;
+          }}
           alt={data.name}
           className="w-full h-42.5 object-cover mt-8"
         />

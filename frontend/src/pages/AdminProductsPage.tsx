@@ -56,7 +56,11 @@ function AdminProductsPage() {
                     <TableRow key={product._id}>
                       <TableCell>
                         <img
-                          src={product.images?.[0]?.url || product.images?.[0] || '/placeholder.jpg'}
+                          src={product.images?.[0]?.url || product.images?.[0] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80'}
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80';
+                          }}
                           alt=""
                           className="w-10 h-10 object-cover rounded"
                         />

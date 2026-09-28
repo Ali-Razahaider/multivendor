@@ -16,7 +16,11 @@ const WishlistSingle = ({ data, dispatch, setOpenWishlist }) => {
     <div className="flex items-center p-4 border-b">
       <Link to={`/product/${productName}`} onClick={() => setOpenWishlist(false)}>
         <img
-          src={data.images?.[0]?.url || data.images?.[0] || data.image_Url?.[0]?.url}
+          src={data.images?.[0]?.url || data.images?.[0] || data.image_Url?.[0]?.url || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80'}
+          onError={(e) => {
+            e.currentTarget.onerror = null;
+            e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80';
+          }}
           alt={data.name}
           className="w-16 h-16 object-cover rounded-md"
         />

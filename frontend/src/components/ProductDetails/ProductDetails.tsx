@@ -287,7 +287,15 @@ function ProductDetails({ data }) {
                 <div className="block w-full 800px:flex gap-8">
                     <div className="w-full 800px:w-1/2">
                         <div className="flex justify-center items-center bg-gray-50 rounded-lg p-4 mb-4 h-75 overflow-hidden">
-                            <img src={images?.[select]?.url || images?.[select]} alt="" className="max-w-full max-h-full object-contain" />
+                            <img
+                              src={images?.[select]?.url || images?.[select] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80'}
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80';
+                              }}
+                              alt=""
+                              className="max-w-full max-h-full object-contain"
+                            />
                         </div>
                         <div className="flex flex-wrap gap-2">
                             {images?.map((i, index) => (
@@ -296,13 +304,25 @@ function ProductDetails({ data }) {
                                     className={`${select === index ? "border-2 border-teal-500" : "border border-gray-300"} cursor-pointer rounded-md overflow-hidden w-15 h-15`}
                                     onClick={() => setSelect(index)}
                                 >
-                                    <img src={i?.url || i} alt="" className="w-full h-full object-cover" />
+                                    <img
+                                      src={i?.url || i}
+                                      onError={(e) => {
+                                        e.currentTarget.onerror = null;
+                                        e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80';
+                                      }}
+                                      alt=""
+                                      className="w-full h-full object-cover"
+                                    />
                                 </div>
                             ))}
                         </div>
                         <div className="flex items-center border-t mt-6 pt-4 border-gray-200">
                             <img
-                                src={typeof data?.shop?.avatar === 'string' ? data.shop.avatar : (data?.shop?.avatar?.url || data?.shop?.shop_avatar?.url)}
+                                src={typeof data?.shop?.avatar === 'string' ? data.shop.avatar : (data?.shop?.avatar?.url || data?.shop?.shop_avatar?.url || 'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=200&q=80')}
+                                onError={(e) => {
+                                  e.currentTarget.onerror = null;
+                                  e.currentTarget.src = 'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=200&q=80';
+                                }}
                                 alt=""
                                 className="w-12.5 h-12.5 rounded-full border-2 border-gray-300 p-0.5"
                             />

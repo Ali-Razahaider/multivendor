@@ -94,7 +94,11 @@ const Header = ({ activeHeading }) => {
                   <Link to={`/product/${ProductName}`} key={index}>
                     <div className="flex items-center w-full p-3 hover:bg-slate-200 cursor-pointer">
                       <img
-                        src={i.images?.[0]?.url || i.image_Url?.[0]?.url || i.images?.[0] || '/placeholder.jpg'}
+                        src={i.images?.[0]?.url || i.image_Url?.[0]?.url || i.images?.[0] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80'}
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80';
+                        }}
                         alt=""
                         className="w-10 h-10 object-cover rounded-full"
                       />
@@ -257,9 +261,13 @@ const Header = ({ activeHeading }) => {
                         <Link to={`/product/${Product_name}`} key={i._id}>
                           <div className="flex items-center">
                             <img
-                              src={i.images?.[0]?.url || i.image_Url?.[0]?.url}
+                              src={i.images?.[0]?.url || i.image_Url?.[0]?.url || i.images?.[0] || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80'}
+                              onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80';
+                              }}
                               alt=""
-                              className="w-[50px] mr-2"
+                              className="w-[50px] mr-2 h-[50px] object-cover rounded"
                             />
                             <h5>{i.name}</h5>
                           </div>
