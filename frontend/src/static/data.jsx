@@ -1,3 +1,5 @@
+import { LayoutGrid, Store, Search, ShoppingBag } from 'lucide-react';
+
 // navigation Data
 export const navItems = [
   {
@@ -26,164 +28,27 @@ export const navItems = [
 export const brandingData = [
   {
     id: 1,
-    title: "Free Shipping",
-    Description: "From all orders over 100$",
-    icon: (
-      <svg
-        width="36"
-        height="36"
-        viewBox="0 0 36 36"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M1 1H5.63636V24.1818H35"
-          stroke="#FFBB38"
-          strokeWidth="2"
-          strokeMiterlimit="10"
-          strokeLinecap="square"
-        ></path>
-        <path
-          d="M8.72763 35.0002C10.4347 35.0002 11.8185 33.6163 11.8185 31.9093C11.8185 30.2022 10.4347 28.8184 8.72763 28.8184C7.02057 28.8184 5.63672 30.2022 5.63672 31.9093C5.63672 33.6163 7.02057 35.0002 8.72763 35.0002Z"
-          stroke="#FFBB38"
-          strokeWidth="2"
-          strokeMiterlimit="10"
-          strokeLinecap="square"
-        ></path>
-        <path
-          d="M31.9073 35.0002C33.6144 35.0002 34.9982 33.6163 34.9982 31.9093C34.9982 30.2022 33.6144 28.8184 31.9073 28.8184C30.2003 28.8184 28.8164 30.2022 28.8164 31.9093C28.8164 33.6163 30.2003 35.0002 31.9073 35.0002Z"
-          stroke="#FFBB38"
-          strokeWidth="2"
-          strokeMiterlimit="10"
-          strokeLinecap="square"
-        ></path>
-        <path
-          d="M34.9982 1H11.8164V18H34.9982V1Z"
-          stroke="#FFBB38"
-          strokeWidth="2"
-          strokeMiterlimit="10"
-          strokeLinecap="square"
-        ></path>
-        <path
-          d="M11.8164 7.18164H34.9982"
-          stroke="#FFBB38"
-          strokeWidth="2"
-          strokeMiterlimit="10"
-          strokeLinecap="square"
-        ></path>
-      </svg>
-    ),
+    title: "Wide Selection",
+    Description: "Explore finds across every category",
+    icon: <LayoutGrid size={34} strokeWidth={1.8} color="#FFBB38" />,
   },
   {
     id: 2,
-    title: "Daily Surprise Offers",
-    Description: "Save up to 25% off",
-    icon: (
-      <svg
-        width="32"
-        height="34"
-        viewBox="0 0 32 34"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M31 17.4502C31 25.7002 24.25 32.4502 16 32.4502C7.75 32.4502 1 25.7002 1 17.4502C1 9.2002 7.75 2.4502 16 2.4502C21.85 2.4502 26.95 5.7502 29.35 10.7002"
-          stroke="#FFBB38"
-          strokeWidth="2"
-          strokeMiterlimit="10"
-        ></path>
-        <path
-          d="M30.7 2L29.5 10.85L20.5 9.65"
-          stroke="#FFBB38"
-          strokeWidth="2"
-          strokeMiterlimit="10"
-          strokeLinecap="square"
-        ></path>
-      </svg>
-    ),
+    title: "Independent Sellers",
+    Description: "Discover shops with something unique",
+    icon: <Store size={34} strokeWidth={1.8} color="#FFBB38" />,
   },
   {
     id: 3,
-    title: "Affortable Prices",
-    Description: "Get Factory direct price",
-    icon: (
-      <svg
-        width="32"
-        height="35"
-        viewBox="0 0 32 35"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M7 13H5.5C2.95 13 1 11.05 1 8.5V1H7"
-          stroke="#FFBB38"
-          strokeWidth="2"
-          strokeMiterlimit="10"
-        ></path>
-        <path
-          d="M25 13H26.5C29.05 13 31 11.05 31 8.5V1H25"
-          stroke="#FFBB38"
-          strokeWidth="2"
-          strokeMiterlimit="10"
-        ></path>
-        <path
-          d="M16 28V22"
-          stroke="#FFBB38"
-          strokeWidth="2"
-          strokeMiterlimit="10"
-        ></path>
-        <path
-          d="M16 22C11.05 22 7 17.95 7 13V1H25V13C25 17.95 20.95 22 16 22Z"
-          stroke="#FFBB38"
-          strokeWidth="2"
-          strokeMiterlimit="10"
-          strokeLinecap="square"
-        ></path>
-        <path
-          d="M25 34H7C7 30.7 9.7 28 13 28H19C22.3 28 25 30.7 25 34Z"
-          stroke="#FFBB38"
-          strokeWidth="2"
-          strokeMiterlimit="10"
-          strokeLinecap="square"
-        ></path>
-      </svg>
-    ),
+    title: "Great Finds",
+    Description: "Compare options and find your fit",
+    icon: <Search size={34} strokeWidth={1.8} color="#FFBB38" />,
   },
   {
     id: 4,
-    title: "Secure Payments",
-    Description: "100% protected payments",
-    icon: (
-      <svg
-        width="32"
-        height="38"
-        viewBox="0 0 32 38"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M22.6654 18.667H9.33203V27.0003H22.6654V18.667Z"
-          stroke="#FFBB38"
-          strokeWidth="2"
-          strokeMiterlimit="10"
-          strokeLinecap="square"
-        ></path>
-        <path
-          d="M12.668 18.6663V13.6663C12.668 11.833 14.168 10.333 16.0013 10.333C17.8346 10.333 19.3346 11.833 19.3346 13.6663V18.6663"
-          stroke="#FFBB38"
-          strokeWidth="2"
-          strokeMiterlimit="10"
-          strokeLinecap="square"
-        ></path>
-        <path
-          d="M31 22C31 30.3333 24.3333 37 16 37C7.66667 37 1 30.3333 1 22V5.33333L16 2L31 5.33333V22Z"
-          stroke="#FFBB38"
-          strokeWidth="2"
-          strokeMiterlimit="10"
-          strokeLinecap="square"
-        ></path>
-      </svg>
-    ),
+    title: "Simple Checkout",
+    Description: "Shop and check out with ease",
+    icon: <ShoppingBag size={34} strokeWidth={1.8} color="#FFBB38" />,
   },
 ];
 
@@ -192,72 +57,72 @@ export const categoriesData = [
   {
     id: 5,
     title: "Computers and Laptops",
-    subTitle: "",
-    image_Url:
-      "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80",
+    displayTitle: "Computers & Laptops",
+    subTitle: "Work, create, and play",
+    image_Url: "/images/categories/computers-laptops.webp",
   },
   {
     id: 6,
-    title: "cosmetics and body care",
-    subTitle: "",
-    image_Url:
-      "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=800&q=80",
+    title: "Cosmetics and Body Care",
+    displayTitle: "Beauty & Body Care",
+    subTitle: "Everyday care essentials",
+    image_Url: "/images/categories/beauty-body-care.webp",
   },
   {
     id: 7,
-    title: "Accesories",
-    subTitle: "",
-    image_Url:
-      "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80",
+    title: "Accessories",
+    displayTitle: "Accessories",
+    subTitle: "The details that make it yours",
+    image_Url: "/images/categories/accessories.webp",
   },
   {
     id: 8,
     title: "Cloths",
-    subTitle: "",
-    image_Url:
-      "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?auto=format&fit=crop&w=800&q=80",
+    displayTitle: "Clothing",
+    subTitle: "Style for every day",
+    image_Url: "/images/categories/clothing.webp",
   },
   {
     id: 9,
     title: "Shoes",
-    subTitle: "",
-    image_Url:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80",
+    displayTitle: "Shoes",
+    subTitle: "Find your next pair",
+    image_Url: "/images/categories/shoes.webp",
   },
   {
     id: 10,
     title: "Gifts",
-    subTitle: "",
-    image_Url:
-      "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=800&q=80",
+    displayTitle: "Gifts",
+    subTitle: "Thoughtful finds for every occasion",
+    image_Url: "/images/categories/gifts.webp",
   },
   {
     id: 11,
     title: "Pet Care",
-    subTitle: "",
-    image_Url:
-      "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=800&q=80",
+    displayTitle: "Pet Care",
+    subTitle: "Little extras for beloved pets",
+    image_Url: "/images/categories/pet-care.webp",
   },
   {
     id: 12,
     title: "Mobile and Tablets",
-    subTitle: "",
-    image_Url:
-      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=800&q=80",
+    displayTitle: "Phones & Tablets",
+    subTitle: "Stay connected wherever you go",
+    image_Url: "/images/categories/phones-tablets.webp",
   },
   {
     id: 13,
     title: "Music and Gaming",
-    subTitle: "",
-    image_Url:
-      "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80",
+    displayTitle: "Music & Gaming",
+    subTitle: "More ways to play and listen",
+    image_Url: "/images/categories/music-gaming.webp",
   },
   {
     id: 14,
     title: "Others",
-    subTitle: "",
-    image_Url:
-      "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=80",
+    displayTitle: "More to Explore",
+    subTitle: "Discover something unexpected",
+    image_Url: "/images/categories/more-to-explore.webp",
   },
 ];
 
