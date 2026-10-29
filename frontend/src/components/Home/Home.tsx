@@ -5,7 +5,6 @@ import Categories from './Categories';
 import BestDeals from './BestDeals';
 import FeaturedProducts from './FeaturedProducts';
 import Events from './Events';
-import Sponsored from './Sponsored';
 import Footer from '../Layout/Footer';
 const Home = () => {
   return (
@@ -16,7 +15,6 @@ const Home = () => {
       <BestDeals />
       <Events />
       <FeaturedProducts />
-      <Sponsored />
       <Footer />
     </>
   )

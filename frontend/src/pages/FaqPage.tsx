@@ -6,24 +6,24 @@ import { AiOutlinePlus, AiOutlineMinus } from "react-icons/ai"
 
 const faqData = [
   {
-    question: "How do I track my order?",
-    answer: "You can track your order by logging into your account and visiting the 'My Orders' section. There you will find the tracking number and a link to the carrier's tracking page.",
+    question: "Where can I check my order status?",
+    answer: "Sign in and open your account page to view your orders and their latest status.",
   },
   {
-    question: "What is your return policy?",
-    answer: "We offer a 30-day return policy from the date of delivery. Items must be unused and in their original packaging. To initiate a return, please contact our support team.",
+    question: "How do I ask about an order or a refund?",
+    answer: "Open your account page to review your orders or send a message to the seller. Refund requests and updates appear in the Refunds section of your account.",
   },
   {
-    question: "How long does shipping take?",
-    answer: "Standard shipping takes 5-7 business days within the US. Express shipping is available for 2-3 business days. International shipping may take 10-15 business days depending on the destination.",
+    question: "How do I find products from a specific category?",
+    answer: "Choose a category from the home page or the category menu. You can also browse all products and search for a product by name.",
   },
   {
-    question: "Do you ship internationally?",
-    answer: "Yes, we ship to most countries worldwide. Shipping fees and delivery times vary depending on the destination. You can check the estimated shipping cost at checkout.",
+    question: "Can I shop from more than one seller?",
+    answer: "Yes. Bazaarly brings products from different sellers into one marketplace. Each product page shows the seller's shop details.",
   },
   {
-    question: "How can I contact customer support?",
-    answer: "You can reach us via email at support@example.com, through the live chat on our website, or by calling our toll-free number at 1-800-123-4567. Our support team is available Monday to Friday, 9 AM to 6 PM.",
+    question: "How do I become a seller?",
+    answer: "Select Become a Seller from the site header and create a shop account to get started.",
   },
 ]
 
@@ -36,7 +36,8 @@ const Faq = () => {
 
   return (
     <div className={`${styles.section} my-8`}>
-      <h2 className="text-3xl font-bold text-gray-800 mb-8">FAQ</h2>
+      <h2 className="text-3xl font-bold text-gray-800 mb-2">Frequently asked questions</h2>
+      <p className="text-gray-600 mb-8">Quick answers to help you shop and sell on Bazaarly.</p>
       <div className="mx-auto max-w-4xl space-y-3">
         {faqData.map((item, index) => (
           <div key={index} className="border border-gray-200 rounded-lg overflow-hidden">
