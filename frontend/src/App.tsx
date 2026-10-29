@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import {
   LoginPage,
   HomePage,
@@ -27,7 +27,7 @@ import {
 import './App.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import axios from 'axios';
 import Store from './redux/store.js';
 import { loadUser } from './redux/actions/userActions.js';
@@ -42,6 +42,21 @@ import {
 
 axios.defaults.withCredentials = true;
 
+const ScrollToTop = () => {
+  const { pathname, hash } = useLocation();
+
+  useLayoutEffect(() => {
+    if (hash) {
+      document.getElementById(decodeURIComponent(hash.slice(1)))?.scrollIntoView();
+      return;
+    }
+
+    window.scrollTo(0, 0);
+  }, [pathname, hash]);
+
+  return null;
+};
+
 const App = () => {
 
   useEffect(() => {
@@ -55,6 +70,7 @@ const App = () => {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -290,4 +306,3 @@ const App = () => {
 };
 
 export default App;
-  
