@@ -1,77 +1,58 @@
-import { AiFillFacebook, AiFillTwitterCircle, AiFillInstagram, AiFillYoutube } from "react-icons/ai"
-import { footerProductLinks } from "../../static/data";
-import { footercompanyLinks } from "../../static/data";
-import {footerSupportLinks} from "../../static/data";
-import { Link } from "react-router-dom";
-const Footer = () => {
-  return (
-    <div className="bg-gray-900 text-white">
-      <div className="bg-indigo-600 text-white">
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center sm:px-12 px-3 py-7">
-          <h1 className="lg:text-3xl text-3xl md:mb-0 mb-6 lg:leading-normal font-semibold md:w-2/5 text-justify">
-            <span className="text-emerald-400">
-              Subscribe Now! <br />
-            </span>
-            Get the Latest Deals and Offers.
-          </h1>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <input
-              type="text"
-              placeholder="Enter your email"
-              required
-              className="text-gray-800 bg-amber-50 sm:w-72 w-full py-2.5 rounded px-2 focus:outline-none focus:ring-2 focus:ring-emerald-400"
-            />
-            <button className="bg-emerald-500 hover:bg-emerald-600 duration-300 px-5 py-2.5 rounded-md text-white font-medium w-full sm:w-auto whitespace-nowrap">Subscribe</button>
-          </div>
-        </div>
-      </div>
-      <div className="grid grid-cols-1 py-5 sm:grid-cols-4 md:items-center px-4 sm:px-12">
-        <ul className="px-5 text-center sm:text-start flex sm:block flex-col items-center">
-          <img src="https://1000logos.net/wp-content/uploads/2020/09/SpaceX-Logo.png" alt="" className="" style={{ width: '100%', height: '150px', filter: 'brightness(0) invert(1)' }} />
-          <p className="text-gray-400">Home Elements need to create beautiful designs.</p>
-          <div className="flex items-center gap-3 mt-4 justify-center sm:justify-start">
-            <AiFillFacebook size={22} className="cursor-pointer hover:text-emerald-400 transition-colors" />
-            <AiFillTwitterCircle size={22} className="cursor-pointer hover:text-emerald-400 transition-colors" />
-            <AiFillInstagram size={22} className="cursor-pointer hover:text-emerald-400 transition-colors" />
-            <AiFillYoutube size={22} className="cursor-pointer hover:text-emerald-400 transition-colors" />
-          </div>
-        </ul>
-        <ul className="text-center p-4 sm:text-start">
-          <h1 className="mb-1 font-semibold">Company</h1>
-          {footerProductLinks.map((link) =>(
-            <li className="" key={link.name}>
-              <Link to={link.link} className="text-gray-400 hover:text-emerald-400 duration-300">{link.name}</Link>
-            </li>
-          ))}
-        </ul>
-        <ul className="text-center p-4 sm:text-start">
-          <h1 className="mb-1 font-semibold">Shop</h1>
-          {footercompanyLinks.map((link) =>(
-            <li className="" key={link.name}>
-              <Link to={link.link} className="text-gray-400 hover:text-emerald-400 duration-300">{link.name}</Link>
-            </li>
-          ))}
-        </ul>
-        <ul className="text-center p-4 sm:text-start">
-          <h1 className="mb-1 font-semibold">Support</h1>
-          {footerSupportLinks.map((link) =>(
-            <li className="" key={link.name}>
-              <Link to={link.link} className="text-gray-400 hover:text-emerald-400 duration-300">{link.name}</Link>
-            </li>
-          ))}
-        </ul>
-        <div className="text-center p-4 sm:text-start mt-4 sm:mt-0">
-          <p className="text-gray-400">123 Main Street, Anytown, USA</p>
-          <p className="text-gray-400">Email:
-            <a href="mailto:info@company.com" className="text-indigo-400 hover:text-indigo-300">info@company.com</a>
+import { Link } from 'react-router-dom';
+import { ShoppingBag } from 'lucide-react';
+
+const shopLinks = [
+  { label: 'All products', to: '/products' },
+  { label: 'Best selling', to: '/best-selling' },
+  { label: 'Events', to: '/events' },
+];
+
+const helpfulLinks = [
+  { label: 'Frequently asked questions', to: '/faq' },
+  { label: 'Your account', to: '/profile' },
+  { label: 'Become a seller', to: '/shop-create' },
+];
+
+const Footer = () => (
+  <footer className="bg-gray-900 text-white">
+    <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:py-16">
+      <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="lg:col-span-2">
+          <Link to="/" className="inline-flex items-center gap-2 text-2xl font-extrabold tracking-tight" aria-label="Bazaarly home">
+            <ShoppingBag className="h-7 w-7 text-amber-400" aria-hidden="true" />
+            Bazaarly
+          </Link>
+          <p className="mt-4 max-w-md text-sm leading-6 text-gray-300">
+            A place to find your next favorite thing. Browse products across everyday essentials, personal style, gifts, tech, and more.
           </p>
+          <Link to="/products" className="mt-6 inline-flex items-center font-semibold text-amber-300 hover:text-amber-200">
+            Explore the marketplace <span className="ml-2" aria-hidden="true">→</span>
+          </Link>
         </div>
-      </div>
-      <div className="bg-gray-800 text-center text-white py-3">
-        <p className="text-sm">&copy; 2026 Ecommerce Store. All rights reserved.</p>
+
+        <nav aria-label="Shop links">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-200">Shop</h2>
+          <ul className="mt-4 space-y-3">
+            {shopLinks.map(({ label, to }) => (
+              <li key={to}><Link to={to} className="text-sm text-gray-300 hover:text-white">{label}</Link></li>
+            ))}
+          </ul>
+        </nav>
+
+        <nav aria-label="Helpful links">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-gray-200">Helpful links</h2>
+          <ul className="mt-4 space-y-3">
+            {helpfulLinks.map(({ label, to }) => (
+              <li key={to}><Link to={to} className="text-sm text-gray-300 hover:text-white">{label}</Link></li>
+            ))}
+          </ul>
+        </nav>
       </div>
     </div>
-  )
-}
+    <div className="border-t border-gray-800 px-5 py-5 text-center text-xs text-gray-400">
+      © {new Date().getFullYear()} Bazaarly. All rights reserved.
+    </div>
+  </footer>
+);
 
-export default Footer
+export default Footer;

@@ -3,10 +3,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import styles from '../../styles/styles';
 import EventCard from './EventCard';
 import { getAllEvents } from '../../redux/actions/eventActions';
+import { isCurrentEvent } from '../../utils/events';
+import type { EventData } from '../../utils/events';
 
 const Events = () => {
   const dispatch = useDispatch();
-  const { allEvents, isLoading } = useSelector((state: any) => state.events);
+  const { allEvents, isLoading } = useSelector((state: { events: { allEvents?: EventData[]; isLoading: boolean } }) => state.events);
+  const currentEvent = allEvents?.find(isCurrentEvent);
 
   useEffect(() => {
     dispatch(getAllEvents());
@@ -14,13 +17,13 @@ const Events = () => {
 
   return (
     <div>
-      {!isLoading && allEvents && allEvents.length > 0 && (
+      {!isLoading && currentEvent && (
         <div className={`${styles.section}`}>
           <div className={`${styles.heading} py-5`}>
-            <h1>Popular Events</h1>
+            <h2>Current offers</h2>
           </div>
           <div className="w-full grid">
-            <EventCard data={allEvents[0]} />
+            <EventCard data={currentEvent} />
           </div>
         </div>
       )}

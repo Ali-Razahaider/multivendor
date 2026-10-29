@@ -6,13 +6,14 @@ import Header from '../components/Layout/Header'
 import Footer from '../components/Layout/Footer'
 import { useSearchParams } from 'react-router'
 import { getAllProducts } from '../redux/actions/productActions'
-import { productData } from '../static/data'
+import { categoriesData, productData } from '../static/data'
 
 const ProductsPage = () => {
     const dispatch = useDispatch()
     const { products } = useSelector((state) => state.product)
     const [ searchParams ] = useSearchParams()
     const category = searchParams.get('category')
+    const selectedCategory = categoriesData.find((item) => item.title === category)
 
     useEffect(() => {
       dispatch(getAllProducts())
@@ -28,7 +29,10 @@ const ProductsPage = () => {
         <Header activeHeading={3} />
         <div className={`${styles.section} flex-col items-center justify-center bg-gray-100 min-h-screen py-10 w-full px-5 md:px-10  `}>
             <div className="w-full flex items-center justify-between">
-                <h1 className="text-3xl font-bold text-gray-800 py-5">All Products</h1>
+                <div className="py-5">
+                    <h1 className="text-3xl font-bold text-gray-800">{selectedCategory?.displayTitle || 'All products'}</h1>
+                    <p className="mt-2 text-sm text-gray-600">{selectedCategory?.subTitle || 'Explore finds from across the marketplace.'}</p>
+                </div>
             </div>
 
             <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
@@ -36,7 +40,7 @@ const ProductsPage = () => {
                     <ProductCard key={`${product._id || product.id}-${idx}`} data={product} />
                 ))}
                     {data.length === 0 && (
-                        <p className="text-gray-500 text-center my-2.5 col-span-full">No products found in this category.</p>
+                        <p className="text-gray-500 text-center my-2.5 col-span-full">No products found here yet. Try another category.</p>
                     )}
                 
                 </div>

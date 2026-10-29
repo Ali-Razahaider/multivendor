@@ -1,27 +1,21 @@
-import styles from '../../styles/styles';
 import { Link } from 'react-router-dom';
 import { navItems } from '../../static/data';
 
-interface NavItem {
-  title: string;
-  url: string;
-}
-
 function Navbar({ active }) {
   return (
-    <div className={`${styles.normalFlex} `}>
+    <nav className="flex h-full items-center gap-1" aria-label="Main navigation">
       {navItems &&
         navItems.map((i, index) => (
-          <div className="flex " key={index}>
-            <Link
-              to={i.url}
-              className={`${active === index + 1 ? 'text-indigo-200' : 'text-white'} font-semibold text-lg px-3 py-2 rounded-md hover:text-indigo-100 transition-colors`}
-            >
-              {i.title}
-            </Link>
-          </div>
+          <Link
+            to={i.url}
+            key={i.url}
+            aria-current={active === index + 1 ? 'page' : undefined}
+            className={`${active === index + 1 ? 'bg-white/15 text-white' : 'text-indigo-50'} inline-flex h-11 items-center whitespace-nowrap rounded-lg px-3 text-[15px] font-medium transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white`}
+          >
+            {i.title}
+          </Link>
         ))}
-    </div>
+    </nav>
   );
 }
 
