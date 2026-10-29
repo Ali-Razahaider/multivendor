@@ -1,24 +1,15 @@
-import React from 'react'
 import Countdown from './Countdown';
+import type { EventData } from '../../utils/events';
 
 interface EventCardProps {
     active?: boolean;
-    data?: any;
+    data: EventData;
 }
 
 function EventCard({ active, data }: EventCardProps) {
-    // If no dynamic data is passed, use a placeholder representation
-    const eventData = data || {
-        name: "iPhone 15 Pro Max 256GB Natural Titanium",
-        description: "Experience the ultimate iPhone with a strong and lightweight titanium design, groundbreaking A17 Pro chip with 6-core GPU, and a 48MP Pro camera system featuring 5x optical zoom. The 6.7-inch Super Retina XDR display with ProMotion delivers stunning visuals.",
-        price: 1199,
-        discountedPrice: 999,
-        totalSell: 120,
-        endDate: "2026-12-31T12:00:00Z",
-        images: ["https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=80"]
-    };
-
-    const imageUrl = eventData.images && eventData.images[0] ? (eventData.images[0]?.url || eventData.images[0]) : "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=80";
+    const eventData = data;
+    const firstImage = eventData.images?.[0];
+    const imageUrl = typeof firstImage === 'string' ? firstImage : firstImage?.url || "https://images.unsplash.com/photo-1695048133142-1a20484d2569?auto=format&fit=crop&w=800&q=80";
 
     return (
         <div className={`w-full bg-white rounded-lg p-6 flex mt-12 flex-col lg:flex-row gap-6 items-center ${active ? 'unset' : 'mb-12'}`}>
@@ -57,11 +48,6 @@ function EventCard({ active, data }: EventCardProps) {
                         <Countdown targetDate={eventData.endDate} />
                     </div>
 
-                    <div className="flex items-center gap-4">
-                        <button className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow transition-colors">See Details</button>
-                        <button className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg shadow transition-colors">Buy Now</button>
-                        
-                    </div>
                 </div>
             </div>
         </div>
