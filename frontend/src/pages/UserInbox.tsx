@@ -4,6 +4,8 @@ import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Send, Image as ImageIcon, ChevronLeft, MessageSquare } from 'lucide-react'
 import axios from 'axios'
+import { apiError } from '../lib/api'
+import { toast } from 'react-toastify'
 import { io } from 'socket.io-client'
 import server from '../server'
 import { format } from '../utils/timeago'
@@ -11,7 +13,7 @@ import { format } from '../utils/timeago'
 const ENDPOINT = import.meta.env.VITE_SOCKET_URL || 'http://localhost:8000'
 
 const UserInbox = () => {
-  const { user } = useSelector((state) => state.user)
+  const { user } = useSelector((state: any) => state.user)
   const [conversations, setConversations] = useState([])
   const [selected, setSelected] = useState(null)
   const [messages, setMessages] = useState([])
@@ -24,7 +26,7 @@ const UserInbox = () => {
   const scrollRef = useRef(null)
 
   useEffect(() => {
-    socketRef.current = io(ENDPOINT, { transports: ['websocket'] })
+    socketRef.current = io(ENDPOINT, { transports: ['websocket'], withCredentials: true })
     socketRef.current.on('getMessage', (data) => {
       setArrivalMessage({ sender: data.senderId, text: data.text, createdAt: Date.now() })
     })
@@ -51,7 +53,7 @@ const UserInbox = () => {
           { withCredentials: true }
         )
         setConversations(data.conversations)
-        const ids = [...new Set(data.conversations.map((c) => c.members.find((m) => m !== user._id)).filter(Boolean))]
+        const ids: string[] = [...new Set<string>(data.conversations.map((c) => c.members.find((m) => m !== user._id)).filter(Boolean))]
         const info = {}
         await Promise.all(ids.map(async (id) => {
           try {
@@ -110,7 +112,9 @@ const UserInbox = () => {
         lastMessage: input, lastMessageId: user._id,
       })
       setInput('')
-    } catch {}
+    } catch (err) {
+      toast.error(apiError(err, 'Message could not be sent'))
+    }
   }
 
   const handleImageUpload = async (e) => {
@@ -132,7 +136,9 @@ const UserInbox = () => {
           await axios.put(`${server}conversation/update-last-message/${selected._id}`, {
             lastMessage: 'Photo', lastMessageId: user._id,
           })
-        } catch {}
+        } catch (err) {
+          toast.error(apiError(err, 'Message could not be sent'))
+        }
       }
     }
     reader.readAsDataURL(file)
