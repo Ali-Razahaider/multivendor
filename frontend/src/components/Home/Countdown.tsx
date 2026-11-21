@@ -1,52 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type Props = {
   targetDate: string;
 };
 
-function Countdown({ targetDate }: Props) {
-  const calculateTimeLeft = () => {
-    const difference = +new Date(targetDate) - +new Date();
-    if (difference <= 0) return null;
-    return {
-      days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-      hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-      minutes: Math.floor((difference / (1000 * 60)) % 60),
-      seconds: Math.floor((difference / 1000) % 60),
-    };
+const timeLeftUntil = (targetDate: string) => {
+  const difference = +new Date(targetDate) - Date.now();
+  if (!(difference > 0)) return null;
+  return {
+    Days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+    Hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+    Mins: Math.floor((difference / (1000 * 60)) % 60),
+    Secs: Math.floor((difference / 1000) % 60),
   };
+};
 
-  const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+function Countdown({ targetDate }: Props) {
+  const [timeLeft, setTimeLeft] = useState(() => timeLeftUntil(targetDate));
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft(calculateTimeLeft());
-    }, 1000);
+    const timer = setInterval(() => setTimeLeft(timeLeftUntil(targetDate)), 1000);
     return () => clearInterval(timer);
   }, [targetDate]);
 
   if (!timeLeft) {
-    return <div className="text-red-500 font-semibold">Time's up!</div>;
+    return <p className="font-semibold text-rose-600">This offer has ended.</p>;
   }
 
   return (
-    <div className="flex items-center gap-3 text-sm font-medium">
-      <div className="text-center">
-        <div className="text-2xl font-bold">{timeLeft.days}</div>
-        <div className="text-xs text-gray-500">Days</div>
-      </div>
-      <div className="text-center">
-        <div className="text-2xl font-bold">{String(timeLeft.hours).padStart(2, '0')}</div>
-        <div className="text-xs text-gray-500">Hours</div>
-      </div>
-      <div className="text-center">
-        <div className="text-2xl font-bold">{String(timeLeft.minutes).padStart(2, '0')}</div>
-        <div className="text-xs text-gray-500">Minutes</div>
-      </div>
-      <div className="text-center">
-        <div className="text-2xl font-bold">{String(timeLeft.seconds).padStart(2, '0')}</div>
-        <div className="text-xs text-gray-500">Seconds</div>
-      </div>
+    <div className="flex gap-2" role="timer" aria-label="Time left on this offer">
+      {Object.entries(timeLeft).map(([label, value]) => (
+        <div key={label} className="min-w-[64px] rounded-xl bg-slate-900 px-3 py-2 text-center text-white">
+          <div className="text-xl font-bold tabular-nums">{String(value).padStart(2, '0')}</div>
+          <div className="text-[10px] font-medium uppercase tracking-wider text-slate-400">{label}</div>
+        </div>
+      ))}
     </div>
   );
 }
