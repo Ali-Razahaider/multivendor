@@ -17,6 +17,8 @@ import { GiPayMoney } from "react-icons/gi"
 import { Link } from "react-router-dom"
 import axios from 'axios'
 import server from '../server'
+import { apiError } from '../lib/api'
+import { toast } from 'react-toastify'
 
 function AdminDashboardPage() {
   const [stats, setStats] = useState({
@@ -57,7 +59,7 @@ function AdminDashboardPage() {
         })
         setLatestOrders(orders.slice(0, 5))
       } catch (err) {
-        console.error('Failed to fetch admin stats', err)
+        toast.error(apiError(err, 'Failed to fetch admin stats'))
       }
     }
     fetchData()

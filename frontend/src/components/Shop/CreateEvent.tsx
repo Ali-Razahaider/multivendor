@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -12,24 +12,14 @@ import { Separator } from '@/components/ui/separator'
 import { categoriesData } from '../../static/data'
 import axios from 'axios'
 import server from '../../server'
+import { apiError } from '../../lib/api'
+import { MAX_IMAGES, readImageFiles, validatePricing } from './productForm'
 
 const CreateEvent = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { seller } = useSelector((state) => state.seller)
-  const { success, error } = useSelector((state) => state.events)
-
-  useEffect(() => {
-    if (success) {
-      toast.success('Event created successfully')
-      dispatch({ type: 'clearErrors' })
-      navigate(`/dashboard-events`)
-    }
-    if (error) {
-      toast.error(error)
-      dispatch({ type: 'clearErrors' })
-    }
-  }, [success, error])
+  const { seller } = useSelector((state: any) => state.seller)
+  const [submitting, setSubmitting] = useState(false)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [countInStock, setCountInStock] = useState(0)
@@ -41,16 +31,10 @@ const CreateEvent = () => {
   const [endDate, setEndDate] = useState('')
   const [images, setImages] = useState<string[]>([])
 
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files || [])
-    const readers = files.map((file) => new Promise<string>((resolve) => {
-      const reader = new FileReader()
-      reader.onload = () => {
-        if (reader.readyState === 2) resolve(reader.result as string)
-      }
-      reader.readAsDataURL(file as Blob)
-    }))
-    Promise.all(readers).then((results) => setImages(results))
+  const handleImageChange = async (e) => {
+    const added = await readImageFiles(e.target.files, images.length)
+    e.target.value = ''
+    setImages((prev) => [...prev, ...added].slice(0, MAX_IMAGES))
   }
 
   const handleSubmit = async (e) => {
@@ -59,6 +43,13 @@ const CreateEvent = () => {
       toast.error('Start and end dates are required')
       return
     }
+    if (new Date(endDate) <= new Date(startDate)) {
+      toast.error('End date must be after the start date')
+      return
+    }
+    const invalid = validatePricing({ price, discountedPrice, countInStock })
+    if (invalid) return void toast.error(invalid)
+    setSubmitting(true)
     const data = {
       name, description, price, category, countInStock, tags, startDate, endDate,
       discountedPrice: discountedPrice || undefined,
@@ -71,14 +62,13 @@ const CreateEvent = () => {
         headers: { 'Content-Type': 'application/json' },
       })
       dispatch({ type: 'eventCreateSuccess', payload: res.data.event })
-      toast.success('Event created successfully')
       dispatch({ type: 'clearErrors' })
-      navigate(`/dashboard-events`)
+      toast.success('Event created successfully')
+      navigate('/dashboard-events')
     } catch (error) {
-      dispatch({
-        type: 'eventCreateFail',
-        payload: error.response?.data?.message || error.message,
-      })
+      dispatch({ type: 'eventCreateFail', payload: null })
+      toast.error(apiError(error, 'Failed to create event'))
+      setSubmitting(false)
     }
   }
 
@@ -219,7 +209,7 @@ const CreateEvent = () => {
               <label className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-indigo-500 transition-colors">
                 <div className="text-center">
                   <p className="text-sm text-gray-500">Click to upload images</p>
-                  <p className="text-xs text-gray-400 mt-1">PNG, JPG, WEBP</p>
+                  <p className="text-xs text-gray-400 mt-1">PNG, JPG, WEBP · up to 6 images, 5MB each</p>
                 </div>
                 <input
                   type="file"
@@ -232,7 +222,17 @@ const CreateEvent = () => {
               {images.length > 0 && (
                 <div className="flex gap-2 mt-2 flex-wrap">
                   {images.map((img, i) => (
-                    <img key={i} src={img} className="size-16 object-cover rounded border" alt="" />
+                    <div key={i} className="relative">
+                      <img src={img} className="size-16 object-cover rounded-lg border" alt={`Image ${i + 1}`} />
+                      <button
+                        type="button"
+                        aria-label={`Remove image ${i + 1}`}
+                        onClick={() => setImages((prev) => prev.filter((_, idx) => idx !== i))}
+                        className="absolute -right-1.5 -top-1.5 grid h-5 w-5 place-items-center rounded-full bg-slate-900 text-[11px] text-white"
+                      >
+                        ×
+                      </button>
+                    </div>
                   ))}
                 </div>
               )}
@@ -240,7 +240,7 @@ const CreateEvent = () => {
 
             <Separator />
 
-            <Button type="submit">Create Event</Button>
+            <Button type="submit" disabled={submitting}>{submitting ? 'Saving…' : 'Create Event'}</Button>
           </CardContent>
         </Card>
       </form>

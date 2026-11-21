@@ -14,8 +14,8 @@ import { toast } from 'react-toastify'
 
 const AllCoupons = () => {
   const dispatch = useDispatch()
-  const { seller } = useSelector((state) => state.seller)
-  const { coupons, isLoading } = useSelector((state) => state.coupon)
+  const { seller } = useSelector((state: any) => state.seller)
+  const { coupons, isLoading } = useSelector((state: any) => state.coupon)
 
   useEffect(() => {
     if (seller?._id) {

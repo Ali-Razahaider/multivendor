@@ -40,8 +40,8 @@ const fallbackOrders = [
 
 const ShopAllOrders = () => {
   const dispatch = useDispatch()
-  const { seller } = useSelector((state) => state.seller)
-  const { isLoading, sellerOrders } = useSelector((state) => state.order)
+  const { seller } = useSelector((state: any) => state.seller)
+  const { isLoading, sellerOrders } = useSelector((state: any) => state.order)
 
   useEffect(() => {
     if (seller?._id) {

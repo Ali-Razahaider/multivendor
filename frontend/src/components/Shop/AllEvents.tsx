@@ -15,8 +15,8 @@ import { toast } from 'react-toastify'
 
 const AllEvents = () => {
   const dispatch = useDispatch()
-  const { seller } = useSelector((state) => state.seller)
-  const { events, isLoading } = useSelector((state) => state.events)
+  const { seller } = useSelector((state: any) => state.seller)
+  const { events, isLoading } = useSelector((state: any) => state.events)
   const [previewOpen, setPreviewOpen] = useState(false)
   const [previewEvent, setPreviewEvent] = useState(null)
 
