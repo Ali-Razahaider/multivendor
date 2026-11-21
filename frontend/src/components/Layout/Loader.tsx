@@ -1,24 +1,11 @@
-import { useEffect, useRef } from 'react'
-import lottie from 'lottie-web'
-import loadingData from '../../assets/loading.json'
+import { LogoMark } from '../brand/Logo'
 
-function Loader() {
-  const containerRef = useRef(null)
-
-  useEffect(() => {
-    const anim = lottie.loadAnimation({
-      container: containerRef.current,
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-      animationData: loadingData,
-    })
-    return () => anim.destroy()
-  }, [])
-
+// Full-page loading state shown while routes or session data load.
+function Loader({ label = 'Loading' }: { label?: string }) {
   return (
-    <div className="flex justify-center items-center h-screen">
-      <div ref={containerRef} style={{ width: 250, height: 300 }} />
+    <div className="flex h-[70vh] min-h-[320px] flex-col items-center justify-center gap-4" role="status" aria-live="polite">
+      <LogoMark className="h-12 w-12 animate-pulse" />
+      <span className="text-sm font-medium text-slate-500">{label}…</span>
     </div>
   )
 }

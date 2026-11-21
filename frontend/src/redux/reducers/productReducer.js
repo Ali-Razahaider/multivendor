@@ -3,6 +3,10 @@ import { createReducer } from '@reduxjs/toolkit';
 const initialState = {
     isLoading: false,
     products: [],
+    // Storefront catalog, kept separate from a seller's own product list.
+    allProducts: [],
+    catalogStatus: 'idle',
+    catalogError: null,
     product: null,
     success: false,
     error: null,
@@ -25,6 +29,18 @@ const productReducer = createReducer(initialState, (builder) => {
             state.success = false;
         })
 
+        .addCase('catalogRequest', (state) => {
+            state.catalogStatus = 'loading';
+            state.catalogError = null;
+        })
+        .addCase('catalogSuccess', (state, action) => {
+            state.catalogStatus = 'ready';
+            state.allProducts = action.payload;
+        })
+        .addCase('catalogFail', (state, action) => {
+            state.catalogStatus = 'error';
+            state.catalogError = action.payload;
+        })
         .addCase('getAllProductsRequest', (state) => {
             state.isLoading = true;
         })

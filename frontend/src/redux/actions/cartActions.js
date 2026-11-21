@@ -1,14 +1,31 @@
+const persist = (getState) => {
+  try {
+    localStorage.setItem('cartItems', JSON.stringify(getState().cart.cart))
+  } catch {
+    // Storage can be unavailable (private mode); the cart still works in memory.
+  }
+}
+
 export const addToCart = (item) => (dispatch, getState) => {
   dispatch({ type: 'addToCart', payload: item })
-  localStorage.setItem('cartItems', JSON.stringify(getState().cart.cart))
+  persist(getState)
+}
+
+export const updateCartQty = (id, qty) => (dispatch, getState) => {
+  dispatch({ type: 'updateCartQty', payload: { id, qty } })
+  persist(getState)
 }
 
 export const removeFromCart = (id) => (dispatch, getState) => {
   dispatch({ type: 'removeFromCart', payload: id })
-  localStorage.setItem('cartItems', JSON.stringify(getState().cart.cart))
+  persist(getState)
 }
 
-export const clearCart = () => (dispatch, getState) => {
+export const clearCart = () => (dispatch) => {
   dispatch({ type: 'clearCart' })
-  localStorage.removeItem('cartItems')
+  try {
+    localStorage.removeItem('cartItems')
+  } catch {
+    // ignore
+  }
 }

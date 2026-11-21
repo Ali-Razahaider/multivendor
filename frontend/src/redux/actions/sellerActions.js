@@ -15,3 +15,12 @@ export const loadSeller = () => async (dispatch) => {
     });
   }
 };
+
+// Clears the seller session cookie and resets seller state without a reload.
+export const logoutSeller = () => async (dispatch) => {
+  try {
+    await axios.post(`${server}shop/logout`, {}, { withCredentials: true });
+  } finally {
+    dispatch({ type: 'LoadSellerFail', payload: null });
+  }
+};

@@ -5,10 +5,8 @@ try {
   const raw = localStorage.getItem('wishlistItems')
   if (raw) {
     savedWishlist = JSON.parse(raw)
-    savedWishlist = savedWishlist.map((item) => ({
-      ...item,
-      _id: item._id || item.id,
-    }))
+    // Drop demo items from older versions that never existed in the database.
+    savedWishlist = savedWishlist.filter((item) => /^[a-f\d]{24}$/i.test(item?._id || ''))
   }
 } catch (e) {
   localStorage.removeItem('wishlistItems')
