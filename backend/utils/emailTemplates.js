@@ -1,162 +1,57 @@
-export const activationTemplate = (name, url) => `
-<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"></head>
-<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif">
-  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 20px">
-    <tr>
-      <td align="center">
-        <table width="480" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;overflow:hidden">
-          <tr>
-            <td style="padding:40px 30px;text-align:center;background:#2563eb">
-              <h1 style="color:#fff;margin:0;font-size:22px">Activate Your Account</h1>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:30px">
-              <p style="font-size:15px;color:#333;margin:0 0 20px">Hi <strong>${name}</strong>,</p>
-              <p style="font-size:14px;color:#666;margin:0 0 24px;line-height:1.6">
-                Thanks for signing up! Please click the button below to activate your account and get started.
-              </p>
-              <table cellpadding="0" cellspacing="0" style="margin:0 auto">
-                <tr>
-                  <td style="background:#2563eb;border-radius:6px;padding:12px 32px">
-                    <a href="${url}" style="color:#fff;text-decoration:none;font-size:15px;font-weight:bold">Activate Account</a>
-                  </td>
-                </tr>
-              </table>
-              <p style="font-size:13px;color:#999;margin:24px 0 0;line-height:1.5">
-                If the button doesn't work, copy and paste this link into your browser:<br>
-                <span style="color:#2563eb;word-break:break-all">${url}</span>
-              </p>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:20px 30px;background:#f9f9f9;text-align:center;border-top:1px solid #eee">
-              <p style="font-size:12px;color:#aaa;margin:0">This link expires in 10 minutes.</p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`
+import { frontendUrl } from '../config/env.js';
 
-export const welcomeTemplate = (name) => `
-<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"></head>
-<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif">
-  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 20px">
-    <tr>
-      <td align="center">
-        <table width="480" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;overflow:hidden">
-          <tr>
-            <td style="padding:40px 30px;text-align:center;background:#16a34a">
-              <h1 style="color:#fff;margin:0;font-size:22px">Welcome Aboard!</h1>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:30px">
-              <p style="font-size:15px;color:#333;margin:0 0 20px">Hi <strong>${name}</strong>,</p>
-              <p style="font-size:14px;color:#666;margin:0;line-height:1.6">
-                Your account has been activated successfully. You can now log in and start using our platform.
-              </p>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:20px 30px;background:#f9f9f9;text-align:center;border-top:1px solid #eee">
-              <p style="font-size:12px;color:#aaa;margin:0">Thank you for joining us!</p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`
+// Transactional email templates. Everything user-controlled is escaped.
 
-export const orderConfirmationTemplate = (name, orderId, totalPrice, items) => `
-<!DOCTYPE html>
-<html>
-<head><meta charset="utf-8"></head>
-<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif">
-  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 20px">
-    <tr>
-      <td align="center">
-        <table width="520" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;overflow:hidden">
-          <tr>
-            <td style="padding:40px 30px;text-align:center;background:#16a34a">
-              <h1 style="color:#fff;margin:0;font-size:22px">Order Confirmed!</h1>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:30px">
-              <p style="font-size:15px;color:#333;margin:0 0 20px">Hi <strong>${name}</strong>,</p>
-              <p style="font-size:14px;color:#666;margin:0 0 20px;line-height:1.6">
-                Your order <strong>#${orderId}</strong> has been placed successfully.
-              </p>
-              <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #eee;border-radius:6px;margin-bottom:20px">
-                <tr>
-                  <td style="padding:12px 16px;background:#f9f9f9;font-size:13px;font-weight:bold;color:#333;border-bottom:1px solid #eee">Items</td>
-                  <td style="padding:12px 16px;background:#f9f9f9;font-size:13px;font-weight:bold;color:#333;border-bottom:1px solid #eee;text-align:right">Total</td>
-                </tr>
-                ${items.map(item => `
-                  <tr>
-                    <td style="padding:10px 16px;font-size:13px;color:#666;border-bottom:1px solid #f4f4f4">
-                      ${item.name} × ${item.qty}
-                    </td>
-                    <td style="padding:10px 16px;font-size:13px;color:#666;border-bottom:1px solid #f4f4f4;text-align:right">
-                      $${((item.discountedPrice || item.price) * item.qty).toFixed(2)}
-                    </td>
-                  </tr>
-                `).join('')}
-                <tr>
-                  <td style="padding:12px 16px;font-size:14px;font-weight:bold;color:#333">Total</td>
-                  <td style="padding:12px 16px;font-size:14px;font-weight:bold;color:#333;text-align:right">$${totalPrice}</td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding:20px 30px;background:#f9f9f9;text-align:center;border-top:1px solid #eee">
-              <p style="font-size:12px;color:#aaa;margin:0">You'll receive updates when your order status changes.</p>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`
+const BRAND = '#4f46e5';
 
-export const statusUpdateTemplate = (name, orderId, status) => `
+const escape = (value) =>
+  String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
+const button = (url, label) => `
+  <table cellpadding="0" cellspacing="0" style="margin:8px auto 0">
+    <tr>
+      <td style="background:${BRAND};border-radius:10px;padding:13px 30px">
+        <a href="${escape(url)}" style="color:#fff;text-decoration:none;font-size:15px;font-weight:600">${label}</a>
+      </td>
+    </tr>
+  </table>`;
+
+const fallbackLink = (url) => `
+  <p style="font-size:12px;color:#94a3b8;margin:24px 0 0;line-height:1.5">
+    If the button doesn't work, copy and paste this link into your browser:<br>
+    <span style="color:${BRAND};word-break:break-all">${escape(url)}</span>
+  </p>`;
+
+const layout = ({ title, body, footer = '' }) => `
 <!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"></head>
-<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif">
-  <table width="100%" cellpadding="0" cellspacing="0" style="padding:40px 20px">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title></head>
+<body style="margin:0;padding:0;background:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0" style="padding:32px 16px">
     <tr>
       <td align="center">
-        <table width="480" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;overflow:hidden">
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px">
           <tr>
-            <td style="padding:40px 30px;text-align:center;background:#2563eb">
-              <h1 style="color:#fff;margin:0;font-size:22px">Order Updated</h1>
+            <td style="padding:0 4px 18px">
+              <a href="${frontendUrl()}" style="text-decoration:none;color:#0f172a;font-size:22px;font-weight:800;letter-spacing:-0.5px">
+                <span style="display:inline-block;width:30px;height:30px;line-height:30px;text-align:center;border-radius:9px;background:${BRAND};color:#fff;font-size:17px;vertical-align:middle;margin-right:8px">b</span><span style="vertical-align:middle">bazaarly</span>
+              </a>
             </td>
           </tr>
           <tr>
-            <td style="padding:30px">
-              <p style="font-size:15px;color:#333;margin:0 0 20px">Hi <strong>${name}</strong>,</p>
-              <p style="font-size:14px;color:#666;margin:0;line-height:1.6">
-                The status of your order <strong>#${orderId}</strong> has been updated to
-                <strong style="color:#2563eb">${status}</strong>.
-              </p>
+            <td style="background:#fff;border-radius:16px;padding:36px 32px;border:1px solid #e2e8f0">
+              <h1 style="margin:0 0 18px;font-size:22px;color:#0f172a;letter-spacing:-0.3px">${title}</h1>
+              ${body}
             </td>
           </tr>
           <tr>
-            <td style="padding:20px 30px;background:#f9f9f9;text-align:center;border-top:1px solid #eee">
-              <p style="font-size:12px;color:#aaa;margin:0">Thank you for shopping with us!</p>
+            <td style="padding:18px 4px;text-align:center;font-size:12px;color:#94a3b8;line-height:1.6">
+              ${footer}${footer ? '<br>' : ''}Bazaarly — independent shops, one marketplace.
             </td>
           </tr>
         </table>
@@ -164,4 +59,72 @@ export const statusUpdateTemplate = (name, orderId, status) => `
     </tr>
   </table>
 </body>
-</html>`
+</html>`;
+
+const p = (html) => `<p style="font-size:15px;color:#334155;margin:0 0 16px;line-height:1.6">${html}</p>`;
+
+export const activationTemplate = (name, url) =>
+  layout({
+    title: 'Confirm your email',
+    body: `${p(`Hi <strong>${escape(name)}</strong>,`)}
+      ${p('Thanks for joining Bazaarly! Confirm your email address to activate your account.')}
+      ${button(url, 'Activate account')}
+      ${fallbackLink(url)}`,
+    footer: 'This link expires in 30 minutes. If you didn’t sign up, you can ignore this email.',
+  });
+
+export const welcomeTemplate = (name) =>
+  layout({
+    title: 'Welcome to Bazaarly',
+    body: `${p(`Hi <strong>${escape(name)}</strong>,`)}
+      ${p('Your account is active. Discover great products from independent sellers, all in one place.')}
+      ${button(frontendUrl(), 'Start shopping')}`,
+  });
+
+export const passwordResetTemplate = (name, url) =>
+  layout({
+    title: 'Reset your password',
+    body: `${p(`Hi <strong>${escape(name)}</strong>,`)}
+      ${p('We received a request to reset your password. Choose a new one using the button below.')}
+      ${button(url, 'Reset password')}
+      ${fallbackLink(url)}`,
+    footer: 'This link expires in 30 minutes. If you didn’t request a reset, no action is needed.',
+  });
+
+export const orderConfirmationTemplate = (name, orderId, totalPrice, items) =>
+  layout({
+    title: 'Thanks for your order!',
+    body: `${p(`Hi <strong>${escape(name)}</strong>,`)}
+      ${p(`Your order <strong>#${escape(orderId)}</strong> has been placed. We’ll email you as it moves along.`)}
+      <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e2e8f0;border-radius:12px;margin:8px 0 20px;border-collapse:separate">
+        ${items
+          .map(
+            (item) => `
+          <tr>
+            <td style="padding:12px 16px;font-size:14px;color:#334155;border-bottom:1px solid #f1f5f9">${escape(item.name)} <span style="color:#94a3b8">× ${escape(item.qty)}</span></td>
+            <td style="padding:12px 16px;font-size:14px;color:#334155;border-bottom:1px solid #f1f5f9;text-align:right;white-space:nowrap">$${((item.discountedPrice || item.price) * item.qty).toFixed(2)}</td>
+          </tr>`
+          )
+          .join('')}
+        <tr>
+          <td style="padding:14px 16px;font-size:15px;font-weight:700;color:#0f172a">Total paid</td>
+          <td style="padding:14px 16px;font-size:15px;font-weight:700;color:#0f172a;text-align:right">$${escape(totalPrice)}</td>
+        </tr>
+      </table>
+      ${button(`${frontendUrl()}/profile`, 'View my orders')}`,
+  });
+
+export const statusUpdateTemplate = (name, orderId, status) =>
+  layout({
+    title: 'Your order has an update',
+    body: `${p(`Hi <strong>${escape(name)}</strong>,`)}
+      ${p(`Order <strong>#${escape(orderId)}</strong> is now:`)}
+      <p style="display:inline-block;margin:0 0 20px;padding:8px 14px;border-radius:999px;background:#eef2ff;color:${BRAND};font-weight:700;font-size:14px">${escape(status)}</p>
+      ${button(`${frontendUrl()}/user/order/${escape(orderId)}`, 'View order')}`,
+  });
+
+export const plainNoticeTemplate = (title, name, message) =>
+  layout({
+    title: escape(title),
+    body: `${p(`Hi <strong>${escape(name)}</strong>,`)}${p(escape(message))}`,
+  });

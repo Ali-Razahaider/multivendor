@@ -1,10 +1,15 @@
+let warnedMissingConfig = false;
+
 const sendMail = async (options) => {
   const apiKey = process.env.BREVO_API_KEY;
   const senderEmail = process.env.BREVO_SENDER_EMAIL;
-  const senderName = process.env.BREVO_SENDER_NAME || 'Multivendor App';
+  const senderName = process.env.BREVO_SENDER_NAME || 'Bazaarly';
 
   if (!apiKey || !senderEmail) {
-    console.error('Brevo API key or Sender Email is missing in environment variables.');
+    if (!warnedMissingConfig && process.env.NODE_ENV !== 'test') {
+      console.warn('Email is not configured (BREVO_API_KEY / BREVO_SENDER_EMAIL); skipping outgoing mail.');
+    }
+    warnedMissingConfig = true;
     return;
   }
 

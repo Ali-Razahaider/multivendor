@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -11,6 +10,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please enter your email!'],
     unique: true,
+    trim: true,
   },
   password: {
     type: String,
@@ -19,11 +19,14 @@ const userSchema = new mongoose.Schema({
     select: false,
   },
   phoneNumber: {
-    type: Number,
+    type: String,
   },
   addresses: [
     {
       country: {
+        type: String,
+      },
+      state: {
         type: String,
       },
       city: {
@@ -36,7 +39,7 @@ const userSchema = new mongoose.Schema({
         type: String,
       },
       zipCode: {
-        type: Number,
+        type: String,
       },
       addressType: {
         type: String,
@@ -57,24 +60,31 @@ const userSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: Date.now(),
+    default: Date.now,
   },
-  resetPasswordToken: String,
-  resetPasswordTime: Date,
+  passwordChangedAt: Date,
+  resetPasswordToken: { type: String, select: false },
+  resetPasswordTime: { type: Date, select: false },
 });
 
 //  Hash password
 userSchema.pre('save', async function () {
   if (!this.isModified('password')) return;
-  this.password = await bcrypt.hash(this.password, await bcrypt.genSalt(10));
+  if (!this.isNew) this.passwordChangedAt = new Date();
+  // Activation tokens carry an already-hashed password; don't hash it twice.
+  if (this.$locals.passwordIsHashed) return;
+  this.password = await bcrypt.hash(this.password, await bcrypt.genSalt(12));
 });
 
-// create token
-userSchema.methods.getJwtToken = function () {
-  return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
-    expiresIn: '5d',
-  });
-};
+// Never serialize secrets, even if a query selected them.
+userSchema.set('toJSON', {
+  transform: (doc, ret) => {
+    delete ret.password;
+    delete ret.resetPasswordToken;
+    delete ret.resetPasswordTime;
+    return ret;
+  },
+});
 
 // compare password (salt is stored in the hashed string so no need to save and provide salt)
 userSchema.methods.comparePassword = async function (enteredPassword) {
