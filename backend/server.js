@@ -1,24 +1,17 @@
+import { validateEnv } from './config/env.js';
 import app from './app.js';
 import http from 'http';
-import dotenv from 'dotenv';
-import { existsSync } from 'fs';
+import mongoose from 'mongoose';
 import connectDB from './db/database.js';
 import setupSocket from './socket/socketServer.js';
 import { v2 as cloudinary } from 'cloudinary';
 
 process.on('uncaughtException', (err) => {
-  console.log(`Error: ${err.message}`);
-  console.log('Shutting down the server for handling uncaught exception');
+  console.error('Uncaught exception, shutting down:', err);
   process.exit(1);
 });
 
-// Load .env only if present. Real environment variables (set by Docker,
-// compose, or the cloud platform) always take precedence — dotenv never
-// overrides them. Checking file existence instead of NODE_ENV avoids
-// crashes when the file is missing (e.g. inside a container).
-if (existsSync('backend/config/.env')) {
-  dotenv.config({ path: 'backend/config/.env' });
-}
+validateEnv();
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -26,20 +19,31 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-connectDB();
+await connectDB();
 
 const server = http.createServer(app);
 setupSocket(server);
 
-server.listen(process.env.PORT, () => {
-  const url = process.env.BACKEND_URL || `http://localhost:${process.env.PORT}`;
+const port = process.env.PORT || 8000;
+server.listen(port, () => {
+  const url = process.env.BACKEND_URL || `http://localhost:${port}`;
   console.log(`Server is running on ${url}`);
 });
 
-process.on('unhandledRejection', (err) => {
-  console.log(`Shutting down the server for ${err.message}`);
-  console.log('Shutting down the server for unhandled promise rejection');
-  server.close(() => {
-    process.exit(1);
+const shutdown = (signal) => {
+  console.log(`${signal} received, closing server`);
+  server.close(async () => {
+    await mongoose.connection.close();
+    process.exit(0);
   });
+  // Force exit if connections don't drain in time.
+  setTimeout(() => process.exit(1), 10_000).unref();
+};
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
+
+process.on('unhandledRejection', (err) => {
+  console.error('Unhandled promise rejection, shutting down:', err);
+  server.close(() => process.exit(1));
 });
