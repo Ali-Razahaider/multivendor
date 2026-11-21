@@ -13,6 +13,8 @@ import {
 import { Button } from "@/components/ui/button"
 import axios from 'axios'
 import server from '../server'
+import { apiError } from '../lib/api'
+import { toast } from 'react-toastify'
 
 function AdminUsersPage() {
   const [users, setUsers] = useState([])
@@ -22,7 +24,7 @@ function AdminUsersPage() {
       const { data } = await axios.get(`${server}user/admin-all-users`)
       setUsers(data.users || [])
     } catch (err) {
-      console.error('Failed to fetch users', err)
+      toast.error(apiError(err, 'Failed to fetch users'))
     }
   }
 
@@ -34,7 +36,7 @@ function AdminUsersPage() {
       await axios.delete(`${server}user/admin-delete-user/${id}`)
       setUsers(users.filter((u) => u._id !== id))
     } catch (err) {
-      console.error('Failed to delete user', err)
+      toast.error(apiError(err, 'Failed to delete user'))
     }
   }
 

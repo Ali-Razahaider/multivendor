@@ -1,23 +1,27 @@
 {
-  "name": "multivendor",
+  "name": "bazaarly",
   "version": "1.0.0",
-  "description": "",
+  "description": "Bazaarly multivendor marketplace API",
   "license": "ISC",
   "author": "",
   "type": "module",
   "main": "server.js",
   "scripts": {
     "dev": "nodemon --watch backend --ext js,mjs,cjs,json ./backend/server.js",
-    "start": "node ./backend/server.js"
+    "start": "node ./backend/server.js",
+    "seed": "node ./backend/seed/seed.js"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cloudinary": "^1.41.3",
+    "compression": "^1.8.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-async-handler": "^1.2.0",
+    "express-rate-limit": "^8.7.5",
+    "helmet": "^8.3.0",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^9.6.2",
     "multer": "^2.2.0",
@@ -26,5 +30,8 @@
     "resend": "^6.17.1",
     "socket.io": "^4.8.3",
     "stripe": "^22.3.0"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/table"
 import axios from 'axios'
 import server from '../server'
+import { apiError } from '../lib/api'
+import { toast } from 'react-toastify'
 
 function AdminOrdersPage() {
   const [orders, setOrders] = useState([])
@@ -22,7 +24,7 @@ function AdminOrdersPage() {
         const { data } = await axios.get(`${server}order/admin-all-orders`)
         setOrders(data.orders || [])
       } catch (err) {
-        console.error('Failed to fetch orders', err)
+        toast.error(apiError(err, 'Failed to fetch orders'))
       }
     }
     fetchOrders()

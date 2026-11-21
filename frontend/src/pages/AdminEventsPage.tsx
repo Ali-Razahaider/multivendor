@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/table"
 import axios from 'axios'
 import server from '../server'
+import { apiError } from '../lib/api'
+import { toast } from 'react-toastify'
 
 function AdminEventsPage() {
   const [events, setEvents] = useState([])
@@ -22,7 +24,7 @@ function AdminEventsPage() {
         const { data } = await axios.get(`${server}event/admin-all-events`)
         setEvents(data.events || [])
       } catch (err) {
-        console.error('Failed to fetch events', err)
+        toast.error(apiError(err, 'Failed to fetch events'))
       }
     }
     fetchEvents()

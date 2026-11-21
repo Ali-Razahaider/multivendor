@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -12,24 +12,14 @@ import { Separator } from '@/components/ui/separator'
 import { categoriesData } from '../../static/data'
 import axios from 'axios'
 import server from '../../server'
+import { apiError } from '../../lib/api'
+import { MAX_IMAGES, readImageFiles, validatePricing } from './productForm'
 
 const CreateProduct = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { seller } = useSelector((state) => state.seller)
-  const { success, error } = useSelector((state) => state.product)
-
-  useEffect(() => {
-    if (success) {
-      toast.success('Product created successfully')
-      dispatch({ type: 'clearErrors' })
-      navigate(`/shop/${seller._id}`)
-    }
-    if (error) {
-      toast.error(error)
-      dispatch({ type: 'clearErrors' })
-    }
-  }, [success, error])
+  const { seller } = useSelector((state: any) => state.seller)
+  const [submitting, setSubmitting] = useState(false)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const [countInStock, setCountInStock] = useState(0)
@@ -39,20 +29,17 @@ const CreateProduct = () => {
   const [discountedPrice, setDiscountedPrice] = useState<number | undefined>(undefined)
   const [images, setImages] = useState<string[]>([])
 
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files || [])
-    const readers = files.map((file) => new Promise<string>((resolve) => {
-      const reader = new FileReader()
-      reader.onload = () => {
-        if (reader.readyState === 2) resolve(reader.result as string)
-      }
-      reader.readAsDataURL(file as Blob)
-    }))
-    Promise.all(readers).then((results) => setImages(results))
+  const handleImageChange = async (e) => {
+    const added = await readImageFiles(e.target.files, images.length)
+    e.target.value = ''
+    setImages((prev) => [...prev, ...added].slice(0, MAX_IMAGES))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    const invalid = validatePricing({ price, discountedPrice, countInStock })
+    if (invalid) return void toast.error(invalid)
+    setSubmitting(true)
     const data = {
       name, description, price, category, countInStock, tags,
       discountedPrice: discountedPrice !== undefined && discountedPrice !== null ? discountedPrice : undefined,
@@ -65,14 +52,13 @@ const CreateProduct = () => {
         headers: { 'Content-Type': 'application/json' },
       })
       dispatch({ type: 'productCreateSuccess', payload: res.data.product })
-      toast.success('Product created successfully')
       dispatch({ type: 'clearErrors' })
-      navigate(`/shop/${seller._id}`)
+      toast.success('Product created successfully')
+      navigate('/dashboard-products')
     } catch (error) {
-      dispatch({
-        type: 'productCreateFail',
-        payload: error.response?.data?.message || error.message,
-      })
+      dispatch({ type: 'productCreateFail', payload: null })
+      toast.error(apiError(error, 'Failed to create product'))
+      setSubmitting(false)
     }
   }
 
@@ -188,7 +174,7 @@ const CreateProduct = () => {
               <label className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-indigo-500 transition-colors">
                 <div className="text-center">
                   <p className="text-sm text-gray-500">Click to upload images</p>
-                  <p className="text-xs text-gray-400 mt-1">PNG, JPG, WEBP</p>
+                  <p className="text-xs text-gray-400 mt-1">PNG, JPG, WEBP · up to 6 images, 5MB each</p>
                 </div>
                 <input
                   type="file"
@@ -201,7 +187,17 @@ const CreateProduct = () => {
               {images.length > 0 && (
                 <div className="flex gap-2 mt-2 flex-wrap">
                   {images.map((img, i) => (
-                    <img key={i} src={img} className="size-16 object-cover rounded border" alt="" />
+                    <div key={i} className="relative">
+                      <img src={img} className="size-16 object-cover rounded-lg border" alt={`Image ${i + 1}`} />
+                      <button
+                        type="button"
+                        aria-label={`Remove image ${i + 1}`}
+                        onClick={() => setImages((prev) => prev.filter((_, idx) => idx !== i))}
+                        className="absolute -right-1.5 -top-1.5 grid h-5 w-5 place-items-center rounded-full bg-slate-900 text-[11px] text-white"
+                      >
+                        ×
+                      </button>
+                    </div>
                   ))}
                 </div>
               )}
@@ -209,7 +205,7 @@ const CreateProduct = () => {
 
             <Separator />
 
-            <Button type="submit">Create Product</Button>
+            <Button type="submit" disabled={submitting}>{submitting ? 'Saving…' : 'Create Product'}</Button>
           </CardContent>
         </Card>
       </form>

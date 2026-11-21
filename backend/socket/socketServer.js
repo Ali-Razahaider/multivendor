@@ -1,52 +1,82 @@
-import { Server } from 'socket.io'
+import { Server } from 'socket.io';
+import { allowedOrigins } from '../app.js';
+import { verifyToken } from '../middleware/authMiddleware.js';
+
+const parseCookies = (header = '') =>
+  Object.fromEntries(
+    header
+      .split(';')
+      .map((part) => part.trim().split('='))
+      .filter(([key, value]) => key && value)
+      .map(([key, ...rest]) => [key, decodeURIComponent(rest.join('='))])
+  );
 
 const setupSocket = (server) => {
-  const origins = ['http://localhost:5173'];
-  if (process.env.FRONTEND_URL) {
-    origins.push(process.env.FRONTEND_URL.replace(/\/$/, ''));
-  }
-  if (process.env.BACKEND_URL) {
-    origins.push(process.env.BACKEND_URL.replace(/\/$/, ''));
-  }
-
   const io = new Server(server, {
     cors: {
-      origin: origins,
+      origin: allowedOrigins,
       credentials: true,
     },
-  })
+  });
 
-  const onlineUsers = new Map()
+  // Identify the shopper and/or seller from their session cookies; anonymous
+  // sockets are rejected.
+  io.use((socket, next) => {
+    const cookies = parseCookies(socket.handshake.headers.cookie);
+    const ids = [];
+    const user = cookies.auth_token && verifyToken(cookies.auth_token);
+    const shop = cookies.shop_token && verifyToken(cookies.shop_token);
+    if (user?.userId) ids.push(String(user.userId));
+    if (shop?.shopId) ids.push(String(shop.shopId));
+    if (!ids.length) return next(new Error('unauthorized'));
+    socket.data.ids = ids;
+    next();
+  });
+
+  const onlineUsers = new Map();
+  const broadcastOnline = () =>
+    io.emit(
+      'getUsers',
+      Array.from(onlineUsers.keys(), (userId) => ({ userId }))
+    );
 
   io.on('connection', (socket) => {
     socket.on('addUser', (userId) => {
-      onlineUsers.set(userId, socket.id)
-      io.emit('getUsers', Array.from(onlineUsers, ([userId]) => ({ userId })))
-    })
+      if (!socket.data.ids.includes(String(userId))) return;
+      onlineUsers.set(String(userId), socket.id);
+      broadcastOnline();
+    });
 
-    socket.on('sendMessage', ({ senderId, receiverId, text, images }) => {
-      const receiverSocket = onlineUsers.get(receiverId)
+    socket.on('sendMessage', ({ senderId, receiverId, text, images } = {}) => {
+      if (!socket.data.ids.includes(String(senderId))) return;
+      const receiverSocket = onlineUsers.get(String(receiverId));
       if (receiverSocket) {
-        io.to(receiverSocket).emit('getMessage', { senderId, text, images, createdAt: Date.now() })
+        io.to(receiverSocket).emit('getMessage', {
+          senderId,
+          text: String(text ?? '').slice(0, 2000),
+          images,
+          createdAt: Date.now(),
+        });
       }
-    })
+    });
 
-    socket.on('updateLastMessage', ({ lastMessage, lastMessageId }) => {
-      io.emit('getLastMessage', { lastMessage, lastMessageId })
-    })
+    socket.on('updateLastMessage', ({ lastMessage, lastMessageId } = {}) => {
+      if (!socket.data.ids.includes(String(lastMessageId))) return;
+      io.emit('getLastMessage', {
+        lastMessage: String(lastMessage ?? '').slice(0, 200),
+        lastMessageId,
+      });
+    });
 
     socket.on('disconnect', () => {
       for (const [userId, socketId] of onlineUsers.entries()) {
-        if (socketId === socket.id) {
-          onlineUsers.delete(userId)
-          break
-        }
+        if (socketId === socket.id) onlineUsers.delete(userId);
       }
-      io.emit('getUsers', Array.from(onlineUsers, ([userId]) => ({ userId })))
-    })
-  })
+      broadcastOnline();
+    });
+  });
 
-  return io
-}
+  return io;
+};
 
-export default setupSocket
+export default setupSocket;

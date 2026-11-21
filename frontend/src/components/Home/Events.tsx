@@ -1,34 +1,28 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import styles from '../../styles/styles';
 import EventCard from './EventCard';
+import SectionHeader from './SectionHeader';
 import { getAllEvents } from '../../redux/actions/eventActions';
 import { isCurrentEvent } from '../../utils/events';
 import type { EventData } from '../../utils/events';
 
 const Events = () => {
   const dispatch = useDispatch();
-  const { allEvents, isLoading } = useSelector((state: { events: { allEvents?: EventData[]; isLoading: boolean } }) => state.events);
+  const { allEvents } = useSelector((state: { events: { allEvents?: EventData[] } }) => state.events);
   const currentEvent = allEvents?.find(isCurrentEvent);
 
   useEffect(() => {
-    dispatch(getAllEvents());
+    dispatch(getAllEvents() as any);
   }, [dispatch]);
 
-  return (
-    <div>
-      {!isLoading && currentEvent && (
-        <div className={`${styles.section}`}>
-          <div className={`${styles.heading} py-5`}>
-            <h2>Current offers</h2>
-          </div>
-          <div className="w-full grid">
-            <EventCard data={currentEvent} />
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
+  if (!currentEvent) return null;
 
-export default Events
+  return (
+    <section className="container-page py-14 sm:py-16" aria-labelledby="events-heading">
+      <SectionHeader id="events-heading" eyebrow="Ends soon" title="Current offers" link={{ to: '/events', label: 'All offers' }} />
+      <EventCard data={currentEvent} />
+    </section>
+  );
+};
+
+export default Events;

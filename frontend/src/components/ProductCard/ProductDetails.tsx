@@ -12,8 +12,8 @@ import server from '../../server'
 const ProductDetails = ({ data, setOpen }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { wishlist } = useSelector((state) => state.wishlist)
-  const { user, isAuthenticated } = useSelector((state) => state.user)
+  const { wishlist } = useSelector((state: any) => state.wishlist)
+  const { user, isAuthenticated } = useSelector((state: any) => state.user)
   const [count, setCount] = useState(1)
   const [select, setSelect] = useState(0)
   const isWishlisted = wishlist?.find((i) => (i._id || i.id) === (data._id || data.id))

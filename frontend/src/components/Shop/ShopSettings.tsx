@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 const ShopSettings = () => {
-  const { seller } = useSelector((state) => state.seller)
+  const { seller } = useSelector((state: any) => state.seller)
   const dispatch = useDispatch()
   const [form, setForm] = useState({
     name: seller?.name || '',

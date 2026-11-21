@@ -59,5 +59,9 @@ const productSchema = mongoose.Schema({
     },
 })
 
+productSchema.index({ shopId: 1, createdAt: -1 });
+productSchema.index({ category: 1 });
+productSchema.index({ name: "text", tags: "text", description: "text" });
+
 const Product = mongoose.model('Product', productSchema);
 export default Product;

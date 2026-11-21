@@ -1,41 +1,30 @@
-import styles from '../../styles/styles'
+import { Check } from 'lucide-react';
 
-const CheckoutSteps = ({active}) => {
-  return (
-    <div className='w-full flex justify-center'>
-        <div className="w-[90%] 800px:w-[50%] flex items-center flex-wrap">
-               <div className={`${styles.normalFlex}`}>
-                <div className={`${styles.cart_button}`}>
-                       <span className={`${styles.cart_button_text}`}>1.Shipping</span>
-                </div>
-                <div className={`${
-                    active > 1 ? "w-[30px] 800px:w-[70px] h-[4px] !bg-indigo-500"
-                    : "w-[30px] 800px:w-[70px] h-[4px] !bg-indigo-100"
-                }`} />
-               </div>
+const STEPS = ['Shipping', 'Payment', 'Done'];
 
-               <div className={`${styles.normalFlex}`}>
-                <div className={`${active > 1 ? `${styles.cart_button}` : `${styles.cart_button} !bg-indigo-100`}`}>
-                    <span className={`${active > 1 ? `${styles.cart_button_text}` : `${styles.cart_button_text} !text-indigo-600`}`}>
-                        2.Payment
-                    </span>
-                </div>
-               </div>
+const CheckoutSteps = ({ active }: { active: number }) => (
+  <ol className="mx-auto flex w-full max-w-md items-center" aria-label="Checkout progress">
+    {STEPS.map((label, i) => {
+      const step = i + 1;
+      const done = step < active;
+      const current = step === active;
+      return (
+        <li key={label} className={`flex items-center ${i < STEPS.length - 1 ? 'flex-1' : ''}`} aria-current={current ? 'step' : undefined}>
+          <span className="flex items-center gap-2">
+            <span
+              className={`grid h-8 w-8 place-items-center rounded-full text-sm font-bold ${
+                done ? 'bg-brand-600 text-white' : current ? 'bg-brand-600 text-white ring-4 ring-brand-100' : 'bg-slate-200 text-slate-500'
+              }`}
+            >
+              {done ? <Check size={16} /> : step}
+            </span>
+            <span className={`text-sm font-semibold ${current || done ? 'text-slate-900' : 'text-slate-400'}`}>{label}</span>
+          </span>
+          {i < STEPS.length - 1 && <span className={`mx-3 h-0.5 flex-1 rounded ${done ? 'bg-brand-600' : 'bg-slate-200'}`} />}
+        </li>
+      );
+    })}
+  </ol>
+);
 
-               <div className={`${styles.normalFlex}`}>
-               <div className={`${
-                    active > 3 ? "w-[30px] 800px:w-[70px] h-[4px] !bg-indigo-500"
-                    : "w-[30px] 800px:w-[70px] h-[4px] !bg-indigo-100"
-                }`} />
-                <div className={`${active > 2 ? `${styles.cart_button}` : `${styles.cart_button} !bg-indigo-100`}`}>
-                    <span className={`${active > 2 ? `${styles.cart_button_text}` : `${styles.cart_button_text} !text-indigo-600`}`}>
-                        3.Success
-                    </span>
-                </div>
-               </div>
-        </div>
-    </div>
-  )
-}
-
-export default CheckoutSteps
+export default CheckoutSteps;

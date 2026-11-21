@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import Loader from '../components/Layout/Loader';
 
 const ProtectedAdminRoute = ({ children }) => {
-  const { loading, isAuthenticated, user } = useSelector((state) => state.user);
+  const { loading, isAuthenticated, user } = useSelector((state: any) => state.user);
 
   if (loading) return <Loader />;
   if (!isAuthenticated) return <Navigate to="/login" replace />;

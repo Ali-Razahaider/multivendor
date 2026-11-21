@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import axios from 'axios'
 import server from '../../server'
+import { apiError } from '../../lib/api'
 import { loadSeller } from '../../redux/actions/sellerActions'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -18,7 +19,7 @@ import {
 import { Banknote, Landmark, Wallet, Loader2 } from 'lucide-react'
 
 const WithdrawMoney = () => {
-  const { seller } = useSelector((state) => state.seller)
+  const { seller } = useSelector((state: any) => state.seller)
   const dispatch = useDispatch()
   const [amount, setAmount] = useState('')
   const [withdraws, setWithdraws] = useState([])
@@ -37,7 +38,7 @@ const WithdrawMoney = () => {
       )
       setWithdraws(data.withdraws || [])
     } catch (err) {
-      console.error(err)
+      toast.error(apiError(err, 'Failed to load withdrawals'))
     }
   }
 
@@ -64,7 +65,7 @@ const WithdrawMoney = () => {
         setBankDialogOpen(false)
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to save bank info')
+      toast.error(apiError(err, 'Failed to save bank info'))
     } finally {
       setSaving(false)
     }
@@ -79,7 +80,7 @@ const WithdrawMoney = () => {
         dispatch(loadSeller())
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to delete')
+      toast.error(apiError(err, 'Failed to delete'))
     } finally {
       setSaving(false)
     }
@@ -87,6 +88,10 @@ const WithdrawMoney = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    if (!hasBank) {
+      toast.error('Add a withdrawal method first')
+      return
+    }
     if (!amount || Number(amount) <= 0) {
       toast.error('Enter a valid amount')
       return
@@ -95,8 +100,8 @@ const WithdrawMoney = () => {
       toast.error('Insufficient balance')
       return
     }
-    if (Number(amount) < 50) {
-      toast.error('Minimum withdrawal is $50')
+    if (Number(amount) < 10) {
+      toast.error('Minimum withdrawal is $10')
       return
     }
     setSubmitting(true)
@@ -113,7 +118,7 @@ const WithdrawMoney = () => {
         fetchWithdraws()
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to submit request')
+      toast.error(apiError(err, 'Failed to submit request'))
     } finally {
       setSubmitting(false)
     }
@@ -208,7 +213,7 @@ const WithdrawMoney = () => {
 
               <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
                 <div className="space-y-2">
-                  <Label htmlFor="amount">Amount ($) — Minimum $50</Label>
+                  <Label htmlFor="amount">Amount ($) — Minimum $10</Label>
                   <Input id="amount" type="number" value={amount} onChange={(e) => setAmount(e.target.value)} placeholder="Enter amount" />
                 </div>
                 <Button type="submit" disabled={submitting}>

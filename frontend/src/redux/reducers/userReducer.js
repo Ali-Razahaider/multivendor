@@ -17,6 +17,7 @@ const userReducer = createReducer(initialState, (builder) => {
   builder.addCase('LoadUserFail', (state, action) => {
     state.isAuthenticated = false;
     state.loading = false;
+    state.user = null;
     state.error = action.payload;
   });
   builder.addCase('UpdateProfileRequest', (state) => {

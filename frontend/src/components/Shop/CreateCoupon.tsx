@@ -12,8 +12,8 @@ import { createCoupon, clearErrors } from '../../redux/actions/couponActions'
 const CreateCoupon = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { seller } = useSelector((state) => state.seller)
-  const { success, error } = useSelector((state) => state.coupon)
+  const { seller } = useSelector((state: any) => state.seller)
+  const { success, error } = useSelector((state: any) => state.coupon)
 
   useEffect(() => {
     if (success) {
@@ -35,6 +35,18 @@ const CreateCoupon = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (!/^[A-Za-z0-9_-]{3,30}$/.test(name)) {
+      toast.error('Codes must be 3–30 letters, numbers, dashes or underscores')
+      return
+    }
+    if (!Number.isFinite(value) || value < 1 || value > 100) {
+      toast.error('Discount must be between 1% and 100%')
+      return
+    }
+    if ((minAmount || 0) < 0 || (maxAmount || 0) < 0) {
+      toast.error("Amounts can't be negative")
+      return
+    }
     dispatch(
       createCoupon({
         name,
@@ -62,6 +74,8 @@ const CreateCoupon = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value.toUpperCase())}
                   placeholder="e.g. SUMMER20"
+                  pattern="[A-Za-z0-9_-]{3,30}"
+                  title="3–30 letters, numbers, dashes or underscores"
                   required
                 />
               </div>
@@ -72,8 +86,8 @@ const CreateCoupon = () => {
                   type="number"
                   value={value}
                   onChange={(e) => setValue(e.target.valueAsNumber)}
-                  placeholder="0"
-                  min="0"
+                  placeholder="10"
+                  min="1"
                   max="100"
                   required
                 />
@@ -84,7 +98,7 @@ const CreateCoupon = () => {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="minAmount">Min Amount ($)</Label>
+                <Label htmlFor="minAmount">Min spend ($)</Label>
                 <Input
                   id="minAmount"
                   type="number"
@@ -96,7 +110,7 @@ const CreateCoupon = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="maxAmount">Max Amount ($)</Label>
+                <Label htmlFor="maxAmount">Max discount ($, 0 = no cap)</Label>
                 <Input
                   id="maxAmount"
                   type="number"

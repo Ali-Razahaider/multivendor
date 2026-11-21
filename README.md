@@ -1,6 +1,44 @@
-# Multi-Vendor E-Commerce Platform
+# Bazaarly — Multi-Vendor Marketplace
 
 A full-featured multi-vendor e-commerce platform built with the **MERN stack** (MongoDB, Express, React, Node.js). Buyers can browse products, checkout via Stripe, and chat with sellers in real time. Sellers get a full dashboard to manage products, orders, events, coupons, and withdrawals. An admin panel provides centralized oversight of users, sellers, products, orders, and withdrawal requests.
+
+
+## Quick start
+
+```bash
+npm install && (cd frontend && npm install)
+cp backend/config/.env.example backend/config/.env   # fill in Mongo, JWT, Stripe, Brevo, Cloudinary
+npm run seed            # demo shops, products, shoppers, orders, reviews (idempotent)
+npm run dev             # API on :8000
+(cd frontend && npm run dev)   # storefront on :5173
+```
+
+Promote an existing account to admin with `npm run seed -- --admin you@example.com`.
+
+
+### Payments (Stripe)
+
+- The browser only sends product ids and quantities. Every total is computed server-side
+  (`backend/utils/pricing.js`) — `POST /api/payment/quote` for the checkout page, `POST /api/payment/process`
+  to create the PaymentIntent.
+- Orders are created only after Stripe reports the payment as `succeeded`, by whichever arrives first:
+  `POST /api/payment/confirm` from the browser or the webhook. Finalization is idempotent, and if stock ran
+  out meanwhile the payment is refunded automatically.
+- Configure a webhook to `https://<api-host>/api/payment/webhook` for `payment_intent.succeeded`,
+  `payment_intent.payment_failed`, `payment_intent.canceled` and `charge.refunded`, and set
+  `STRIPE_WEBHOOK_SECRET`. Locally: `stripe listen --forward-to localhost:8000/api/payment/webhook`.
+- Approved refunds and seller cancellations of card orders are refunded through Stripe.
+
+### Production checklist
+
+- `NODE_ENV=production`, a long random `JWT_SECRET` (`openssl rand -hex 32`), `FRONTEND_URL` (comma-separate
+  extra origins such as staging; it drives CORS, the CSRF origin check and socket.io).
+- Cookies are `Secure; SameSite=None` in production. If the frontend and API share an origin (bundled nginx),
+  you may set `COOKIE_SAMESITE=lax`.
+- Business rules: `SHIPPING_RATE` (default 0.1), `FREE_SHIPPING_THRESHOLD` (0 = off), `PLATFORM_FEE_RATE` (0.1).
+- Built in: helmet headers, rate limiting on auth/payment, NoSQL-operator stripping, a 15 MB JSON cap, a
+  non-root Docker image with a healthcheck, and graceful shutdown. CI runs the frontend type-check and
+  build before building images.
 
 ---
 
@@ -497,9 +535,10 @@ flowchart LR
     NEXT --> RES[Response]
 ```
 
-- **JWT-based auth** with separate secrets for users (`JWT_SECRET`) and sellers (`JWT_SECRET_KEY_2`)
+- **JWT-based auth** (7-day sessions, revoked on password change); activation and reset links use separate, short-lived tokens, and passwords are never placed in links
 - Tokens stored in **HTTP-only cookies** (`auth_token` for users, `shop_token` for sellers)
-- Passwords hashed with **bcrypt** (pre-save hook)
+- Passwords hashed with **bcrypt** (cost 12) and must have at least 8 characters, including a letter and a number; password reset uses hashed one-time tokens
+- Every order, chat, product and coupon route checks ownership, not just that the caller is signed in
 - **Protected routes** on both frontend (`ProtectedRoute`, `SellerProtectedRoute`, `ProtectedAdminRoute`) and backend (`isAuthenticated`, `isSeller`, `isAdmin` middleware)
 - `withCredentials: true` on all Axios requests for cookie transmission
 - Admin middleware reads `auth_token` cookie directly — no dependency on `isAuthenticated`

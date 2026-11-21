@@ -1,46 +1,24 @@
-import { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { productData } from '../../static/data'
-import styles from '../../styles/styles'
-import ProductCard from '../ProductCard/ProductCard'
+import { ProductGrid } from '../ProductCard/ProductCard'
+import SectionHeader from '../Home/SectionHeader'
+import { useCatalog } from '../../hooks/useCatalog'
+import type { Product } from '../../lib/product'
 
-function SuggestedProducts({ data }) {
-    const { products: apiProducts } = useSelector((state) => state.product)
-    const [products, setProducts] = useState(null)
+function SuggestedProducts({ data }: { data: Product }) {
+  const { products } = useCatalog()
+  const others = products.filter((p) => p._id !== data._id)
+  const sameCategory = others.filter((p) => p.category === data.category)
+  const related = (sameCategory.length >= 4 ? sameCategory : [...sameCategory, ...others.filter((p) => p.category !== data.category)])
+    .sort((a, b) => (b.totalSell ?? 0) - (a.totalSell ?? 0))
+    .slice(0, 4)
 
-    useEffect(() => {
-        if (!data) return
+  if (related.length === 0) return null
 
-        const allProducts = [...productData, ...(apiProducts || [])]
-
-        let sameCategory = allProducts.filter(
-            (i) => i.category === data.category && i.name !== data.name
-        )
-
-        if (sameCategory.length === 0) {
-            sameCategory = [...allProducts]
-                .sort((a, b) => (b.totalSell ?? b.total_sell ?? 0) - (a.totalSell ?? a.total_sell ?? 0))
-                .slice(0, 5)
-                .filter((i) => i.name !== data.name)
-        }
-
-        setProducts(sameCategory)
-    }, [data, apiProducts])
-
-    if (!products || products.length === 0) return null
-
-    return (
-        <div className={`${styles.section} my-8`}>
-            <div className={`${styles.heading}`}>
-                <h1>Related Products</h1>
-            </div>
-            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5">
-                {products.map((product, idx) => (
-                    <ProductCard key={`${product._id || product.id}-${idx}`} data={product} />
-                ))}
-            </div>
-        </div>
-    )
+  return (
+    <section className="container-page pb-6" aria-labelledby="related-heading">
+      <SectionHeader id="related-heading" title="You may also like" link={data.category ? { to: `/products?category=${encodeURIComponent(data.category)}`, label: 'More like this' } : undefined} />
+      <ProductGrid products={related} />
+    </section>
+  )
 }
 
 export default SuggestedProducts

@@ -1,55 +1,68 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
 import { toast } from 'react-toastify'
 import axios from 'axios'
 import server from '../server'
+import { apiError } from '../lib/api'
 import DashboardHeader from '../components/Shop/Layout/DashboardHeader'
 import DashboardSideBar from '../components/Shop/Layout/DashboardSideBar'
-import { updateOrderStatus } from '../redux/actions/orderActions'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 
+// Fulfilment steps in order; sellers can only move an order forward.
+const FLOW = ['Processing', 'Transferred to delivery partner', 'Shipping', 'Received', 'On the way', 'Delivered']
+const FINAL = ['delivered', 'cancelled', 'processing refund', 'refund success', 'refund rejected']
+
+const nextStatuses = (current) => {
+  if (FINAL.includes(current?.toLowerCase())) return []
+  const index = FLOW.indexOf(current)
+  return [...FLOW.slice(index + 1), 'Cancelled']
+}
+
 const ShopOrderDetails = () => {
   const { id } = useParams()
   const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const { seller } = useSelector((state) => state.seller)
-  const { isLoading, error } = useSelector((state) => state.order)
   const [order, setOrder] = useState(null)
   const [status, setStatus] = useState('')
+  const [saving, setSaving] = useState(false)
 
   useEffect(() => {
     const fetchOrder = async () => {
       try {
-        const { data } = await axios.get(`${server}order/get-seller-all-orders/${seller._id}`, {
-          withCredentials: true,
-        })
+        const { data } = await axios.get(`${server}order/seller-orders`, { withCredentials: true })
         const found = data.orders?.find((o) => o._id === id)
         if (found) {
           setOrder(found)
-          setStatus(found.status)
+          setStatus(nextStatuses(found.status)[0] || '')
         } else {
           toast.error('Order not found')
           navigate('/dashboard-orders')
         }
-      } catch {
-        toast.error('Failed to load order')
+      } catch (err) {
+        toast.error(apiError(err, 'Failed to load order'))
         navigate('/dashboard-orders')
       }
     }
-    if (seller?._id) fetchOrder()
-  }, [seller, id, navigate])
+    fetchOrder()
+  }, [id, navigate])
 
-  useEffect(() => {
-    if (error) toast.error(error)
-  }, [error])
+  const options = order ? nextStatuses(order.status) : []
 
-  const handleUpdateStatus = () => {
+  const handleUpdateStatus = async () => {
     if (!status) return
-    dispatch(updateOrderStatus(id, status))
-    toast.success('Order status updated')
+    if (status === 'Cancelled' && !window.confirm('Cancel this order? Stock will be restored and card payments refunded.')) return
+    setSaving(true)
+    try {
+      const { data } = await axios.put(`${server}order/update-order-status/${id}`, { status }, { withCredentials: true })
+      setOrder(data.order)
+      setStatus(nextStatuses(data.order.status)[0] || '')
+      toast.success(`Order marked as ${data.order.status}`)
+    } catch (err) {
+      toast.error(apiError(err, 'Failed to update order'))
+    } finally {
+      setSaving(false)
+    }
   }
 
   if (!order) {
@@ -89,20 +102,29 @@ const ShopOrderDetails = () => {
                 <CardTitle>Order Status</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="flex items-center gap-4">
-                  <select
-                    className="border rounded-md px-3 py-2 text-sm"
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                  >
-                    <option value="Processing">Processing</option>
-                    <option value="Delivered">Delivered</option>
-                    <option value="Shipped">Shipped</option>
-                  </select>
-                  <Button onClick={handleUpdateStatus} disabled={isLoading}>
-                    {isLoading ? 'Updating...' : 'Update Status'}
-                  </Button>
-                </div>
+                <p className="mb-3 text-sm text-slate-600">
+                  Current status: <span className="badge bg-brand-50 text-brand-700">{order.status}</span>
+                </p>
+                {options.length > 0 ? (
+                  <div className="flex flex-wrap items-center gap-3">
+                    <label htmlFor="order-status" className="sr-only">New status</label>
+                    <select
+                      id="order-status"
+                      className="field h-10 w-auto min-w-[240px]"
+                      value={status}
+                      onChange={(e) => setStatus(e.target.value)}
+                    >
+                      {options.map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                    <Button onClick={handleUpdateStatus} disabled={saving || !status}>
+                      {saving ? 'Updating...' : 'Update status'}
+                    </Button>
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-500">This order is {order.status.toLowerCase()} and can no longer be changed here.</p>
+                )}
               </CardContent>
             </Card>
 
@@ -116,7 +138,7 @@ const ShopOrderDetails = () => {
                     <div key={i} className="flex items-center justify-between border-b pb-2">
                       <div className="flex items-center gap-3">
                         <img
-                          src={item.images?.[0]?.url || item.images?.[0]}
+                          src={item.image || item.images?.[0]?.url || item.images?.[0]}
                           alt={item.name}
                           className="w-12 h-12 object-cover rounded"
                         />
@@ -126,7 +148,7 @@ const ShopOrderDetails = () => {
                         </div>
                       </div>
                       <p className="font-medium">
-                        ${(item.discountedPrice || item.price) * item.qty}
+                        ${((item.discountedPrice || item.price) * item.qty).toFixed(2)}
                       </p>
                     </div>
                   ))}
@@ -161,7 +183,11 @@ const ShopOrderDetails = () => {
                     <span className="font-medium">Total:</span> ${order.totalPrice?.toFixed(2)}
                   </p>
                   <p>
-                    <span className="font-medium">Status:</span> {order.status}
+                    <span className="font-medium">Payment:</span> {order.paymentInfo?.type || '—'}
+                    {order.paymentInfo?.status ? ` (${order.paymentInfo.status})` : ''}
+                  </p>
+                  <p>
+                    <span className="font-medium">Customer:</span> {order.user?.name} · {order.user?.email}
                   </p>
                   <p>
                     <span className="font-medium">Placed on:</span>{' '}

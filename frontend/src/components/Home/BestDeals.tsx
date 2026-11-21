@@ -1,36 +1,29 @@
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import styles from '../../styles/styles'
-import ProductCard from '../ProductCard/ProductCard'
-import { getAllProducts } from '../../redux/actions/productActions'
-import { productData } from '../../static/data'
+import { ProductGrid } from '../ProductCard/ProductCard';
+import SectionHeader from './SectionHeader';
+import { useCatalog } from '../../hooks/useCatalog';
+import { discountPercent, hasDiscount, inStock } from '../../lib/product';
 
 const BestDeals = () => {
-  const dispatch = useDispatch()
-  const { products } = useSelector((state) => state.product)
+  const { products, loading } = useCatalog();
+  const deals = products
+    .filter((p) => hasDiscount(p) && inStock(p))
+    .sort((a, b) => discountPercent(b) - discountPercent(a))
+    .slice(0, 8);
 
-  useEffect(() => {
-    dispatch(getAllProducts())
-  }, [dispatch])
-
-  const allProducts = [...productData, ...(products || [])]
-    .sort((a, b) => (b.totalSell ?? b.total_sell ?? 0) - (a.totalSell ?? a.total_sell ?? 0))
-    .slice(0, 5)
+  if (!loading && deals.length === 0) return null;
 
   return (
-    <div>
-      <div className={`${styles.section}`}>
-        <div className={`${styles.heading}`}>
-          <h1>Best Deals</h1>
-        </div>
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5">
-          {allProducts.map((product, idx) => (
-            <ProductCard key={`${product._id || product.id}-${idx}`} data={product} />
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
+    <section className="container-page py-14 sm:py-16" aria-labelledby="deals-heading">
+      <SectionHeader
+        id="deals-heading"
+        eyebrow="Save more"
+        title="Today’s best deals"
+        subtitle="The biggest markdowns from shops across the marketplace."
+        link={{ to: '/products?sort=discount', label: 'All deals' }}
+      />
+      <ProductGrid products={deals} loading={loading} />
+    </section>
+  );
+};
 
-export default BestDeals
+export default BestDeals;

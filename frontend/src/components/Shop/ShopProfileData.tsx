@@ -1,129 +1,107 @@
-import { useState, useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { Link, useParams } from 'react-router-dom'
-import ProductCard from '../ProductCard/ProductCard'
-import { AiFillStar, AiOutlineStar } from 'react-icons/ai'
-import styles from '../../styles/styles'
-import { getShopProducts } from '../../redux/actions/productActions'
-import { getShopEvents } from '../../redux/actions/eventActions'
-import { productData } from '../../static/data'
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
+import axios from 'axios'
+import { BadgeCheck } from 'lucide-react'
+import server from '../../server'
+import { ProductGrid } from '../ProductCard/ProductCard'
+import EventCard from '../Home/EventCard'
+import Ratings from '../Ratings'
+import { isCurrentEvent } from '../../utils/events'
+import { onImageError, type Product } from '../../lib/product'
 
-const tabs = [
-  { id: 'products', label: 'Shop Products' },
-  { id: 'reviews', label: 'Shop Reviews' },
-  { id: 'events', label: 'Events' },
-]
-
-const ShopProfileData = ({ isOwner }) => {
-  const [active, setActive] = useState('products')
-  const dispatch = useDispatch()
+const ShopProfileData = ({ isOwner }: { isOwner: boolean }) => {
+  const { seller } = useSelector((state: any) => state.seller)
   const { id } = useParams()
-  const { products } = useSelector((state) => state.product)
-  const { events } = useSelector((state) => state.events)
+  const shopId = isOwner ? seller?._id : id
+  const [tab, setTab] = useState<'products' | 'events' | 'reviews'>('products')
+  const [products, setProducts] = useState<Product[]>([])
+  const [events, setEvents] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (id) {
-      dispatch(getShopProducts(id))
-      dispatch(getShopEvents(id))
+    if (!shopId) return
+    let cancelled = false
+    setLoading(true)
+    Promise.all([axios.get(`${server}product/shop/${shopId}`), axios.get(`${server}event/shop/${shopId}`)])
+      .then(([p, e]) => {
+        if (cancelled) return
+        setProducts(p.data.products || [])
+        setEvents((e.data.events || []).filter(isCurrentEvent))
+      })
+      .catch(() => {})
+      .finally(() => !cancelled && setLoading(false))
+    return () => {
+      cancelled = true
     }
-  }, [dispatch, id])
+  }, [shopId])
+
+  const reviews = products.flatMap((p) => (p.reviews || []).map((r) => ({ ...r, productName: p.name })))
+    .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
+
+  const tabs = [
+    { key: 'products', label: `Products (${products.length})` },
+    { key: 'events', label: `Offers (${events.length})` },
+    { key: 'reviews', label: `Reviews (${reviews.length})` },
+  ] as const
 
   return (
-    <div className="w-full bg-[#fff] rounded-[4px] shadow-sm p-5">
-      <div className="flex items-center justify-between border-b border-[#e3e3e3] pb-3">
-        <div className="flex items-center">
-          {tabs.map((tab) => (
-            <div
-              key={tab.id}
-              className={`mr-8 pb-2 cursor-pointer ${active === tab.id ? 'border-b-2 border-b-indigo-500' : ''}`}
-              onClick={() => setActive(tab.id)}
-            >
-              <h5 className={`font-[600] text-[18px] ${active === tab.id ? 'text-indigo-600' : 'text-gray-500'}`}>
-                {tab.label}
-              </h5>
-            </div>
-          ))}
-        </div>
-        {isOwner && (
-          <Link to="/dashboard">
-            <div className={`${styles.button} !w-auto !px-4 !h-[36px] !rounded-[5px]`}>
-              <span className="text-white text-sm">Go to Dashboard</span>
-            </div>
-          </Link>
-        )}
+    <section className="mt-8">
+      <div className="flex gap-1 overflow-x-auto border-b border-slate-200 scrollbar-none" role="tablist">
+        {tabs.map((t) => (
+          <button
+            key={t.key}
+            type="button"
+            role="tab"
+            aria-selected={tab === t.key}
+            onClick={() => setTab(t.key)}
+            className={`-mb-px whitespace-nowrap border-b-2 px-4 py-3 text-sm font-semibold ${tab === t.key ? 'border-brand-600 text-brand-700' : 'border-transparent text-slate-500 hover:text-slate-800'}`}
+          >
+            {t.label}
+          </button>
+        ))}
       </div>
 
-      {active === 'products' && (
-        <div className="py-5">
-          {(() => {
-            const displayProducts = products || []
-            return displayProducts.length === 0 ? (
-              <div className="flex items-center justify-center h-[300px]">
-                <p className="text-[#000000a6] text-[16px]">No products yet</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5">
-                {displayProducts.map((product, idx) => (
-                  <ProductCard key={product._id || product.id || idx} data={product} />
-                ))}
-              </div>
-            )
-          })()}
-        </div>
-      )}
-
-      {active === 'reviews' && (
-        <div className="py-5">
-          {(() => {
-            const displayProducts = products || []
-            const allReviews = displayProducts.flatMap(
-              (product) => product.reviews?.map((review) => ({ ...review, productName: product.name })) || []
-            )
-            return !allReviews || allReviews.length === 0 ? (
-              <div className="flex items-center justify-center h-[300px]">
-                <p className="text-[#000000a6] text-[16px]">No reviews yet</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {allReviews.map((review, idx) => (
-                  <div key={idx} className="border border-gray-200 rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <h5 className="font-[500] text-[15px] text-blue-500">{review.productName}</h5>
-                      <div className="flex items-center">
-                        {[1, 2, 3, 4, 5].map((star) =>
-                          review.rating >= star ? (
-                            <AiFillStar key={star} size={16} className="text-yellow-500" />
-                          ) : (
-                            <AiOutlineStar key={star} size={16} className="text-gray-400" />
-                          )
-                        )}
-                      </div>
-                    </div>
-                    <p className="text-[#000000a6] text-[14px]">{review.comment}</p>
-                  </div>
-                ))}
-              </div>
-            )
-          })()}
-        </div>
-      )}
-
-      {active === 'events' && (
-        <div className="py-5">
-          {!events || events.length === 0 ? (
-            <div className="flex items-center justify-center h-[300px]">
-              <p className="text-[#000000a6] text-[16px]">No events yet</p>
-            </div>
+      <div className="py-8" role="tabpanel">
+        {tab === 'products' &&
+          (!loading && products.length === 0 ? (
+            <p className="card p-10 text-center text-slate-600">{isOwner ? 'You haven’t listed any products yet.' : 'This shop has no products yet.'}</p>
           ) : (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5">
-              {events.map((event, idx) => (
-                <ProductCard key={event._id || idx} data={event} />
-              ))}
+            <ProductGrid products={products} loading={loading} />
+          ))}
+
+        {tab === 'events' &&
+          (events.length === 0 ? (
+            <p className="card p-10 text-center text-slate-600">No running offers right now.</p>
+          ) : (
+            <div className="space-y-6">
+              {events.map((e) => <EventCard key={e._id} data={e} />)}
             </div>
-          )}
-        </div>
-      )}
-    </div>
+          ))}
+
+        {tab === 'reviews' &&
+          (reviews.length === 0 ? (
+            <p className="card p-10 text-center text-slate-600">No reviews yet.</p>
+          ) : (
+            <ul className="card divide-y divide-slate-100 px-5">
+              {reviews.map((r, i) => (
+                <li key={i} className="flex gap-4 py-5">
+                  <img src={r.user?.avatar?.url} onError={onImageError} alt="" className="h-10 w-10 shrink-0 rounded-full object-cover" />
+                  <div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-semibold text-slate-900">{r.user?.name || 'Shopper'}</span>
+                      <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700"><BadgeCheck size={14} /> Verified purchase</span>
+                    </div>
+                    <Ratings rating={r.rating} size={14} className="mt-1" />
+                    {r.comment && <p className="mt-2 text-slate-700">{r.comment}</p>}
+                    <p className="mt-1 text-xs text-slate-400">on {r.productName}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ))}
+      </div>
+    </section>
   )
 }
 

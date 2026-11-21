@@ -17,3 +17,10 @@ export const loadUser = () => async (dispatch) => {
 };
 
 
+export const logoutUser = () => async (dispatch) => {
+  try {
+    await axios.post(`${server}user/logout`, {}, { withCredentials: true });
+  } finally {
+    dispatch({ type: 'LoadUserFail', payload: null });
+  }
+};

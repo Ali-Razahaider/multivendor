@@ -87,3 +87,16 @@ export const deleteProduct = (id) => async (dispatch) => {
 export const clearErrors = () => async (dispatch) => {
   dispatch({ type: 'clearErrors' });
 };
+
+// Loads the storefront catalog once per session (call with force to refresh).
+export const loadCatalog = (force = false) => async (dispatch, getState) => {
+  const { catalogStatus } = getState().product;
+  if (!force && (catalogStatus === 'loading' || catalogStatus === 'ready')) return;
+  try {
+    dispatch({ type: 'catalogRequest' });
+    const res = await axios.get(`${server}product/all`);
+    dispatch({ type: 'catalogSuccess', payload: res.data.products });
+  } catch (error) {
+    dispatch({ type: 'catalogFail', payload: error.response?.data?.message || error.message });
+  }
+};

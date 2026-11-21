@@ -18,11 +18,12 @@ import { categoriesData } from '../../static/data'
 import { updateProduct, clearErrors, getShopProducts } from '../../redux/actions/productActions'
 import axios from 'axios'
 import server from '../../server'
+import { MAX_IMAGES, readImageFiles, validatePricing } from './productForm'
 
 const EditProduct = ({ product, open, setOpen }) => {
   const dispatch = useDispatch()
-  const { seller } = useSelector((state) => state.seller)
-  const { success, error } = useSelector((state) => state.product)
+  const { seller } = useSelector((state: any) => state.seller)
+  const { success, error } = useSelector((state: any) => state.product)
 
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
@@ -63,16 +64,10 @@ const EditProduct = ({ product, open, setOpen }) => {
     }
   }, [success, error])
 
-  const handleImageChange = (e) => {
-    const files = Array.from(e.target.files || [])
-    const readers = files.map((file) => new Promise<string>((resolve) => {
-      const reader = new FileReader()
-      reader.onload = () => {
-        if (reader.readyState === 2) resolve(reader.result as string)
-      }
-      reader.readAsDataURL(file as Blob)
-    }))
-    Promise.all(readers).then((results) => setImages((prev) => [...prev, ...results]))
+  const handleImageChange = async (e) => {
+    const added = await readImageFiles(e.target.files, images.length)
+    e.target.value = ''
+    setImages((prev) => [...prev, ...added].slice(0, MAX_IMAGES))
   }
 
   const removeImage = (index) => {
@@ -81,6 +76,9 @@ const EditProduct = ({ product, open, setOpen }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    const invalid = validatePricing({ price, discountedPrice, countInStock })
+    if (invalid) return void toast.error(invalid)
+    if (images.length === 0) return void toast.error('Add at least one image')
     dispatch(
       updateProduct(product._id, {
         name,

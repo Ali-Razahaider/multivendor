@@ -8,6 +8,8 @@ export type EventData = {
   startDate?: string;
   endDate: string;
   status?: string;
+  category?: string;
+  shop?: { name?: string };
   images?: Array<string | { url: string }>;
 };
 

@@ -13,6 +13,8 @@ import {
 import { Button } from "@/components/ui/button"
 import axios from 'axios'
 import server from '../server'
+import { apiError } from '../lib/api'
+import { toast } from 'react-toastify'
 
 function AdminSellersPage() {
   const [sellers, setSellers] = useState([])
@@ -22,7 +24,7 @@ function AdminSellersPage() {
       const { data } = await axios.get(`${server}shop/admin-all-sellers`)
       setSellers(data.sellers || [])
     } catch (err) {
-      console.error('Failed to fetch sellers', err)
+      toast.error(apiError(err, 'Failed to fetch sellers'))
     }
   }
 
@@ -34,7 +36,7 @@ function AdminSellersPage() {
       await axios.delete(`${server}shop/admin-delete-seller/${id}`)
       setSellers(sellers.filter((s) => s._id !== id))
     } catch (err) {
-      console.error('Failed to delete seller', err)
+      toast.error(apiError(err, 'Failed to delete seller'))
     }
   }
 

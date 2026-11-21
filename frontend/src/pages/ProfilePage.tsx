@@ -1,23 +1,27 @@
-import { useState } from "react";
-import Header from "../components/Layout/Header";
-import styles from "../styles/styles";
-import ProfileSideBar from "../components/Profile/ProfileSidebar";
-import ProfileContent from "../components/Profile/ProfileContent";
+import { useSearchParams } from 'react-router-dom'
+import Header from '../components/Layout/Header'
+import Footer from '../components/Layout/Footer'
+import ProfileSidebar, { PROFILE_TABS, type ProfileTab } from '../components/Profile/ProfileSidebar'
+import ProfileContent from '../components/Profile/ProfileContent'
 
 const ProfilePage = () => {
-  const [active, setActive] = useState(1);
+  const [params, setParams] = useSearchParams()
+  const requested = params.get('tab')
+  const active: ProfileTab = PROFILE_TABS.some((t) => t.id === requested) ? (requested as ProfileTab) : 'profile'
 
   return (
-    <div>
-      <Header activeHeading={null} />
-      <div className={`${styles.section} flex bg-gray-100 py-10`}>
-        <div className="w-[50px] 800px:w-[335px] 800px:mt-0">
-          <ProfileSideBar active={active} setActive={setActive} />
+    <>
+      <Header />
+      <main id="main" className="container-page py-8 sm:py-10">
+        <h1 className="mb-6 text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">My account</h1>
+        <div className="grid gap-6 lg:grid-cols-[260px_1fr]">
+          <ProfileSidebar active={active} setActive={(tab) => setParams(tab === 'profile' ? {} : { tab })} />
+          <ProfileContent active={active} />
         </div>
-        <ProfileContent active={active} />
-      </div>
-    </div>
-  );
-};
+      </main>
+      <Footer />
+    </>
+  )
+}
 
-export default ProfilePage;
+export default ProfilePage

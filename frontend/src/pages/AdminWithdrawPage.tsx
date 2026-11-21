@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/dialog'
 import axios from 'axios'
 import server from '../server'
+import { apiError } from '../lib/api'
 import { Loader2 } from 'lucide-react'
 
 const AdminWithdrawPage = () => {
@@ -28,7 +29,7 @@ const AdminWithdrawPage = () => {
       )
       setWithdraws(data.withdraws || [])
     } catch (err) {
-      console.error(err)
+      toast.error(apiError(err, 'Failed to load withdrawals'))
     }
   }
 
@@ -49,7 +50,7 @@ const AdminWithdrawPage = () => {
         fetch()
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed')
+      toast.error(apiError(err, 'Failed to update request'))
     } finally {
       setLoading(false)
     }
