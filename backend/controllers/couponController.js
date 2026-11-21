@@ -6,11 +6,23 @@ import { isSeller } from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 router.post('/create-coupon', isSeller, asyncHandler(async (req, res, next) => {
-    const { name, value, minAmount, maxAmount, selectedProduct } = req.body;
+    const name = String(req.body.name || '').trim();
+    const value = Number(req.body.value);
+    const minAmount = Number(req.body.minAmount) || 0;
+    const maxAmount = Number(req.body.maxAmount) || 0;
+    const selectedProduct = req.body.selectedProduct ? String(req.body.selectedProduct).trim() : undefined;
 
-    if (!name || !value) {
+    if (!/^[A-Za-z0-9_-]{3,30}$/.test(name)) {
       res.status(400);
-      throw new Error("Coupon name and discount value are required");
+      throw new Error("Coupon codes must be 3–30 letters, numbers, dashes or underscores");
+    }
+    if (!Number.isFinite(value) || value <= 0 || value > 100) {
+      res.status(400);
+      throw new Error("Discount must be a percentage between 1 and 100");
+    }
+    if (minAmount < 0 || maxAmount < 0) {
+      res.status(400);
+      throw new Error("Amounts can't be negative");
     }
 
     const existing = await Coupon.findOne({ name });
@@ -23,8 +35,8 @@ router.post('/create-coupon', isSeller, asyncHandler(async (req, res, next) => {
     const coupon = await Coupon.create({
       name,
       value,
-      minAmount: minAmount || 0,
-      maxAmount: maxAmount || 0,
+      minAmount,
+      maxAmount,
       selectedProduct,
       shopId: shop._id,
       shop: {
@@ -37,15 +49,12 @@ router.post('/create-coupon', isSeller, asyncHandler(async (req, res, next) => {
 }))
 
 router.get('/get-coupon-value/:name', asyncHandler(async (req, res, next) => {
-    const coupon = await Coupon.findOne({ name: req.params.name });
-    if (!coupon) {
-      return res.status(200).json({ success: true, couponCode: null });
-    }
-    res.status(200).json({ success: true, couponCode: coupon });
+    const coupon = await Coupon.findOne({ name: String(req.params.name).trim() }).select('name value minAmount maxAmount shopId selectedProduct');
+    res.status(200).json({ success: true, couponCode: coupon || null });
 }))
 
-router.get('/shop/:shopId', asyncHandler(async (req, res, next) => {
-    const coupons = await Coupon.find({ shopId: req.params.shopId }).sort({ createdAt: -1 });
+router.get('/shop/:shopId', isSeller, asyncHandler(async (req, res, next) => {
+    const coupons = await Coupon.find({ shopId: String(req.shop._id) }).sort({ createdAt: -1 });
     res.status(200).json({ success: true, coupons });
 }))
 

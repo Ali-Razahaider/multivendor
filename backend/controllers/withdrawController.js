@@ -4,6 +4,7 @@ import asyncHandler from 'express-async-handler';
 import Withdraw from '../models/withdrawModel.js';
 import Shop from '../models/shopModel.js';
 import sendMail from '../utils/sendMail.js';
+import { plainNoticeTemplate } from '../utils/emailTemplates.js';
 
 const router = express.Router();
 
@@ -11,12 +12,25 @@ router.post(
   '/create-withdraw-request',
   isSeller,
   asyncHandler(async (req, res) => {
-    const { amount } = req.body;
-    const shop = await Shop.findById(req.shop._id);
+    const amount = Math.round(Number(req.body.amount) * 100) / 100;
+    if (!Number.isFinite(amount) || amount < 10) {
+      res.status(400);
+      throw new Error('The minimum withdrawal is $10');
+    }
+    if (!req.shop.withdrawMethod) {
+      res.status(400);
+      throw new Error('Add a withdrawal method first');
+    }
 
+    // Atomically debit the balance so concurrent requests can't overdraw it.
+    const shop = await Shop.findOneAndUpdate(
+      { _id: req.shop._id, availableBalance: { $gte: amount } },
+      { $inc: { availableBalance: -amount } },
+      { returnDocument: 'after' }
+    );
     if (!shop) {
-      res.status(404);
-      throw new Error('Shop not found');
+      res.status(400);
+      throw new Error('Insufficient balance');
     }
 
     const data = {
@@ -29,16 +43,14 @@ router.post(
       amount,
     };
 
-    await sendMail({
-      email: shop.email,
-      subject: 'Withdraw Request',
-      message: `Hello ${shop.name}, Your withdraw request of $${amount} is processing. It will take 3days to 7days to process!`,
-    });
-
     const withdraw = await Withdraw.create(data);
 
-    shop.availableBalance = (shop.availableBalance || 0) - amount;
-    await shop.save();
+    sendMail({
+      email: shop.email,
+      subject: 'Withdrawal request received',
+      message: `Hello ${shop.name}, your withdrawal request of $${amount} is processing. It usually takes 3–7 days.`,
+      html: plainNoticeTemplate('Withdrawal request received', shop.name, `Your withdrawal request of $${amount.toFixed(2)} is processing. It usually takes 3–7 business days.`),
+    });
 
     res.status(201).json({ success: true, withdraw });
   })
@@ -48,7 +60,7 @@ router.get(
   '/seller-withdraw-requests/:shopId',
   isSeller,
   asyncHandler(async (req, res) => {
-    const withdraws = await Withdraw.find({ 'seller._id': req.params.shopId }).sort({ createdAt: -1 });
+    const withdraws = await Withdraw.find({ 'seller._id': { $in: [req.shop._id, String(req.shop._id)] } }).sort({ createdAt: -1 });
     res.json({ success: true, withdraws });
   })
 );
@@ -66,20 +78,25 @@ router.put(
   '/update-withdraw-request/:id',
   isAdmin,
   asyncHandler(async (req, res) => {
-    const { sellerId, status } = req.body;
+    const { status } = req.body;
+    if (!['Approved', 'Rejected'].includes(status)) {
+      res.status(400);
+      throw new Error('Status must be Approved or Rejected');
+    }
 
-    const withdraw = await Withdraw.findByIdAndUpdate(
-      req.params.id,
+    // Only pending requests can be decided, and only once.
+    const withdraw = await Withdraw.findOneAndUpdate(
+      { _id: req.params.id, status: { $nin: ['Approved', 'Rejected'] } },
       { status, updatedAt: Date.now() },
-      { new: true }
+      { returnDocument: 'after' }
     );
 
     if (!withdraw) {
       res.status(404);
-      throw new Error('Withdraw request not found');
+      throw new Error('Pending withdraw request not found');
     }
 
-    const seller = await Shop.findById(sellerId);
+    const seller = await Shop.findById(withdraw.seller?._id);
 
     if (!seller) {
       res.status(404);
@@ -101,7 +118,7 @@ router.put(
 
     await seller.save();
 
-    await sendMail({
+    sendMail({
       email: seller.email,
       subject: status === 'Approved' ? 'Payment Confirmation' : 'Withdraw Request Rejected',
       message: status === 'Approved'

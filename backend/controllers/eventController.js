@@ -13,11 +13,20 @@ router.post('/create-event', isSeller, asyncHandler(async (req, res, next) => {
         res.status(400);
         throw new Error("Name, description, price, category, start/end date, and stock are required");
     }
+    if (new Date(endDate) <= new Date(startDate)) {
+        res.status(400);
+        throw new Error("End date must be after the start date");
+    }
+    if (!(Number(price) > 0) || (discountedPrice && Number(discountedPrice) >= Number(price))) {
+        res.status(400);
+        throw new Error("Enter a valid price; the sale price must be lower than the original price");
+    }
 
     const imagesLinks = [];
     if (images && images.length > 0) {
         const imgArray = typeof images === 'string' ? [images] : images;
-        for (const img of imgArray) {
+        for (const img of imgArray.slice(0, 6)) {
+            if (typeof img !== 'string' || !img.startsWith('data:image/')) continue;
             const result = await cloudinary.uploader.upload(img, {
                 folder: "products",
             });
@@ -58,6 +67,15 @@ router.get('/shop/:shopId', asyncHandler(async (req, res, next) => {
     res.status(200).json({ success: true, events });
 }))
 
+router.get(
+    '/admin-all-events',
+    isAdmin,
+    asyncHandler(async (req, res) => {
+        const events = await Events.find().sort({ createdAt: -1 });
+        res.json({ success: true, events });
+    })
+);
+
 router.get('/:id', asyncHandler(async (req, res, next) => {
     const event = await Events.findById(req.params.id);
     if (!event) {
@@ -79,8 +97,14 @@ router.put('/:id', isSeller, asyncHandler(async (req, res, next) => {
         throw new Error("You can only update your own events");
     }
 
-    const updated = await Events.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
+    const editable = ['name', 'description', 'price', 'discountedPrice', 'category', 'startDate', 'endDate', 'countInStock', 'tags'];
+    const updates = Object.fromEntries(editable.filter((k) => req.body[k] !== undefined).map((k) => [k, req.body[k]]));
+    if (updates.startDate && updates.endDate && new Date(updates.endDate) <= new Date(updates.startDate)) {
+        res.status(400);
+        throw new Error("End date must be after the start date");
+    }
+    const updated = await Events.findByIdAndUpdate(req.params.id, updates, {
+        returnDocument: 'after',
         runValidators: true,
     });
 
@@ -102,14 +126,5 @@ router.delete('/:id', isSeller, asyncHandler(async (req, res, next) => {
     await Events.findByIdAndDelete(req.params.id);
     res.status(200).json({ success: true, message: "Event deleted" });
 }))
-
-router.get(
-    '/admin-all-events',
-    isAdmin,
-    asyncHandler(async (req, res) => {
-        const events = await Events.find().sort({ createdAt: -1 });
-        res.json({ success: true, events });
-    })
-);
 
 export default router;
