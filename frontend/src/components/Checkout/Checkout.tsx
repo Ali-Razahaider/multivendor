@@ -1,373 +1,208 @@
-import { useState, useEffect } from "react";
-import styles from "../../styles/styles";
-import { Country, State } from "country-state-city";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
-import axios from "axios";
-import server from "../../server";
-import { toast } from "react-toastify";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { Country, State } from 'country-state-city';
+import { ArrowRight, MapPin, Tag, X } from 'lucide-react';
+import server from '../../server';
+import { apiError } from '../../lib/api';
+import OrderSummary from './OrderSummary';
+import { cartPayload, loadCheckout, saveCheckout, type Quote, type ShippingAddress } from './checkoutState';
+
+const EMPTY_ADDRESS: ShippingAddress = { address1: '', address2: '', city: '', state: '', country: '', zipCode: '' };
 
 const Checkout = () => {
-  const { user } = useSelector((state) => state.user);
-  const { cart } = useSelector((state) => state.cart);
-  const [country, setCountry] = useState("");
-  const [state, setState] = useState("");
-  const [city, setCity] = useState("");
-  const [userInfo, setUserInfo] = useState(false);
-  const [address1, setAddress1] = useState("");
-  const [address2, setAddress2] = useState("");
-  const [zipCode, setZipCode] = useState(null);
-  const [couponCode, setCouponCode] = useState("");
-  const [couponCodeData, setCouponCodeData] = useState(null);
-  const [discountPrice, setDiscountPrice] = useState(null);
   const navigate = useNavigate();
+  const { user } = useSelector((state: any) => state.user);
+  const { cart } = useSelector((state: any) => state.cart);
+  const saved = useMemo(() => loadCheckout(), []);
+
+  const [address, setAddress] = useState<ShippingAddress>(saved?.shippingAddress || EMPTY_ADDRESS);
+  const [couponInput, setCouponInput] = useState('');
+  const [couponCode, setCouponCode] = useState<string | null>(saved?.couponCode || null);
+  const [couponError, setCouponError] = useState('');
+  const [quote, setQuote] = useState<Quote | null>(null);
+  const [quoteError, setQuoteError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [touched, setTouched] = useState(false);
+
+  const cartKey = JSON.stringify(cartPayload(cart || []));
+
+  const fetchQuote = useCallback(
+    async (code: string | null) => {
+      setLoading(true);
+      try {
+        const { data } = await axios.post(`${server}payment/quote`, { cart: JSON.parse(cartKey), couponCode: code || undefined });
+        setQuote(data.quote);
+        setQuoteError('');
+        return true;
+      } catch (err) {
+        const message = apiError(err, 'We couldn’t price your cart.');
+        if (code) {
+          // Retry without the coupon so the summary still shows.
+          setCouponError(message);
+          setCouponCode(null);
+        } else {
+          setQuoteError(message);
+          setQuote(null);
+        }
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [cartKey]
+  );
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+    if (!cart?.length) return;
+    fetchQuote(couponCode);
+  }, [cartKey, couponCode, fetchQuote, cart?.length]);
 
-  const paymentSubmit = () => {
-    if (address1 === "" || zipCode === null || country === "" || state === "" || city === "") {
-      toast.error("Please choose your delivery address!")
-    } else {
-      const shippingAddress = {
-        address1,
-        address2,
-        zipCode,
-        country,
-        state,
-        city,
-      };
-
-      const orderData = {
-        cart,
-        totalPrice,
-        subTotalPrice,
-        shipping,
-        discountPrice,
-        shippingAddress,
-        user,
-      }
-
-      localStorage.setItem("latestOrder", JSON.stringify(orderData));
-      navigate("/payment");
-    }
-  };
-
-  const subTotalPrice = cart?.reduce(
-    (acc, item) => acc + item.qty * (item.discountedPrice ?? item.discountPrice ?? item.price ?? 0),
-    0
-  ) || 0;
-
-  const shipping = subTotalPrice * 0.1;
-
-  const handleSubmit = async (e) => {
+  const applyCoupon = (e: React.FormEvent) => {
     e.preventDefault();
-    const name = couponCode;
-
-    try {
-      const res = await axios.get(`${server}coupon/get-coupon-value/${name}`);
-      const shopId = res.data.couponCode?.shopId;
-      const couponCodeValue = res.data.couponCode?.value;
-      if (res.data.couponCode !== null) {
-        const isCouponValid =
-          cart && cart.filter((item) => item.shopId === shopId);
-
-        if (isCouponValid.length === 0) {
-          toast.error("Coupon code is not valid for this shop");
-          setCouponCode("");
-        } else {
-          const eligiblePrice = isCouponValid.reduce(
-            (acc, item) => acc + item.qty * (item.discountedPrice ?? item.discountPrice ?? item.price ?? 0),
-            0
-          );
-          const discountPrice = (eligiblePrice * couponCodeValue) / 100;
-          setDiscountPrice(discountPrice);
-          setCouponCodeData(res.data.couponCode);
-          setCouponCode("");
-        }
-      }
-      if (res.data.couponCode === null) {
-        toast.error("Coupon code doesn't exists!");
-        setCouponCode("");
-      }
-    } catch {
-      toast.error("Coupon validation unavailable");
-      setCouponCode("");
-    }
+    const code = couponInput.trim();
+    if (!code) return;
+    setCouponError('');
+    setCouponCode(code);
+    setCouponInput('');
   };
 
-  const discountPercentenge = couponCodeData ? discountPrice : "";
+  const set = (field: keyof ShippingAddress) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+    setAddress((a) => ({ ...a, [field]: e.target.value, ...(field === 'country' ? { state: '' } : {}) }));
 
-  const totalPrice = couponCodeData
-    ? (subTotalPrice + shipping - discountPercentenge).toFixed(2)
-    : (subTotalPrice + shipping).toFixed(2);
+  const states = address.country ? State.getStatesOfCountry(address.country) : [];
+  const missing = {
+    country: !address.country,
+    state: states.length > 0 && !address.state,
+    city: !address.city.trim(),
+    address1: !address.address1.trim(),
+    zipCode: !String(address.zipCode).trim(),
+  };
+  const valid = !Object.values(missing).some(Boolean);
 
-  const selectSavedAddress = (item) => {
-    setAddress1(item.address1);
-    setAddress2(item.address2);
-    setZipCode(item.zipCode);
-    setCountry(item.country);
-    setState(item.state);
-    setCity(item.city);
+  const applySavedAddress = (a: any) =>
+    setAddress({
+      address1: a.address1 || '',
+      address2: a.address2 || '',
+      city: a.city || '',
+      state: a.state || '',
+      country: a.country || '',
+      zipCode: String(a.zipCode || ''),
+    });
+
+  const continueToPayment = () => {
+    setTouched(true);
+    if (!valid || !quote) return;
+    saveCheckout({ shippingAddress: address, couponCode: quote.couponCode });
+    navigate('/payment');
   };
 
-  return (
-    <div className="w-full flex flex-col items-center py-8">
-      <div className="w-[90%] 1000px:w-[70%] block 800px:flex">
-        <div className="w-full 800px:w-[65%]">
-          <ShippingInfo
-            user={user}
-            country={country}
-            setCountry={setCountry}
-            state={state}
-            setState={setState}
-            city={city}
-            setCity={setCity}
-            userInfo={userInfo}
-            setUserInfo={setUserInfo}
-            address1={address1}
-            setAddress1={setAddress1}
-            address2={address2}
-            setAddress2={setAddress2}
-            zipCode={zipCode}
-            setZipCode={setZipCode}
-            selectSavedAddress={selectSavedAddress}
-          />
-        </div>
-        <div className="w-full 800px:w-[35%] 800px:mt-0 mt-8">
-          <CartData
-            handleSubmit={handleSubmit}
-            totalPrice={totalPrice}
-            shipping={shipping}
-            subTotalPrice={subTotalPrice}
-            couponCode={couponCode}
-            setCouponCode={setCouponCode}
-            discountPercentenge={discountPercentenge}
-          />
-        </div>
+  if (!cart?.length) {
+    return (
+      <div className="card mx-auto mt-10 max-w-lg p-10 text-center">
+        <h2 className="text-xl font-bold text-slate-900">Your cart is empty</h2>
+        <p className="mt-2 text-slate-600">Add a few things to your cart before checking out.</p>
+        <Link to="/products" className="btn-primary mt-6">Browse products</Link>
       </div>
-      <div
-        className={`${styles.button} w-[150px] 800px:w-[280px] mt-10`}
-        onClick={paymentSubmit}
-      >
-        <h5 className="text-white">Go to Payment</h5>
-      </div>
-    </div>
-  );
-};
+    );
+  }
 
-const ShippingInfo = ({
-  user,
-  country,
-  setCountry,
-  state,
-  setState,
-  city,
-  setCity,
-  userInfo,
-  setUserInfo,
-  address1,
-  setAddress1,
-  address2,
-  setAddress2,
-  zipCode,
-  setZipCode,
-  selectSavedAddress,
-}) => {
+  const fieldClass = (bad: boolean) => `field ${touched && bad ? 'border-rose-400 focus:border-rose-500 focus:ring-rose-500/15' : ''}`;
+
   return (
-    <div className="w-full 800px:w-[95%] bg-white rounded-md p-5 pb-8">
-      <h5 className="text-[18px] font-[500]">Shipping Address</h5>
-      <br />
-      <form>
-        <div className="w-full flex pb-3">
-          <div className="w-[50%]">
-            <label className="block pb-2">Full Name</label>
-            <input
-              type="text"
-              value={user && user.name}
-              readOnly
-              className={`${styles.input} !w-[95%]`}
-            />
-          </div>
-          <div className="w-[50%]">
-            <label className="block pb-2">Email Address</label>
-            <input
-              type="email"
-              value={user && user.email}
-              readOnly
-              className={`${styles.input}`}
-            />
-          </div>
-        </div>
+    <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_400px]">
+      <section className="card p-5 sm:p-7" aria-labelledby="shipping-heading">
+        <h2 id="shipping-heading" className="text-lg font-bold text-slate-900">Shipping details</h2>
+        <p className="mt-1 text-sm text-slate-500">Delivering to {user?.name} · {user?.email}</p>
 
-        <div className="w-full flex pb-3">
-          <div className="w-[50%]">
-            <label className="block pb-2">Phone Number</label>
-            <input
-              type="number"
-              value={user && user.phoneNumber}
-              readOnly
-              className={`${styles.input} !w-[95%]`}
-            />
+        {user?.addresses?.length > 0 && (
+          <div className="mt-5">
+            <p className="field-label">Saved addresses</p>
+            <div className="flex flex-wrap gap-2">
+              {user.addresses.map((a: any) => (
+                <button
+                  key={a._id || a.addressType}
+                  type="button"
+                  onClick={() => applySavedAddress(a)}
+                  className="inline-flex items-center gap-2 rounded-xl px-3 py-2 text-left text-sm ring-1 ring-slate-200 hover:bg-brand-50 hover:ring-brand-200"
+                >
+                  <MapPin size={15} className="text-brand-600" />
+                  <span>
+                    <span className="block font-semibold text-slate-800">{a.addressType}</span>
+                    <span className="block text-xs text-slate-500">{a.address1}, {a.city}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="w-[50%]">
-            <label className="block pb-2">Zip Code <span className="text-red-500">*</span></label>
-            <input
-              type="number"
-              value={zipCode}
-              onChange={(e) => setZipCode(e.target.value)}
-              required
-              className={`${styles.input}`}
-            />
-          </div>
-        </div>
+        )}
 
-        <div className="w-full flex pb-3">
-          <div className="w-[50%]">
-            <label className="block pb-2">Country <span className="text-red-500">*</span></label>
-            <select
-              className="w-[95%] border h-[40px] rounded-[5px]"
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-            >
-              <option className="block pb-2" value="">
-                Choose your country
-              </option>
-              {Country &&
-                Country.getAllCountries().map((item) => (
-                  <option key={item.isoCode} value={item.isoCode}>
-                    {item.name}
-                  </option>
-                ))}
+        <form className="mt-6 grid gap-4 sm:grid-cols-2" onSubmit={(e) => { e.preventDefault(); continueToPayment(); }} noValidate>
+          <div className="sm:col-span-2">
+            <label htmlFor="address1" className="field-label">Street address *</label>
+            <input id="address1" autoComplete="address-line1" className={fieldClass(missing.address1)} value={address.address1} onChange={set('address1')} />
+          </div>
+          <div className="sm:col-span-2">
+            <label htmlFor="address2" className="field-label">Apartment, suite, etc. <span className="font-normal text-slate-400">(optional)</span></label>
+            <input id="address2" autoComplete="address-line2" className="field" value={address.address2} onChange={set('address2')} />
+          </div>
+          <div>
+            <label htmlFor="country" className="field-label">Country *</label>
+            <select id="country" autoComplete="country" className={fieldClass(missing.country)} value={address.country} onChange={set('country')}>
+              <option value="">Choose country</option>
+              {Country.getAllCountries().map((c) => (
+                <option key={c.isoCode} value={c.isoCode}>{c.name}</option>
+              ))}
             </select>
           </div>
-          <div className="w-[50%]">
-            <label className="block pb-2">State/Province <span className="text-red-500">*</span></label>
-            <select
-              className="w-[95%] border h-[40px] rounded-[5px]"
-              value={state}
-              onChange={(e) => { setState(e.target.value); setCity(""); }}
-            >
-              <option className="block pb-2" value="">
-                Choose your State
-              </option>
-              {State &&
-                State.getStatesOfCountry(country).map((item) => (
-                  <option key={item.isoCode} value={item.isoCode}>
-                    {item.name}
-                  </option>
-                ))}
+          <div>
+            <label htmlFor="state" className="field-label">State / Province{states.length > 0 ? ' *' : ''}</label>
+            <select id="state" className={fieldClass(missing.state)} value={address.state} onChange={set('state')} disabled={!states.length}>
+              <option value="">{states.length ? 'Choose state' : 'Not applicable'}</option>
+              {states.map((s) => (
+                <option key={s.isoCode} value={s.isoCode}>{s.name}</option>
+              ))}
             </select>
           </div>
-        </div>
-
-        <div className="w-full flex pb-3">
-          <div className="w-[50%]">
-            <label className="block pb-2">City <span className="text-red-500">*</span></label>
-            <input
-              type="text"
-              required
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              className={`${styles.input} !w-[95%]`}
-            />
+          <div>
+            <label htmlFor="city" className="field-label">City *</label>
+            <input id="city" autoComplete="address-level2" className={fieldClass(missing.city)} value={address.city} onChange={set('city')} />
           </div>
-        </div>
-
-        <div className="w-full flex pb-3">
-          <div className="w-[50%]">
-            <label className="block pb-2">Address1 <span className="text-red-500">*</span></label>
-            <input
-              type="address"
-              required
-              value={address1}
-              onChange={(e) => setAddress1(e.target.value)}
-              className={`${styles.input} !w-[95%]`}
-            />
+          <div>
+            <label htmlFor="zip" className="field-label">ZIP / Postal code *</label>
+            <input id="zip" autoComplete="postal-code" className={fieldClass(missing.zipCode)} value={address.zipCode} onChange={set('zipCode')} />
           </div>
-          <div className="w-[50%]">
-            <label className="block pb-2">Address2</label>
-            <input
-              type="address"
-              value={address2}
-              onChange={(e) => setAddress2(e.target.value)}
-              className={`${styles.input}`}
-            />
-          </div>
-        </div>
-      </form>
-      <h5
-        className="text-[18px] cursor-pointer inline-block"
-        onClick={() => setUserInfo(!userInfo)}
-      >
-        Choose From saved address
-      </h5>
-      {userInfo && (
-        <div>
-          {user &&
-            user.addresses.map((item, index) => (
-              <div className="w-full flex mt-1" key={index}>
-                <input
-                  type="checkbox"
-                  className="mr-3"
-                  value={item.addressType}
-                  onClick={() => selectSavedAddress(item)}
-                />
-                <h2>{item.addressType}</h2>
-              </div>
-            ))}
-        </div>
-      )}
-    </div>
-  );
-};
+          {touched && !valid && (
+            <p className="text-sm text-rose-600 sm:col-span-2" role="alert">Please fill in the highlighted fields.</p>
+          )}
+          <button type="submit" className="hidden" aria-hidden="true" tabIndex={-1} />
+        </form>
+      </section>
 
-const CartData = ({
-  handleSubmit,
-  totalPrice,
-  shipping,
-  subTotalPrice,
-  couponCode,
-  setCouponCode,
-  discountPercentenge,
-}) => {
-  return (
-    <div className="w-full bg-[#fff] rounded-md p-5 pb-8">
-      <div className="flex justify-between">
-        <h3 className="text-[16px] font-[400] text-[#000000a4]">subtotal:</h3>
-        <h5 className="text-[18px] font-[600]">${subTotalPrice}</h5>
-      </div>
-      <br />
-      <div className="flex justify-between">
-        <h3 className="text-[16px] font-[400] text-[#000000a4]">shipping:</h3>
-        <h5 className="text-[18px] font-[600]">${shipping.toFixed(2)}</h5>
-      </div>
-      <br />
-      <div className="flex justify-between border-b pb-3">
-        <h3 className="text-[16px] font-[400] text-[#000000a4]">Discount:</h3>
-        <h5 className="text-[18px] font-[600]">
-          - {discountPercentenge ? "$" + discountPercentenge.toString() : null}
-        </h5>
-      </div>
-      <h5 className="text-[18px] font-[600] text-end pt-3">${totalPrice}</h5>
-      <br />
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          className={`${styles.input} h-[40px] pl-2`}
-          placeholder="Coupon code"
-          value={couponCode}
-          onChange={(e) => setCouponCode(e.target.value)}
-          required
-        />
-        <input
-          className={`w-full h-[40px] border border-indigo-500 text-center text-indigo-600 rounded-[3px] mt-8 cursor-pointer hover:bg-indigo-50 transition-colors`}
-          required
-          value="Apply code"
-          type="submit"
-        />
-      </form>
+      <OrderSummary quote={quote} loading={loading} error={quoteError}>
+        {quote?.couponCode ? (
+          <div className="flex items-center justify-between rounded-xl bg-emerald-50 px-3 py-2.5 text-sm text-emerald-800">
+            <span className="inline-flex items-center gap-2 font-medium"><Tag size={15} /> {quote.couponCode} applied</span>
+            <button type="button" aria-label="Remove coupon" onClick={() => setCouponCode(null)} className="rounded-lg p-1 hover:bg-emerald-100">
+              <X size={15} />
+            </button>
+          </div>
+        ) : (
+          <form onSubmit={applyCoupon}>
+            <label htmlFor="coupon" className="field-label">Coupon code</label>
+            <div className="flex gap-2">
+              <input id="coupon" className="field" placeholder="Enter code" value={couponInput} onChange={(e) => setCouponInput(e.target.value)} />
+              <button type="submit" className="btn-secondary" disabled={!couponInput.trim() || loading}>Apply</button>
+            </div>
+            {couponError && <p className="mt-2 text-sm text-rose-600" role="alert">{couponError}</p>}
+          </form>
+        )}
+        <button type="button" onClick={continueToPayment} disabled={!quote || loading} className="btn-primary mt-5 h-12 w-full text-base">
+          Continue to payment <ArrowRight size={18} />
+        </button>
+        <Link to="/products" className="mt-3 block text-center text-sm font-medium text-slate-500 hover:text-slate-800">Continue shopping</Link>
+      </OrderSummary>
     </div>
   );
 };

@@ -1,117 +1,86 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { RxCross1 } from 'react-icons/rx';
-import { IoHeartOutline } from 'react-icons/io5';
-import { AiOutlineShoppingCart } from 'react-icons/ai';
-import styles from '../../styles/styles';
-import { removeFromWishlist } from '../../redux/actions/wishlistActions';
-import { addToCart } from '../../redux/actions/cartActions';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import { Heart, ShoppingBag, Trash2 } from 'lucide-react';
+import Drawer from '../Cart/Drawer';
+import { addToCart } from '../../redux/actions/cartActions';
+import { removeFromWishlist } from '../../redux/actions/wishlistActions';
+import {
+  formatPrice,
+  hasDiscount,
+  inStock,
+  isObjectId,
+  onImageError,
+  productImage,
+  productUrl,
+  sellingPrice,
+  sizedImage,
+  toCartItem,
+  type Product,
+} from '../../lib/product';
 
-const WishlistSingle = ({ data, dispatch, setOpenWishlist }) => {
-  const productName = data.name?.replace(/\s+/g, '-')
+const Wishlist = ({ setOpenWishlist }: { setOpenWishlist: (open: boolean) => void }) => {
+  const dispatch = useDispatch();
+  const { wishlist } = useSelector((state: any) => state.wishlist) as { wishlist: Product[] };
+  const close = () => setOpenWishlist(false);
 
-  return (
-    <div className="flex items-center p-4 border-b">
-      <Link to={`/product/${productName}`} onClick={() => setOpenWishlist(false)}>
-        <img
-          src={data.images?.[0]?.url || data.images?.[0] || data.image_Url?.[0]?.url || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80'}
-          onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80';
-          }}
-          alt={data.name}
-          className="w-16 h-16 object-cover rounded-md"
-        />
-      </Link>
-      <div className="ml-3 flex-1">
-        <div className="flex items-start justify-between">
-          <div>
-            <Link to={`/product/${productName}`} onClick={() => setOpenWishlist(false)}>
-              <h5 className="text-[15px] font-medium hover:text-blue-600">{data.name}</h5>
-            </Link>
-            <h5 className="text-sm text-gray-500">USD ${data.discountedPrice || data.discount_price || data.price}</h5>
-          </div>
-          <RxCross1
-            size={16}
-            className="cursor-pointer text-gray-500 hover:text-red-500"
-            onClick={() => dispatch(removeFromWishlist(data._id || data.id))}
-          />
-        </div>
-        <div className="flex items-center gap-3 mt-2">
-          <button
-            className="text-xs flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium"
-            onClick={() => {
-              dispatch(addToCart({
-                _id: data._id || data.id,
-                name: data.name,
-                price: data.price,
-                discountedPrice: data.discountedPrice || data.discount_price,
-                images: data.images || data.image_Url,
-                shopId: data.shopId,
-                stock: data.stock || data.countInStock,
-                qty: 1,
-              }))
-              toast.success('Item added to cart')
-            }}
-          >
-            <AiOutlineShoppingCart size={14} /> Add to cart
-          </button>
-          <button
-            className="text-xs text-red-500 hover:text-red-700 font-medium"
-            onClick={() => dispatch(removeFromWishlist(data._id || data.id))}
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function Wishlist({ setOpenWishlist }) {
-  const dispatch = useDispatch()
-  const { wishlist } = useSelector((state) => state.wishlist)
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') setOpenWishlist(false)
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [setOpenWishlist])
+  const moveToCart = (p: Product) => {
+    dispatch(addToCart(toCartItem(p)) as any);
+    dispatch(removeFromWishlist(p._id) as any);
+    toast.success(`Moved “${p.name}” to your cart`);
+  };
 
   return (
-    <div className="fixed top-0 left-0 w-full bg-black/30 h-screen z-50">
-      <div className="fixed top-0 right-0 h-full w-[80%] 800px:w-[25%] bg-white flex flex-col overflow-y-scroll justify-between shadow-sm">
-        {wishlist.length === 0 ? (
-          <div className="w-full h-screen flex items-center justify-center">
-            <div className="flex w-full justify-end pt-5 pr-5 fixed top-3 right-3">
-              <RxCross1 size={25} className="cursor-pointer" onClick={() => setOpenWishlist(false)} />
-            </div>
-            <h5 className="text-gray-500">Wishlist is empty!</h5>
-          </div>
-        ) : (
-          <div>
-            <div className="flex w-full justify-end pt-5 pr-5">
-              <RxCross1 size={25} className="cursor-pointer" onClick={() => setOpenWishlist(false)} />
-            </div>
-            <div className={`${styles.normalFlex} p-4`}>
-              <IoHeartOutline size={25} />
-              <h5 className="pl-2 text-xl font-medium">{wishlist.length} items</h5>
-            </div>
-            <br />
-            <div className="w-full border-t">
-              {wishlist.map((item, index) => (
-                <WishlistSingle key={item._id || item.id || index} data={item} dispatch={dispatch} setOpenWishlist={setOpenWishlist} />
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
+    <Drawer title={`Wishlist${wishlist.length ? ` (${wishlist.length})` : ''}`} onClose={close}>
+      {wishlist.length === 0 ? (
+        <div className="flex h-full flex-col items-center justify-center gap-3 p-8 text-center">
+          <span className="grid h-16 w-16 place-items-center rounded-2xl bg-rose-50 text-rose-500">
+            <Heart size={28} />
+          </span>
+          <p className="text-lg font-semibold text-slate-900">No saved items yet</p>
+          <p className="text-sm text-slate-500">Tap the heart on any product to save it for later.</p>
+          <Link to="/products" onClick={close} className="btn-primary mt-2">
+            Discover products
+          </Link>
+        </div>
+      ) : (
+        <ul className="divide-y divide-slate-100">
+          {wishlist.map((p) => {
+            const purchasable = isObjectId(p._id) && inStock(p);
+            return (
+              <li key={p._id} className="flex gap-4 p-5">
+                <Link to={productUrl(p)} onClick={close} className="shrink-0">
+                  <img src={sizedImage(productImage(p), 200)} onError={onImageError} alt="" className="h-20 w-20 rounded-xl object-cover ring-1 ring-slate-200" />
+                </Link>
+                <div className="min-w-0 flex-1">
+                  <Link to={productUrl(p)} onClick={close} className="line-clamp-2 text-sm font-semibold text-slate-900 hover:text-brand-700">
+                    {p.name}
+                  </Link>
+                  <p className="mt-1 text-sm">
+                    <span className="font-bold text-slate-900">{formatPrice(sellingPrice(p))}</span>
+                    {hasDiscount(p) && <span className="ml-2 text-xs text-slate-400 line-through">{formatPrice(p.price)}</span>}
+                  </p>
+                  <div className="mt-3 flex items-center gap-2">
+                    <button type="button" disabled={!purchasable} onClick={() => moveToCart(p)} className="btn-primary h-9 px-3 text-xs">
+                      <ShoppingBag size={14} /> {purchasable ? 'Move to cart' : 'Unavailable'}
+                    </button>
+                    <button
+                      type="button"
+                      aria-label={`Remove ${p.name} from wishlist`}
+                      onClick={() => dispatch(removeFromWishlist(p._id) as any)}
+                      className="grid h-9 w-9 place-items-center rounded-xl text-slate-500 hover:bg-rose-50 hover:text-rose-600"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </Drawer>
+  );
+};
 
-export default Wishlist
+export default Wishlist;

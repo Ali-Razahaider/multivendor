@@ -1,117 +1,115 @@
-import { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { RxCross1 } from 'react-icons/rx'
-import { IoBagHandleOutline } from 'react-icons/io5'
-import { Link } from 'react-router-dom'
-import styles from '../../styles/styles'
-import { HiPlus, HiOutlineMinus } from 'react-icons/hi'
-import { addToCart, removeFromCart } from '../../redux/actions/cartActions'
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
+import Drawer from './Drawer';
+import { removeFromCart, updateCartQty } from '../../redux/actions/cartActions';
+import { formatPrice, onImageError, productUrl, sizedImage, FALLBACK_IMAGE, type CartItem } from '../../lib/product';
 
-const CartSingle = ({ data }) => {
-  const dispatch = useDispatch()
-  const productName = data.name?.replace(/\s+/g, '-')
+const unit = (i: CartItem) => (i.discountedPrice && i.discountedPrice < i.price ? i.discountedPrice : i.price);
 
-  const handleIncrement = () => {
-    dispatch(addToCart({ ...data, qty: data.qty + 1 }))
-  }
+const Cart = ({ setOpenCart }: { setOpenCart: (open: boolean) => void }) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { cart } = useSelector((state: any) => state.cart) as { cart: CartItem[] };
+  const { isAuthenticated } = useSelector((state: any) => state.user);
+  const close = () => setOpenCart(false);
+  const subtotal = cart.reduce((s, i) => s + unit(i) * i.qty, 0);
+  const count = cart.reduce((n, i) => n + i.qty, 0);
 
-  const handleDecrement = () => {
-    if (data.qty > 1) {
-      dispatch(addToCart({ ...data, qty: data.qty - 1 }))
-    }
-  }
-
-  return (
-    <div className="flex items-center p-4 border-b">
-      <Link to={`/product/${productName}`}>
-        <img
-          src={data.images?.[0]?.url || data.images?.[0] || data.img || 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80'}
-          onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80';
-          }}
-          alt={data.name}
-          className="w-16 h-16 object-cover rounded-md"
-        />
-      </Link>
-      <div className="ml-3 flex-1">
-        <div className="flex items-start justify-between">
-          <div>
-            <Link to={`/product/${productName}`}>
-              <h5 className="text-[15px] font-medium hover:text-blue-600">{data.name}</h5>
-            </Link>
-            <h5 className="text-sm text-gray-500">USD ${data.discountedPrice || data.price}</h5>
-          </div>
-        </div>
-        <div className="flex items-center mt-2 justify-between">
-          <div className="flex items-center">
-            <button
-              className="w-7 h-7 flex items-center justify-center bg-red-500 hover:bg-red-600 transition-colors rounded-full text-white"
-              onClick={handleIncrement}
-            >
-              <HiPlus size={14} />
-            </button>
-            <span className="px-3 font-medium">{data.qty}</span>
-            <button
-              className="w-7 h-7 flex items-center justify-center bg-gray-200 rounded-full"
-              onClick={handleDecrement}
-            >
-              <HiOutlineMinus size={14} />
-            </button>
-          </div>
-          <button
-            className="text-xs text-red-500 hover:text-red-700 font-medium"
-            onClick={() => dispatch(removeFromCart(data._id))}
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function Cart({ setOpenCart }) {
-  const dispatch = useDispatch()
-  const { cart } = useSelector((state) => state.cart)
-  const totalPrice = cart.reduce((acc, item) => acc + item.qty * (item.discountedPrice || item.price), 0)
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape') setOpenCart(false)
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [setOpenCart])
+  const checkout = () => {
+    close();
+    navigate(isAuthenticated ? '/checkout' : '/login?redirect=/checkout');
+  };
 
   return (
-    <div className="fixed top-0 left-0 w-full bg-black/30 h-screen z-50">
-      <div className="fixed top-0 right-0 h-full w-[80%] 800px:w-[25%] bg-white flex flex-col overflow-y-scroll justify-between shadow-sm">
-        <div>
-          <div className="flex w-full justify-end pt-5 pr-5">
-            <RxCross1 size={25} className="cursor-pointer" onClick={() => setOpenCart(false)} />
-          </div>
-          <div className={`${styles.normalFlex} p-4`}>
-            <IoBagHandleOutline size={25} />
-            <h5 className="pl-2 text-xl font-medium">{cart.length} items</h5>
-          </div>
-          <br />
-          <div className="w-full border-t">
-            {cart.map((item, index) => (
-              <CartSingle key={item._id || index} data={item} />
-            ))}
-          </div>
-        </div>
-        <div className="px-5 mb-3">
-          <Link to="/checkout" onClick={() => setOpenCart(false)}>
-            <div               className="h-[45px] flex items-center justify-center w-full bg-indigo-600 hover:bg-indigo-700 transition-colors rounded-[5px]">
-              <h1 className="text-white text-lg font-semibold">Checkout Now (${totalPrice.toFixed(2)})</h1>
+    <Drawer
+      title={`Your cart${count ? ` (${count})` : ''}`}
+      onClose={close}
+      footer={
+        cart.length > 0 && (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-slate-600">Subtotal</span>
+              <span className="text-lg font-bold text-slate-900">{formatPrice(subtotal)}</span>
             </div>
+            <p className="text-xs text-slate-500">Shipping and discounts are calculated at checkout.</p>
+            <button type="button" onClick={checkout} className="btn-primary h-12 w-full text-base">
+              Checkout
+            </button>
+            <button type="button" onClick={close} className="btn-ghost w-full">
+              Continue shopping
+            </button>
+          </div>
+        )
+      }
+    >
+      {cart.length === 0 ? (
+        <div className="flex h-full flex-col items-center justify-center gap-3 p-8 text-center">
+          <span className="grid h-16 w-16 place-items-center rounded-2xl bg-brand-50 text-brand-600">
+            <ShoppingBag size={28} />
+          </span>
+          <p className="text-lg font-semibold text-slate-900">Your cart is empty</p>
+          <p className="text-sm text-slate-500">Find something you love and it will show up here.</p>
+          <Link to="/products" onClick={close} className="btn-primary mt-2">
+            Browse products
           </Link>
         </div>
-      </div>
-    </div>
-  )
-}
+      ) : (
+        <ul className="divide-y divide-slate-100">
+          {cart.map((item) => {
+            const max = Math.min(item.stock > 0 ? item.stock : 20, 20);
+            return (
+              <li key={item._id} className="flex gap-4 p-5">
+                <Link to={productUrl(item)} onClick={close} className="shrink-0">
+                  <img src={sizedImage(item.image || FALLBACK_IMAGE, 200)} onError={onImageError} alt="" className="h-20 w-20 rounded-xl object-cover ring-1 ring-slate-200" />
+                </Link>
+                <div className="min-w-0 flex-1">
+                  <Link to={productUrl(item)} onClick={close} className="line-clamp-2 text-sm font-semibold text-slate-900 hover:text-brand-700">
+                    {item.name}
+                  </Link>
+                  {item.shopName && <p className="mt-0.5 truncate text-xs text-slate-500">{item.shopName}</p>}
+                  <div className="mt-3 flex items-center justify-between gap-2">
+                    <div className="inline-flex items-center rounded-xl ring-1 ring-slate-200">
+                      <button
+                        type="button"
+                        aria-label={`Decrease quantity of ${item.name}`}
+                        disabled={item.qty <= 1}
+                        onClick={() => dispatch(updateCartQty(item._id, item.qty - 1) as any)}
+                        className="grid h-8 w-8 place-items-center text-slate-600 disabled:opacity-40"
+                      >
+                        <Minus size={14} />
+                      </button>
+                      <span className="w-8 text-center text-sm font-semibold tabular-nums" aria-live="polite">{item.qty}</span>
+                      <button
+                        type="button"
+                        aria-label={`Increase quantity of ${item.name}`}
+                        disabled={item.qty >= max}
+                        onClick={() => dispatch(updateCartQty(item._id, item.qty + 1) as any)}
+                        className="grid h-8 w-8 place-items-center text-slate-600 disabled:opacity-40"
+                      >
+                        <Plus size={14} />
+                      </button>
+                    </div>
+                    <span className="text-sm font-bold text-slate-900">{formatPrice(unit(item) * item.qty)}</span>
+                  </div>
+                  <div className="mt-2 flex items-center justify-between">
+                    {item.qty >= max && item.stock > 0 ? <span className="text-xs text-amber-700">Max available</span> : <span />}
+                    <button
+                      type="button"
+                      onClick={() => dispatch(removeFromCart(item._id) as any)}
+                      className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 hover:text-rose-600"
+                    >
+                      <Trash2 size={13} /> Remove
+                    </button>
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </Drawer>
+  );
+};
 
-export default Cart
+export default Cart;
