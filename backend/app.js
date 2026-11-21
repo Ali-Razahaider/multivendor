@@ -14,7 +14,7 @@ import product from './controllers/productController.js';
 import event from './controllers/eventController.js';
 import coupon from './controllers/couponController.js';
 import order from './controllers/orderController.js';
-import payment from './controllers/paymentController.js';
+import payment, { stripeWebhook } from './controllers/paymentController.js';
 import withdraw from './controllers/withdrawController.js';
 import conversation from './controllers/conversationController.js';
 import message from './controllers/messageController.js';
@@ -50,6 +50,10 @@ app.use(
   })
 );
 app.use(compression());
+
+// Stripe signs the raw payload, so the webhook must be mounted before the
+// JSON body parser.
+app.post('/api/payment/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
 
 // CSRF defence: auth cookies are SameSite=None in production, so refuse
 // state-changing requests that a browser sent from an untrusted origin.

@@ -1,164 +1,220 @@
 import express from 'express';
 import asyncHandler from 'express-async-handler';
 import { isAuthenticated, isSeller, isAdmin } from '../middleware/authMiddleware.js';
-import Order from '../models/orderModel.js';
+import Order, { ORDER_STATUSES } from '../models/orderModel.js';
 import Shop from '../models/shopModel.js';
-import Product from '../models/productModel.js';
 import sendMail from '../utils/sendMail.js';
-import { orderConfirmationTemplate, statusUpdateTemplate } from '../utils/emailTemplates.js';
+import { statusUpdateTemplate } from '../utils/emailTemplates.js';
+import { buildQuote, round2, toCents } from '../utils/pricing.js';
+import { createOrdersFromQuote, releaseStock, validateShippingAddress } from '../utils/orderService.js';
+import { getStripe } from '../utils/stripe.js';
 
 const router = express.Router();
 
-// user used route
+const PLATFORM_FEE_RATE = Number(process.env.PLATFORM_FEE_RATE ?? 0.1);
+const REFUND_STATUSES = ['Processing refund', 'Refund Success', 'Refund Rejected'];
+const FULFILMENT_STATUSES = ORDER_STATUSES.filter((s) => !REFUND_STATUSES.includes(s));
+
+const orderBelongsToShop = (order, shopId) =>
+  String(order.shopId || '') === String(shopId) ||
+  (!order.shopId && order.cart?.some((item) => String(item.shopId) === String(shopId)));
+
+const shopOrderFilter = (shopId) => ({
+  $or: [{ shopId: String(shopId) }, { shopId: { $exists: false }, 'cart.shopId': String(shopId) }],
+});
+
+const sellerEarnings = (order) => {
+  const goods = order.subTotalPrice ? order.subTotalPrice - (order.discountPrice || 0) : order.totalPrice;
+  return round2(Math.max(goods, 0) * (1 - PLATFORM_FEE_RATE));
+};
+
+const notifyStatus = (order) =>
+  sendMail({
+    email: order.user?.email,
+    subject: `Order update: ${order.status}`,
+    message: `Hello ${order.user?.name}, your order #${order._id} status has been updated to ${order.status}.`,
+    html: statusUpdateTemplate(order.user?.name, order._id, order.status),
+  });
+
+// Cash on delivery checkout. Card payments go through /api/payment.
 router.post(
   '/create-order',
-  asyncHandler(async (req, res, next) => {
-    const { cart, shippingAddress, user, totalPrice, paymentInfo } = req.body;
-
-    const shopItemsMap = new Map();
-
-    for (const item of cart) {
-      const shopId = item.shopId;
-      if (!shopItemsMap.has(shopId)) {
-        shopItemsMap.set(shopId, []);
-      }
-      shopItemsMap.get(shopId).push(item);
-    }
-
-    const orders = [];
-
-    for (const [shopId, items] of shopItemsMap) {
-      const order = await Order.create({
-        cart: items,
-        shippingAddress,
-        user,
-        totalPrice,
-        paymentInfo,
-      });
-      orders.push(order);
-    }
-
-    for (const item of cart) {
-      const product = await Product.findById(item._id);
-      if (product) {
-        product.countInStock -= item.qty;
-        product.totalSell += item.qty;
-        await product.save();
-      }
-    }
-
-    const total = Array.isArray(orders) ? orders.reduce((s, o) => s + (o.totalPrice || 0), 0) : 0;
-
-    await sendMail({
-      email: user.email,
-      subject: 'Order Confirmed',
-      message: `Hello ${user.name}, your order has been placed successfully. Order ID: ${orders.map(o => o._id).join(', ')}`,
-      html: orderConfirmationTemplate(user.name, orders.map(o => o._id).join(', '), total.toFixed(2), cart),
+  isAuthenticated,
+  asyncHandler(async (req, res) => {
+    const shippingAddress = validateShippingAddress(req.body.shippingAddress);
+    const quote = await buildQuote(req.body.cart, req.body.couponCode);
+    const orders = await createOrdersFromQuote({
+      quote,
+      user: req.user,
+      shippingAddress,
+      paymentInfo: { type: 'Cash On Delivery', status: 'pending' },
     });
-
-    res.status(201).json({
-      success: true,
-      orders,
-    });
+    res.status(201).json({ success: true, orders });
   })
 );
 
-// user used route
+// Orders for the signed-in shopper. The :userId segment is kept for
+// backwards compatibility but the session decides whose orders are returned.
+const listMyOrders = asyncHandler(async (req, res) => {
+  const orders = await Order.find({
+    'user._id': { $in: [String(req.user._id), req.user._id] },
+  }).sort({
+    createdAt: -1,
+  });
+  res.status(200).json({ success: true, orders });
+});
+router.get('/my-orders', isAuthenticated, listMyOrders);
+router.get('/get-all-orders/:userId', isAuthenticated, listMyOrders);
+
 router.get(
-  '/get-all-orders/:userId',
-  asyncHandler(async (req, res, next) => {
-    const orders = await Order.find({ 'user._id': req.params.userId }).sort({
-      createdAt: -1,
-    });
-
-    res.status(200).json({
-      success: true,
-      orders,
-    });
+  '/user-order/:id',
+  isAuthenticated,
+  asyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id);
+    if (!order || String(order.user?._id) !== String(req.user._id)) {
+      res.status(404);
+      throw new Error('Order not found');
+    }
+    res.json({ success: true, order });
   })
 );
 
-// seller used route
-router.get(
-  '/get-seller-all-orders/:shopId',
-  asyncHandler(async (req, res, next) => {
-    const orders = await Order.find({
-      'cart.shopId': req.params.shopId,
-    }).sort({
-      createdAt: -1,
-    });
+const listShopOrders = asyncHandler(async (req, res) => {
+  const orders = await Order.find(shopOrderFilter(req.shop._id)).sort({
+    createdAt: -1,
+  });
+  res.status(200).json({ success: true, orders });
+});
+router.get('/seller-orders', isSeller, listShopOrders);
+router.get('/get-seller-all-orders/:shopId', isSeller, listShopOrders);
 
-    res.status(200).json({
-      success: true,
-      orders,
-    });
-  })
-);
-
-// seller used route
 router.put(
   '/update-order-status/:id',
   isSeller,
-  asyncHandler(async (req, res, next) => {
-    const order = await Order.findById(req.params.id);
+  asyncHandler(async (req, res) => {
+    const { status } = req.body;
+    if (!FULFILMENT_STATUSES.includes(status)) {
+      res.status(400);
+      throw new Error('Invalid order status');
+    }
 
-    if (!order) {
+    const order = await Order.findById(req.params.id);
+    if (!order || !orderBelongsToShop(order, req.shop._id)) {
       res.status(404);
       throw new Error('Order not found');
     }
+    if (
+      order.status === 'Delivered' ||
+      order.status === 'Cancelled' ||
+      REFUND_STATUSES.includes(order.status)
+    ) {
+      res.status(400);
+      throw new Error(`This order is already ${order.status.toLowerCase()} and can't be changed`);
+    }
 
-    order.status = req.body.status;
+    order.status = status;
 
-    if (req.body.status === 'Delivered') {
-      order.deliveredAt = Date.now();
-      order.paymentInfo.status = 'Succeeded';
-
-      let sellerEarnings = 0;
-      for (const item of order.cart) {
-        sellerEarnings += (item.dPrice || 0) * (item.qty || 1);
-      }
-      const shop = await Shop.findById(req.shop._id);
-      if (shop) {
-        shop.availableBalance = (shop.availableBalance || 0) + sellerEarnings;
-        await shop.save();
+    if (status === 'Cancelled') {
+      await releaseStock(order.cart);
+      if (order.paymentInfo?.type === 'Credit Card' && order.paymentInfo?.status === 'succeeded') {
+        const refund = await getStripe().refunds.create({
+          payment_intent: order.paymentInfo.id,
+          amount: toCents(order.totalPrice),
+        });
+        order.refundId = refund.id;
+        order.paymentInfo.status = 'refunded';
       }
     }
 
-    await order.save({ validateBeforeSave: false });
+    if (status === 'Delivered') {
+      order.deliveredAt = new Date();
+      if (order.paymentInfo?.type === 'Cash On Delivery') {
+        order.paymentInfo.status = 'succeeded';
+        order.paidAt = new Date();
+      }
+      if (!order.sellerCredited) {
+        await Shop.updateOne({ _id: req.shop._id }, { $inc: { availableBalance: sellerEarnings(order) } });
+        order.sellerCredited = true;
+      }
+    }
 
-    await sendMail({
-      email: order.user?.email,
-      subject: 'Order Status Updated',
-      message: `Hello ${order.user?.name}, your order #${order._id} status has been updated to ${order.status}.`,
-      html: statusUpdateTemplate(order.user?.name, order._id, order.status),
-    });
+    await order.save();
+    notifyStatus(order);
+
+    res.status(200).json({ success: true, order });
+  })
+);
+
+// Shopper asks for a refund on a delivered order.
+router.put(
+  '/order-refund/:id',
+  isAuthenticated,
+  asyncHandler(async (req, res) => {
+    const order = await Order.findById(req.params.id);
+    if (!order || String(order.user?._id) !== String(req.user._id)) {
+      res.status(404);
+      throw new Error('Order not found');
+    }
+    if (order.status !== 'Delivered') {
+      res.status(400);
+      throw new Error('Refunds can be requested once an order has been delivered');
+    }
+
+    order.status = 'Processing refund';
+    await order.save();
 
     res.status(200).json({
       success: true,
       order,
+      message: 'Refund request sent to the seller',
     });
   })
 );
 
-// user used route
+// Seller approves or rejects a refund request.
 router.put(
-  '/order-refund/:id',
-  asyncHandler(async (req, res, next) => {
+  '/order-refund-success/:id',
+  isSeller,
+  asyncHandler(async (req, res) => {
+    const { status } = req.body;
+    if (!['Refund Success', 'Refund Rejected'].includes(status)) {
+      res.status(400);
+      throw new Error('Invalid refund status');
+    }
     const order = await Order.findById(req.params.id);
-
-    if (!order) {
+    if (!order || !orderBelongsToShop(order, req.shop._id)) {
       res.status(404);
       throw new Error('Order not found');
     }
+    if (order.status.toLowerCase() !== 'processing refund') {
+      res.status(400);
+      throw new Error('There is no pending refund request for this order');
+    }
 
-    order.status = req.body.status;
+    if (status === 'Refund Success') {
+      if (order.paymentInfo?.type === 'Credit Card' && order.paymentInfo?.id && !order.refundId) {
+        const refund = await getStripe().refunds.create({
+          payment_intent: order.paymentInfo.id,
+          amount: toCents(order.totalPrice),
+        });
+        order.refundId = refund.id;
+        order.paymentInfo.status = 'refunded';
+      }
+      await releaseStock(order.cart);
+      if (order.sellerCredited) {
+        await Shop.updateOne({ _id: req.shop._id }, { $inc: { availableBalance: -sellerEarnings(order) } });
+        order.sellerCredited = false;
+      }
+    }
 
-    await order.save({ validateBeforeSave: false });
+    order.status = status;
+    await order.save();
+    notifyStatus(order);
 
-    res.status(200).json({
+    res.json({
       success: true,
       order,
-      message: 'Order Refund Request sent successfully!',
+      message: status === 'Refund Success' ? 'Refund issued' : 'Refund rejected',
     });
   })
 );
@@ -168,8 +224,8 @@ router.get(
   isSeller,
   asyncHandler(async (req, res) => {
     const orders = await Order.find({
-      'cart.shopId': req.params.shopId,
-      status: 'Processing Refund',
+      ...shopOrderFilter(req.shop._id),
+      status: { $in: [...REFUND_STATUSES, 'Processing Refund'] },
     }).sort({ createdAt: -1 });
     res.json({ success: true, orders });
   })
